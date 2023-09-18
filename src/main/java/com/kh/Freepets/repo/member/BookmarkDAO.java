@@ -9,6 +9,6 @@ import java.util.List;
 public interface BookmarkDAO extends JpaRepository<Bookmark, Integer>
 {
     // 특정 유저의 아이디로 모든 북마크 부르기
-    @Query(value = "SELECT * FROM bookmark WHERE id=?")
+    @Query(value = "SELECT * FROM bookmark WHERE id=?", nativeQuery = true)
     List<Bookmark> findByMemberId(String id);
 }

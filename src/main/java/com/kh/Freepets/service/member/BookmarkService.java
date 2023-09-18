@@ -42,7 +42,7 @@ public class BookmarkService
 
         for(Bookmark elem : bookmarks)
         {
-            if(elem.getBoard_code() == type.getValue()){
+            if(elem.getBoardCode() == type.getValue()){
                 bookmarkByBoardType.add(elem);
             }
         }

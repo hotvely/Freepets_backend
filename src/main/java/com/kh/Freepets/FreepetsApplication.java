@@ -9,7 +9,11 @@ public class FreepetsApplication
 
     public static void main(String[] args)
     {
-        SpringApplication.run(FreepetsApplication.class, args);
+        try {
+            SpringApplication.run(FreepetsApplication.class, args);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
