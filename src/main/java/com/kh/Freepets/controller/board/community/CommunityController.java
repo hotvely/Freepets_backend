@@ -19,40 +19,40 @@ public class CommunityController {
     @Autowired
     private CommunityLikeService commonLikeService;
 
-    //일반게시판 전체 조회 GET - http://localhost:8000/api/community
+    //일반게시판 전체 조회 GET - http://localhost:8080/api/community
     @GetMapping("/community")
     public ResponseEntity<List<Community>> commonList(){
         return ResponseEntity.status(HttpStatus.OK).body(commonService.commonAll());
     }
-    //일반게시판 추가 POST - http://localhost:8000/api/community
+    //일반게시판 추가 POST - http://localhost:8080/api/community
     @PostMapping("/community")
     public ResponseEntity<Community> createCommon(@RequestBody Community vo){
         return ResponseEntity.status(HttpStatus.OK).body(commonService.create(vo));
     }
-    //일반게시판 수정 PUT - http://localhost:8000/api/community
+    //일반게시판 수정 PUT - http://localhost:8080/api/community
     @PutMapping("/community")
     public ResponseEntity<Community> updateCommon(@RequestBody Community vo){
         return ResponseEntity.status(HttpStatus.OK).body(commonService.update(vo));
     }
-    //일반게시판 삭제 DELETE - http://localhost:8000/api/community/1
-    @DeleteMapping("/community/{commonCode}")
-    public ResponseEntity<Community>deleteCommon(@PathVariable int commonCode){
-        return ResponseEntity.status(HttpStatus.OK).body(commonService.delete(commonCode));
+    //일반게시판 삭제 DELETE - http://localhost:8080/api/community/1
+    @DeleteMapping("/community/{id}")
+    public ResponseEntity<Community> deleteCommon(@PathVariable int id){
+        return ResponseEntity.status(HttpStatus.OK).body(commonService.delete(id));
     }
 
-    //일반게시판 한 개 조회 GET - http://localhost:8000/api/community/1
+    //일반게시판 한 개 조회 GET - http://localhost:8080/api/community/1
     @GetMapping("/community/{commonCode}")
-    public ResponseEntity <Community>showCommon(@PathVariable int commonCode){
+    public ResponseEntity <Community> showCommon(@PathVariable int commonCode){
         return ResponseEntity.status(HttpStatus.OK).body(commonService.showCommon(commonCode));
     }
 
-    //일반게시판 좋아요 추가 POST - http://localhost:8000/api/community/like/1
+    //일반게시판 좋아요 추가 POST - http://localhost:8080/api/community/like/1
     //추후 기능 부가 및 수정 필요
     @PostMapping("/community/like")
     public ResponseEntity <CommunityLike> createCommonLike(@RequestBody CommunityLike commonLike){
         return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.create(commonLike));
     }
-    //일반게시판 좋아요 삭제 DELETE - http://localhost:8000/api/community/like/1
+    //일반게시판 좋아요 삭제 DELETE - http://localhost:8080/api/community/like/1
     //추후 기능 부가 및 수정 필요
     @DeleteMapping("/community/like/{commonLikeCode}")
     public ResponseEntity<CommunityLike>deleteCommonLike(@PathVariable int commonLikeCode){

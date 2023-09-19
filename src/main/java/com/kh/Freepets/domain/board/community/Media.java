@@ -14,6 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicInsert
+@Table(name = "MEDIA")
 public class Media {
 
     @Id

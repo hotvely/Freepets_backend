@@ -14,6 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicInsert
+@Table(name="MEDIA_COMMENT")
 public class MediaComment {
     @Id
     @Column(name="M_COMMENT_CODE")

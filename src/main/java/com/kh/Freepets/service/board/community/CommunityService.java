@@ -35,8 +35,8 @@ public class CommunityService {
         return null;
     }
 
-    public Community delete(int id){
-        Community target = commonDAO.findById(id).orElse(null);
+    public Community delete(int commonCode){
+        Community target = commonDAO.findById(commonCode).orElse(null);
         commonDAO.delete(target);
         return target;
     }

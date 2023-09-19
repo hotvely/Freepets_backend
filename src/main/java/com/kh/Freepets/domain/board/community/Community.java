@@ -14,6 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicInsert
+@Table(name = "COMMON")
 public class Community {
     @Id
     @Column(name="COMMON_CODE")

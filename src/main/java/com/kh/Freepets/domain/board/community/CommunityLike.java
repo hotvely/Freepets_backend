@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "COMMON_LIKE")
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "COMMON_LIKE")
 public class CommunityLike {
     @Id
     @Column(name="C_LIKE_CODE")

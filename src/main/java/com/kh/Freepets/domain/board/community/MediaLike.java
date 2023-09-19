@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name="MEDIA_LIKE")
 public class MediaLike {
     @Id
     @Column(name = "M_LIKE_CODE")

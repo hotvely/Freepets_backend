@@ -14,6 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicInsert
+@Table(name="COMMON_COMMENT")
 public class CommunityComment {
     @Id
     @Column(name="C_COMMENT_CODE")
