@@ -2,13 +2,14 @@ package com.kh.Freepets.controller.member;
 
 import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.service.member.MemberService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@Slf4j
 @RestController
 @RequestMapping("/api/*")
 public class MemberController
@@ -20,6 +21,7 @@ public class MemberController
     @GetMapping("/member")      //<- 모든 멤버 조회
     public ResponseEntity<List<Member>> findAllMember()
     {
+
         return ResponseEntity.status(HttpStatus.OK).body(memberService.findAll());
     }
 //

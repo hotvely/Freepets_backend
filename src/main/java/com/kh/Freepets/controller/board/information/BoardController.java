@@ -3,6 +3,7 @@ package com.kh.Freepets.controller.board.information;
 import com.kh.Freepets.domain.board.information.*;
 import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.service.board.information.*;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
@@ -81,6 +82,7 @@ public class BoardController {
         }
     }
 
+
     // 게시글 좋아요 & 좋아요 개수 처리
     @PostMapping("/hr/like")
     public ResponseEntity<HrLike> hrUpdateLike(@RequestBody HrLike hrLike) {
@@ -99,6 +101,7 @@ public class BoardController {
     @DeleteMapping("/hr/like/{hrLikeCode}")
     public ResponseEntity<HrLike> hrDeleteLike(@PathVariable int hrLikeCode) {
         try {
+            System.out.println("??");
             HrLike hrLike = hrLikeService.show(hrLikeCode);
             HrLike target = hrLikeService.likeMember(hrLike.getMember().getId(), hrLike.getHospitalReview().getHospitalReviewCode());
             if(target != null) {

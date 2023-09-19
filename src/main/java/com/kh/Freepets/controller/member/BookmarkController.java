@@ -18,14 +18,14 @@ public class BookmarkController
     BookmarkService bookmarkService;
 
 
-    @GetMapping("/api/bookmark")
+    @GetMapping("/bookmark")
     public ResponseEntity<List<Bookmark>> showAll()
     {  // 모든 북마크 가져오기
         return ResponseEntity.status(HttpStatus.OK).body(bookmarkService.showAll());
     }
 
 
-    @GetMapping("/api/bookmark/{id}")
+    @GetMapping("/bookmark/{id}")
     public ResponseEntity<List<Bookmark>> show(@PathVariable String id)
     {  // 특정 유저 북마크 가져오기
         return ResponseEntity.status(HttpStatus.OK).body(bookmarkService.findByMemberId(id));
@@ -39,27 +39,27 @@ public class BookmarkController
 //        return ResponseEntity.status(HttpStatus.OK).body(lists);
 //    }
 
-    @GetMapping("/api/bookmark/{id}/{board_code}")
+    @GetMapping("/bookmark/{id}/{board_code}")
     public ResponseEntity<List<Bookmark>> showByBoard(@PathVariable String id, @PathVariable int board_code)
     {// 게시판 별 북마크 보기 프론트에서 code -> int값으로 넘길때
         List<Bookmark> lists = bookmarkService.findByBoard(id, BoardType.getType(board_code));
         return ResponseEntity.status(HttpStatus.OK).body(lists);
     }
 
-    @PostMapping("/api/bookmark")
+    @PostMapping("/bookmark")
     public ResponseEntity<Bookmark> create(@RequestBody Bookmark bookmark)
     {
         return ResponseEntity.status(HttpStatus.OK).body(bookmarkService.create(bookmark));
     }
 
 
-    @PutMapping("/api/bookmark")
+    @PutMapping("/bookmark")
     public ResponseEntity<Bookmark> update(@RequestBody Bookmark bookmark)
     {
         return ResponseEntity.status(HttpStatus.OK).body(bookmarkService.update(bookmark));
     }
 
-    @DeleteMapping("/api/bookmark/{code}")
+    @DeleteMapping("/bookmark/{code}")
     public ResponseEntity<Bookmark> delete(@PathVariable int code)
     {
         return ResponseEntity.status(HttpStatus.OK).body(bookmarkService.delete(code));
