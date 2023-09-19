@@ -1,15 +1,13 @@
 package com.kh.Freepets.controller.member;
 
 import com.kh.Freepets.domain.member.Bookmark;
-import com.kh.Freepets.repo.board.BoardType;
+import com.kh.Freepets.BoardType;
 import com.kh.Freepets.service.member.BookmarkService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Book;
 import java.util.List;
 
 @RestController

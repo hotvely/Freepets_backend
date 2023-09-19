@@ -1,5 +1,8 @@
-package com.kh.Freepets.repo.board;
+package com.kh.Freepets;
 
+import lombok.Getter;
+
+@Getter
 public enum BoardType
 {
     community(1),
@@ -15,9 +18,10 @@ public enum BoardType
     // enum 값 생성할때 각 값에 value 할당시키기,
     BoardType(int i) { value = i;}
 
-    public int getValue() {
-        return this.value;
-    }
+
+//    public int getValue() {
+//        return this.value;
+//    }
 
 //    public static BoardType getType(String idx)
 //    {

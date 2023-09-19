@@ -1,15 +1,13 @@
 package com.kh.Freepets.service.member;
 
 import com.kh.Freepets.domain.member.Bookmark;
-import com.kh.Freepets.repo.board.BoardType;
+import com.kh.Freepets.BoardType;
 import com.kh.Freepets.repo.member.BookmarkDAO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -64,7 +62,9 @@ public class BookmarkService
     public Bookmark delete(int id)
     {
         Bookmark target = dao.findById(id).orElse(null);
-        dao.delete(target);
+        if(target!=null)
+            dao.delete(target);
+
         return target;
     }
 
