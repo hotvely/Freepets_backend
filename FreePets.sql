@@ -502,9 +502,6 @@ CREATE TABLE EVENT(
 CREATE SEQUENCE SEQ_EVENT;
 CREATE SEQUENCE SEQ_NOTICE;
 ---------------------------------------------------------------------------- 주연 테이블 & 제약조건
-DELETE FROM COMMON WHERE COMMON_CODE =2;
-SELECT * FROM COMMON;
-COMMIT;
 
 
 commit;
