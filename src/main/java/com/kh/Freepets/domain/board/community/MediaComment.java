@@ -35,7 +35,7 @@ public class MediaComment {
 
     @ManyToOne
     @JoinColumn(name = "MEDIA_CODE")
-    private Media midea;
+    private Media media;
     @ManyToOne
     @JoinColumn(name="ID")
     private Member member;

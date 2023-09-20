@@ -2,11 +2,12 @@ package com.kh.Freepets.service.board.community;
 
 import com.kh.Freepets.domain.board.community.Community;
 import com.kh.Freepets.repo.board.community.CommunityDAO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Slf4j
 @Service
 public class CommunityService {
     @Autowired

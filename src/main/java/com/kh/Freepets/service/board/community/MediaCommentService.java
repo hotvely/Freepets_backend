@@ -2,11 +2,12 @@ package com.kh.Freepets.service.board.community;
 
 import com.kh.Freepets.domain.board.community.MediaComment;
 import com.kh.Freepets.repo.board.community.MediaCommentDAO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Slf4j
 @Service
 public class MediaCommentService {
     @Autowired
@@ -35,8 +36,8 @@ public class MediaCommentService {
         return null;
     }
 
-    public MediaComment delete(int id){
-        MediaComment target = mediaCommentDAO.findById(id).orElse(null);
+    public MediaComment delete(int mediaCommentCode){
+        MediaComment target = mediaCommentDAO.findById(mediaCommentCode).orElse(null);
         mediaCommentDAO.delete(target);
         return target;
     }
