@@ -37,11 +37,19 @@ public class Media {
     private String mediaDesc;
     @Column(name="MEDIA_PHOTO")
     private String mediaPhoto;
-    @Column(name="MEDIA_CATEGORY")
-    private String category;
 
-    //좋아요 -> 개수 처리용
-    //댓글 좋아요
+
+    //정렬 위한
+    //조회수
+    @Column(name = "MEDIA_VIEW_COUNT")
+    private int mediaViewCount;
+    //추천수
+    @Column(name = "MEDIA_LIKE_COUNT")
+    private int mediaLikeCount;
+    //댓글수
+    @Column(name = "MEDIA_COMMENT_COUNT")
+    private int mediaCommentCount;
+
     //신고
 
     @ManyToOne

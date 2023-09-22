@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
+import org.springframework.boot.context.properties.bind.Name;
 
 import java.util.Date;
 @Data
@@ -34,8 +35,17 @@ public class Community {
     @Column(name="COMMON_YOUTUBE_URL")
     private String youtubeUrl;
 
-    //좋아요 -> 개수 처리용
-    //댓글 좋아요
+    //정렬 위한
+    //조회수
+    @Column(name = "COMMON_VIEW_COUNT")
+    private int commonViewCount;
+    //추천수
+    @Column(name = "COMMON_LIKE_COUNT")
+    private int commonLikeCount;
+    //댓글수
+    @Column(name = "COMMON_COMMENT_COUNT")
+    private int commonCommentCount;
+
     //신고
 
 

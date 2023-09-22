@@ -21,8 +21,11 @@ public class CommunityController {
     private CommunityLikeService commonLikeService;
 
     //일반게시판 전체 조회 GET - http://localhost:8080/api/community
+    //페이징 처리
     @GetMapping("/community")
     public ResponseEntity<List<Community>> commonList(){
+        //조회수, 추천수, 댓글수 정렬 (기본값 최신순)
+
         return ResponseEntity.status(HttpStatus.OK).body(commonService.commonAll());
     }
     //일반게시판 추가 POST - http://localhost:8080/api/community
