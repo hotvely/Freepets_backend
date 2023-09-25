@@ -4,6 +4,7 @@ import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.repo.member.MemberDAO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -109,6 +110,16 @@ public class MemberService
             dao.delete(target);
 
         return target;
+    }
+
+    public Member getByCredentials(String id, String password, PasswordEncoder passwordEncoder)
+    {
+        Member target = dao.findById(id).orElse(null);
+        if (target != null && passwordEncoder.matches(password, target.getPassword()))
+        {
+            return target;
+        }
+        return null;
     }
 
 }
