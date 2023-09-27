@@ -4,6 +4,7 @@ import com.kh.Freepets.domain.board.information.*;
 import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.service.board.information.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -114,6 +115,7 @@ public class BoardController {
     @GetMapping("/hr/orderlike")
     public ResponseEntity<List<HospitalReview>> hrShowLike() {
         try {
+            Sort.by("hospitalReviewLike").descending();
             return ResponseEntity.status(HttpStatus.OK).body(hrService.showLike());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -124,6 +126,7 @@ public class BoardController {
     @GetMapping("/hr/ordercomment")
     public ResponseEntity<List<HospitalReview>> hrShowComment() {
         try {
+            Sort.by("hospitalReviewCommentCount").descending();
             return ResponseEntity.status(HttpStatus.OK).body(hrService.showComment());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
