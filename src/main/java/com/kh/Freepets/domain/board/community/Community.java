@@ -10,6 +10,7 @@ import org.hibernate.annotations.DynamicInsert;
 import java.util.Date;
 @Data
 @Entity
+@Table(name = "COMMON")
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicInsert

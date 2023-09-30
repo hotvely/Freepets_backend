@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@Table(name = "COMMON_LIKE")
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommunityLike {
