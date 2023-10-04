@@ -1,7 +1,9 @@
 package com.kh.Freepets.controller.board.sitter;
 
 import com.kh.Freepets.domain.board.sitter.Sitter;
+import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.service.board.sitter.SitterService;
+import com.kh.Freepets.service.file.FileInputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -17,6 +20,8 @@ import java.util.List;
 @RequestMapping("/api/*")
 public class SitterController {
 
+    @Autowired
+    private FileInputHandler handler;
     @Autowired
     private SitterService service;
 
@@ -36,7 +41,17 @@ public class SitterController {
     }
 
     @PostMapping("/sitter")
-    public ResponseEntity<Sitter> create(@RequestBody Sitter sitter) {
+    public ResponseEntity<Sitter> create(String title, String loc, int price, String desc, MultipartFile Img, String id) {
+        String imgName = handler.fileInput(Img);
+        Sitter sitter = new Sitter();
+        sitter.setSitterTitle(title);
+        sitter.setSitterLoc(loc);
+        sitter.setSitterPrice(price);
+        sitter.setSitterDesc(desc);
+        sitter.setSitterImg(imgName);
+        Member member = new Member();
+        member.setId(id);
+        sitter.setMember(member);
         service.create(sitter);
         List<Sitter> target = service.isSitter(sitter.getMember().getId());
         if(!target.isEmpty()) {
