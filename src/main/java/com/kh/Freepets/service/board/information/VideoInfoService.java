@@ -69,14 +69,4 @@ public class VideoInfoService {
         videoInfoDAO.deleteLike(videoInfoCode);
         return videoInfoDAO.findById(videoInfoCode).orElse(null);
     }
-
-    // 좋아요 수 정렬 게시글 보기
-    public List<VideoInfo> showLike() {
-        return videoInfoDAO.showLike();
-    }
-
-    // 댓글 수 정렬 게시글 보기
-    public List<VideoInfo> showComment(){
-        return videoInfoDAO.showComment();
-    }
 }

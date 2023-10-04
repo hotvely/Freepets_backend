@@ -1,15 +1,18 @@
 package com.kh.Freepets.controller.board.information;
 
+import com.kh.Freepets.service.file.FileInputHandler;
 import com.kh.Freepets.domain.board.information.*;
 import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.service.board.information.*;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -17,6 +20,8 @@ import java.util.List;
 @RequestMapping("/api/info/*")
 public class BoardController {
 
+    @Autowired
+    private FileInputHandler handler;
     @Autowired
     private HospitalReviewService hrService;
     @Autowired
@@ -35,9 +40,13 @@ public class BoardController {
     
     // 게시글 전체 보기
     @GetMapping("/hr")
-    public ResponseEntity<List<HospitalReview>> hrShowAll() {
+    public ResponseEntity<List<HospitalReview>> hrShowAll(@RequestParam(name = "page", defaultValue = "1") int page) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(hrService.showAll());
+            Sort sort = Sort.by("hospitalReviewCode").descending();
+            Pageable pageable = PageRequest.of(page-1, 10, sort);
+
+            Page<HospitalReview> result = hrService.showAll(pageable);
+            return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
         } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -55,9 +64,20 @@ public class BoardController {
 
     // 게시글 작성
     @PostMapping("/hr")
-    public ResponseEntity<HospitalReview> hrCreate(@RequestBody HospitalReview hospitalReview) {
+    public ResponseEntity<HospitalReview> hrCreate(String hospitalName, String hospitalAddress, String title, String desc, String id, MultipartFile file) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(hrService.create(hospitalReview));
+            String fileName = handler.fileInput(file);
+            HospitalReview vo = new HospitalReview();
+            vo.setHospitalName(hospitalName);
+            vo.setHospitalAddress(hospitalAddress);
+            vo.setHospitalReviewTitle(title);
+            vo.setHospitalReviewDesc(desc);
+            vo.setHospitalReviewFileUrl(fileName);
+            vo.setHospitalReviewReportYn('N');
+            Member member = new Member();
+            member.setId(id);
+            vo.setMember(member);
+            return ResponseEntity.status(HttpStatus.OK).body(hrService.create(vo));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -102,7 +122,6 @@ public class BoardController {
     @DeleteMapping("/hr/like/{hrLikeCode}")
     public ResponseEntity<HrLike> hrDeleteLike(@PathVariable int hrLikeCode) {
         try {
-            System.out.println("??");
             HrLike hrLike = hrLikeService.show(hrLikeCode);
             HrLike target = hrLikeService.likeMember(hrLike.getMember().getId(), hrLike.getHospitalReview().getHospitalReviewCode());
             if(target != null) {
@@ -116,24 +135,20 @@ public class BoardController {
 
     // 게시글 좋아요 별로 보기
     @GetMapping("/hr/orderlike")
-    public ResponseEntity<List<HospitalReview>> hrShowLike() {
-        try {
-            Sort.by("hospitalReviewLike").descending();
-            return ResponseEntity.status(HttpStatus.OK).body(hrService.showLike());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+    public ResponseEntity<List<HospitalReview>> hrShowLike(@RequestParam(name = "page", defaultValue = "1") int page) {
+        Sort sort = Sort.by("hospitalReviewLike").descending();
+        Pageable pageable = PageRequest.of(page-1, 10, sort);
+        Page<HospitalReview> result = hrService.showAll(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
     }
 
     // 게시글 댓글 수 별로 보기
     @GetMapping("/hr/ordercomment")
-    public ResponseEntity<List<HospitalReview>> hrShowComment() {
-        try {
-            Sort.by("hospitalReviewCommentCount").descending();
-            return ResponseEntity.status(HttpStatus.OK).body(hrService.showComment());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+    public ResponseEntity<List<HospitalReview>> hrShowComment(@RequestParam(name = "page", defaultValue = "1") int page) {
+        Sort sort = Sort.by("hospitalReviewCommentCount").descending();
+        Pageable pageable = PageRequest.of(page-1, 10, sort);
+        Page<HospitalReview> result = hrService.showAll(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
     }
 
     // productReview
@@ -220,21 +235,13 @@ public class BoardController {
     // 게시글 좋아요 정렬
     @GetMapping("/pr/orderlike")
     public ResponseEntity<List<ProductReview>> prShowLike() {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(prService.showLike());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        return null;
     }
     
     // 게시글 댓글 수 정렬
     @GetMapping("/pr/ordercomment")
     public ResponseEntity<List<ProductReview>> prShowComment() {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(prService.showComment());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        return null;
     }
 
     // videoInfo
@@ -321,21 +328,13 @@ public class BoardController {
     // 게시글 좋아요 정렬
     @GetMapping("/vi/orderlike")
     public ResponseEntity<List<VideoInfo>> viShowLike() {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(viService.showLike());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        return null;
     }
     
     // 게시글 댓글 수 정렬
     @GetMapping("/vi/ordercomment")
     public ResponseEntity<List<VideoInfo>> viShowComment() {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(viService.showComment());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        return null;
     }
 
 

@@ -30,10 +30,4 @@ public interface ProductReviewDAO extends JpaRepository<ProductReview, Integer> 
     @Modifying
     @Query(value = "UPDATE PRODUCT_REVIEW SET PRODUCT_REVIEW_COMMENT_COUNT = (PRODUCT_REVIEW_COMMENT_COUNT + 1) WHERE PRODUCT_REVIEW_CODE = :productReviewCode", nativeQuery = true)
     int updateCommentCount(int productReviewCode);
-
-    @Query(value = "SELECT * FROM PRODUCT_REVIEW ORDER BY PRODUCT_REVIEW_LIKE DESC", nativeQuery = true)
-    List<ProductReview> showLike();
-
-    @Query(value = "SELECT * FROM PRODUCT_REVIEW ORDER BY PRODUCT_REVIEW_COMMENT_COUNT DESC", nativeQuery = true)
-    List<ProductReview> showComment();
 }

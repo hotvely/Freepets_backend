@@ -23,8 +23,8 @@ public class SitterReviewService {
     @Autowired
     private SitterDAO sitterDAO;
 
-    public List<SitterReview> showall() {
-        return sitterReviewDAO.findAll();
+    public List<SitterReview> showall(String id) {
+        return sitterReviewDAO.findBySitter(id);
     }
 
     public SitterReview show(int id) {

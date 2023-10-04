@@ -4,6 +4,7 @@ import com.kh.Freepets.domain.board.information.HRComment;
 import com.kh.Freepets.domain.board.information.PRComment;
 import com.kh.Freepets.domain.board.information.VIComment;
 import com.kh.Freepets.service.board.information.HRCommentService;
+import com.kh.Freepets.service.board.information.HospitalReviewService;
 import com.kh.Freepets.service.board.information.PRCommentService;
 import com.kh.Freepets.service.board.information.VICommentService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -68,14 +68,4 @@ public class ProductReviewService {
         productReviewDAO.deleteLike(productReviewCode);
         return productReviewDAO.findById(productReviewCode).orElse(null);
     }
-
-    // 좋아요 수 정렬 게시글 보기
-    public List<ProductReview> showLike() {
-        return productReviewDAO.showLike();
-    }
-
-    // 댓글 수 정렬 게시글 보기
-    public List<ProductReview> showComment(){
-        return productReviewDAO.showComment();
-    }
 }

@@ -26,14 +26,9 @@ public interface VideoInfoDAO extends JpaRepository<VideoInfo, Integer> {
     @Query(value = "UPDATE VIDEO_INFO SET VIDEO_INFO_VIEWS = (VIDEO_INFO_VIEWS + 1) WHERE VIDEO_INFO_CODE = :videoInfoCode", nativeQuery = true)
     int updateViews(int videoInfoCode);
 
-    @Query(value = "SELECT * FROM VIDEO_INFO ORDER BY VIDEO_INFO_LIKE DESC", nativeQuery = true)
-    List<VideoInfo> showLike();
-
     @Transactional
     @Modifying
     @Query(value = "UPDATE VIDEO_INFO SET VIDEO_INFO_COMMENT_COUNT = (VIDEO_INFO_COMMENT_COUNT + 1) WHERE VIDEO_INFO_CODE = :videoInfoCode", nativeQuery = true)
     int updateCommentCount(int videoInfoCode);
 
-    @Query(value = "SELECT * FROM VIDEO_INFO ORDER BY VIDEO_INFO_COMMENT_COUNT DESC", nativeQuery = true)
-    List<VideoInfo> showComment();
 }

@@ -26,14 +26,13 @@ public interface HospitalReviewDAO extends JpaRepository<HospitalReview, Integer
     @Query(value = "UPDATE HOSPITAL_REVIEW SET HOSPITAL_REVIEW_VIEWS = (HOSPITAL_REVIEW_VIEWS + 1) WHERE HOSPITAL_REVIEW_CODE = :hospitalReviewCode", nativeQuery = true)
     int updateViews(int hospitalReviewCode);
 
-    @Query(value = "SELECT * FROM HOSPITAL_REVIEW ORDER BY HOSPITAL_REVIEW_LIKE DESC", nativeQuery = true)
-    List<HospitalReview> showLike();
-
     @Transactional
     @Modifying
     @Query(value = "UPDATE HOSPITAL_REVIEW SET HOSPITAL_REVIEW_COMMENT_COUNT = (HOSPITAL_REVIEW_COMMENT_COUNT + 1) WHERE HOSPITAL_REVIEW_CODE = :hospitalReviewCode", nativeQuery = true)
     int updateCommentCount(int hospitalReviewCode);
 
-    @Query(value = "SELECT * FROM HOSPITAL_REVIEW ORDER BY HOSPITAL_REVIEW_COMMENT_COUNT DESC", nativeQuery = true)
-    List<HospitalReview> showComment();
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE HOSPITAL_REVIEW SET HOSPITAL_REVIEW_COMMENT_COUNT = (HOSPITAL_REVIEW_COMMENT_COUNT - 1) WHERE HOSPITAL_REVIEW_CODE = :hospitalReviewCode", nativeQuery = true)
+    int deleteCommentCount(int hospitalReviewCode);
 }
