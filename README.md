@@ -56,8 +56,11 @@
 - css작업 (각자 맡은 퍼블리싱 페이지)
 
 **승환**
-✔️ 달력 기능 구현
+✔️ 달력 기능 구현, 로그인페이지 구현
 <img src="Weekly_Report/resources/hotvely/9_5week/승환_이벤트페이지퍼블리싱.png">
+<img src="Weekly_Report/resources/hotvely/9_5week/승환_로그인페이지.png">
+<img src="Weekly_Report/resources/hotvely/9_5week/승환_회원가입페이지.png">
+
 ⚠️ 스프링 부트 시큐리티 멤버 관련 설정중
 **지우**
 <img src="Weekly_Report/resources/Jiwoo/9_5week/지우_미디어영상썸네일화면구현_2.png" >
@@ -80,6 +83,7 @@
 6. ✔️맵들어갈 틀...게시판? (병원 정보만...)
 7. ✔️펫시터 게시판
 8. 채팅....
+9. ✔️로그인페이지, ✔️회원가입, 아이디 비밀번호 찾기
 
 ### 10월 2째 주
 
