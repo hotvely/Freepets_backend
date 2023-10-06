@@ -10,4 +10,6 @@ public interface MediaDAO extends JpaRepository<Media, Integer> {
     // 특정 멤버의 모든 영상 게시글 조회
     @Query(value="SELECT * FROM MEDIA WHERE ID= :id", nativeQuery = true)
     List<Media> findByMemberId(String id);
+
+    // 말머리별 목록 보기 추후 추가
 }

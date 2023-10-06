@@ -4,6 +4,8 @@ import com.kh.Freepets.domain.board.community.Media;
 import com.kh.Freepets.repo.board.community.MediaDAO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,8 +15,8 @@ public class MediaService {
     @Autowired
     private MediaDAO mediaDAO;
 
-    public List<Media> mediaAll(){
-        return mediaDAO.findAll();
+    public Page<Media> mediaAll(Pageable pageable){
+        return mediaDAO.findAll(pageable);
     }
     public Media showMedia(int id) {
         return mediaDAO.findById(id).orElse(null);

@@ -4,6 +4,8 @@ import com.kh.Freepets.domain.board.community.Community;
 import com.kh.Freepets.repo.board.community.CommunityDAO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,8 +15,8 @@ public class CommunityService {
     @Autowired
     private CommunityDAO commonDAO;
 
-    public List<Community> commonAll(){
-        return commonDAO.findAll();
+    public Page<Community> commonAll(Pageable pageable){
+        return commonDAO.findAll(pageable);
     }
     public Community showCommon(int id) {
         return commonDAO.findById(id).orElse(null);

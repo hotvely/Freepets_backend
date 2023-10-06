@@ -5,11 +5,19 @@ import com.kh.Freepets.service.board.community.MediaCommentService;
 import com.kh.Freepets.service.board.community.MediaService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/*")
@@ -18,7 +26,8 @@ public class MediaCommentController {
     private MediaService mediaService;
     @Autowired
     private MediaCommentService mediaCommentService;
-
+    @Value("${spring.servlet.multipart.location}")
+    private String uploadPath;
     //미디어 게시글 한 개에 따른 댓글 전체 조회 GET - http://localhost:8080/api/media/1/comment
     @GetMapping("/media/{mediaCode}/comment")
     private ResponseEntity<List<MediaComment>> mediaCommentList(@PathVariable int mediaCode){
@@ -27,8 +36,23 @@ public class MediaCommentController {
     }
     //미디어 게시글 댓글 추가 POST - http://localhost:8080/api/media/comment
     @PostMapping("/media/comment")
-    public ResponseEntity<MediaComment> createMediaComment(@RequestBody MediaComment vo){
-        log.info("군밤이 여기까지 왔늬?");
+    public ResponseEntity<MediaComment> createMediaComment(String desc, MultipartFile file){
+//        log.info("군밤이 여기까지 왔늬?");
+        String originalFile = file.getOriginalFilename();
+        String realFile = originalFile.substring(originalFile.indexOf("\\")+1); //저장할 파일 이름
+        String uuid = UUID.randomUUID().toString();
+
+        String saveFile = uploadPath + File.separator + uuid + "_" + realFile;
+        Path pathFile = Paths.get(saveFile);
+        try{
+            file.transferTo(pathFile);
+        }catch (IOException e){
+            throw new RuntimeException(e);
+        }
+        MediaComment vo = new MediaComment();
+        vo.setMediaCommentAddFileUrl(uuid + "_" + realFile);
+        vo.setMediaCommentDesc(desc);
+
         return ResponseEntity.status(HttpStatus.OK).body(mediaCommentService.create(vo));
     }
 
