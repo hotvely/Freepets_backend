@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -32,7 +33,7 @@ public class Member
     private String name;
 
     @Column
-    private Date birth;
+    private LocalDate birth;
 
     @Column
     private char gender;
@@ -50,7 +51,7 @@ public class Member
     private String email;
 
     @Column(name = "create_account_date")
-    private Date createAccountDate;
+    private LocalDate createAccountDate;
 
     @Column(name = "delete_account_yn")
     private char deleteAccountYN;

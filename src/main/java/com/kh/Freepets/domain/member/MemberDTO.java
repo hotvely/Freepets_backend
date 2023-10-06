@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -18,13 +20,13 @@ public class MemberDTO
     private String id;
     private String password;
     private String name;
-    private Date birth;
+    private LocalDate birth;
     private char gender;
     private String phone;
     private String address;
     private String nickname;
     private String email;
-    private Date createAccountDate;
+    private LocalDate createAccountDate;
     private char deleteAccountYN;
     private String memberImg;
     private String memberInfo;
