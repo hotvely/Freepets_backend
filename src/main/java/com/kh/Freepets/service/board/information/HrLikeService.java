@@ -1,7 +1,6 @@
 package com.kh.Freepets.service.board.information;
 
 import com.kh.Freepets.domain.board.information.HrLike;
-import com.kh.Freepets.domain.board.information.PrLike;
 import com.kh.Freepets.repo.board.information.HrLikeDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

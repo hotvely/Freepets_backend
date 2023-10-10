@@ -1,13 +1,9 @@
 package com.kh.Freepets.repo.board.information;
 
-import com.kh.Freepets.domain.board.information.HospitalReview;
-import com.kh.Freepets.domain.board.information.ProductReview;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-
-import java.util.List;
 
 public interface ProductReviewDAO extends JpaRepository<ProductReview, Integer> {
 
