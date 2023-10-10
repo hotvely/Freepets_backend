@@ -40,6 +40,7 @@ public class Community {
     @Column(name = "COMMON_VIEW_COUNT")
     private int commonViewCount;
     //추천수
+    //@ColumnDefault("0")
     @Column(name = "COMMON_LIKE_COUNT")
     private int commonLikeCount;
     //댓글수

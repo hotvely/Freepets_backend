@@ -37,4 +37,9 @@ public class CommunityLikeService {
         commonLikeDAO.delete(target);
         return target;
     }
+
+    public CommunityLike commonLikesByMemberAndCommunity(String id, int commonCode) {
+        CommunityLike communityLike = commonLikeDAO.commonLikesByMemberAndCommunity(id,commonCode);
+        return communityLike;
+    }
 }
