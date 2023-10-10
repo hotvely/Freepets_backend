@@ -33,7 +33,7 @@ public class Member
     private String name;
 
     @Column
-    private LocalDate birth;
+    private Date birth;
 
     @Column
     private char gender;
@@ -51,7 +51,7 @@ public class Member
     private String email;
 
     @Column(name = "create_account_date")
-    private LocalDate createAccountDate;
+    private Date createAccountDate;
 
     @Column(name = "delete_account_yn")
     private char deleteAccountYN;

@@ -25,14 +25,6 @@ public class TokenProvider
                 .setIssuer("Freepets")
                 .setIssuedAt(new Date())
                 .setExpiration(expriryDate)
-                .claim("name", member.getName())
-                .claim("nickName", member.getNickname())
-                .claim("email", member.getEmail())
-                .claim("phone", member.getPhone())
-                .claim("address", member.getAddress())
-                .claim("createAccountDate", member.getCreateAccountDate())
-                .claim("authority", member.getAuthority())
-                .claim("birth", member.getBirth())
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
                 .compact();
     }

@@ -44,18 +44,15 @@ public class MemberController
     @GetMapping("/showMember")
     public ResponseEntity<MemberDTO> showMember(@RequestHeader(name = "Authorization") String headerToken)
     {   // 마이 페이지.. 할건데.. 잠시 대기 프론트에 전역을 쓸 토큰 넘겨 받는법 알아야함
+        log.info("일단... showMember 관련 컨트롤러 드러옴");
         try
         {
-
+            log.info(headerToken);
             String token = headerToken.replace("Bearer ", "");
-
+            log.info(token);
             Claims claims = tokenProvider.validateAndGetClaims(token);
 
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
-
-
-            LocalDateTime birth = LocalDateTime.parse(formatter.format(claims.get("birth")));
-            LocalDateTime createAccountDate = LocalDateTime.parse(formatter.format(claims.get("createAccountDate")));
+            log.info("claims.getId() : " + claims.getSubject());
 
             MemberDTO memberDTO = MemberDTO.builder()
                     .token(token)
@@ -65,12 +62,13 @@ public class MemberController
                     .email((String) claims.get("email"))
                     .phone((String) claims.get("phone"))
                     .address((String) claims.get("address"))
-                    .createAccountDate((LocalDate) claims.get("createAccountDate"))
-                    .birth((LocalDate) claims.get("birth"))
+                    .createAccountDate((Date) claims.get("createAccountDate"))
+                    .birth((Date) claims.get("birth"))
                     .authority((String) claims.get("Authority"))
                     .build();
 
             log.info("?? 왜 실패함?");
+            log.info("멤버관련 정보.. 로그인했을때 마이페이지에서.. : " + memberDTO);
             return ResponseEntity.ok().body(memberDTO);
         }
         catch (Exception e)
@@ -100,7 +98,7 @@ public class MemberController
                 .address(dto.getAddress())
                 .nickname(dto.getNickname())
                 .email(dto.getEmail())
-                .createAccountDate(LocalDate.now())
+                .createAccountDate(new Date())
                 .deleteAccountYN('N')
                 .authority("USER")          //우선 기본적인거.. user로 넣기..
                 .build();
@@ -119,6 +117,9 @@ public class MemberController
     @PostMapping("/login")
     public ResponseEntity<MemberDTO> authenticate(@RequestBody MemberDTO dto)
     {
+        log.info("일단 멤버 컨트롤러 로그인 들어옴");
+        log.info(dto.getId());
+        log.info(dto.getPassword());
         Member member = memberService.getByCredentials(dto.getId(),
                                                        dto.getPassword(),
                                                        passwordEncoder);
@@ -131,6 +132,14 @@ public class MemberController
                     .name(member.getName())
                     .nickname(member.getNickname())
                     .authority(member.getAuthority())
+                    .email(member.getEmail())
+                    .phone(member.getPhone())
+                    .birth(member.getBirth())
+                    .memberImg(member.getMemberImg())
+                    .memberInfo(member.getMemberInfo())
+                    .gender(member.getGender())
+                    .address(member.getAddress())
+                    .createAccountDate(member.getCreateAccountDate())
                     .token(token)
                     .build();
             return ResponseEntity.ok().body(responseDTO);

@@ -20,13 +20,13 @@ public class MemberDTO
     private String id;
     private String password;
     private String name;
-    private LocalDate birth;
+    private Date birth;
     private char gender;
     private String phone;
     private String address;
     private String nickname;
     private String email;
-    private LocalDate createAccountDate;
+    private Date createAccountDate;
     private char deleteAccountYN;
     private String memberImg;
     private String memberInfo;
