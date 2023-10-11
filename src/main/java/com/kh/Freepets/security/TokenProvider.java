@@ -49,6 +49,7 @@ public class TokenProvider
         return claims.getSubject();
     }
 
+
     public String getAuthorityFromToken(String token)
     {
         // Claims 쓰려면 스프링부트 버전 3.0.0으로 낮춰야 함;;;

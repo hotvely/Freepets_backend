@@ -105,12 +105,18 @@ public class MemberController
 
 
         Member registerMember = memberService.create(member);
-        MemberDTO responseDTO = MemberDTO.builder().id(registerMember.getId())
-                .name(registerMember.getName())
-                .authority(registerMember.getAuthority())
-                .build();
 
-        return ResponseEntity.ok().body(responseDTO);
+        if (registerMember != null)
+        {
+            MemberDTO responseDTO = MemberDTO.builder().id(registerMember.getId())
+                    .name(registerMember.getName())
+                    .authority(registerMember.getAuthority())
+                    .build();
+            return ResponseEntity.ok().body(responseDTO);
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
     }
 
     // sign in 로그인
@@ -123,39 +129,71 @@ public class MemberController
         Member member = memberService.getByCredentials(dto.getId(),
                                                        dto.getPassword(),
                                                        passwordEncoder);
+
+
         log.info("로그인...... : " + member);
         if (member != null)
         {
             String token = tokenProvider.create(member);
-            MemberDTO responseDTO = MemberDTO.builder()
-                    .id(member.getId())
-                    .name(member.getName())
-                    .nickname(member.getNickname())
-                    .authority(member.getAuthority())
-                    .email(member.getEmail())
-                    .phone(member.getPhone())
-                    .birth(member.getBirth())
-                    .memberImg(member.getMemberImg())
-                    .memberInfo(member.getMemberInfo())
-                    .gender(member.getGender())
-                    .address(member.getAddress())
-                    .createAccountDate(member.getCreateAccountDate())
-                    .token(token)
-                    .build();
+            MemberDTO responseDTO = memberService.createDTO(member, token);
+
             return ResponseEntity.ok().body(responseDTO);
         }
         else
-            return ResponseEntity.ok().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
     }
 
 
     @PutMapping("/update")
-    public ResponseEntity<Member> updateUser(@PathVariable String token, @RequestBody MemberDTO memberDTO)
+    public ResponseEntity<MemberDTO> updateUser(@RequestBody MemberDTO memberDTO)
     {
-        log.info("token : " + token);
+        log.info("token : " + memberDTO.getToken());
         log.info(memberDTO.getNickname());
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.update(null));
+        String token = memberDTO.getToken();
+        // 전달 받은 데이터로 변경 할 멤버 객체 만듬
+        String userId = tokenProvider.validateAndGetUserId(token);
+        log.info("받은 토큰을 이용해 유저 아이디 찾기 : " + userId);
+
+        // db에 있는 member 객체...
+        Member member = memberService.findByIdUser(userId);
+
+        log.info("member : " + member.toString());
+
+        if (!memberDTO.getNickname().isEmpty())
+        {
+            member.setNickname(memberDTO.getNickname());
+        }
+
+        if (!memberDTO.getEmail().isEmpty())
+        {
+            member.setEmail(memberDTO.getEmail());
+        }
+
+        if (!memberDTO.getPhone().isEmpty())
+        {
+            member.setPhone(memberDTO.getPhone());
+        }
+
+        if (!memberDTO.getAddress().isEmpty())
+        {
+            member.setAddress(memberDTO.getAddress());
+        }
+
+        if (!memberDTO.getMemberInfo().isEmpty())
+        {
+            member.setMemberInfo(memberDTO.getMemberInfo());
+        }
+
+        log.info("데이터 집어넣어서 DB로 보내기 전에 멤버 객체 : " + member);
+        // 받은 데이터를 통해서 DB에 업데이트 한 이후 객체..
+        Member updateMember = memberService.update(member);
+        log.info("updateMember : " + updateMember);
+
+        // 다시 프론트로 던질 중요 정보 제외한 객체 생성
+        MemberDTO responseDTO = memberService.createDTO(updateMember, token);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
 //    @PutMapping("/admin")
@@ -165,9 +203,23 @@ public class MemberController
 //            return ResponseEntity.status(HttpStatus.OK).body(memberService.update(member));
 //    }
 
-    @DeleteMapping("/member/{id}")
-    public ResponseEntity<Member> delete(@PathVariable String id)
+    @PutMapping("/delete")
+    public ResponseEntity<MemberDTO> delete(@RequestBody MemberDTO memberDTO)
     {
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.delete(id));
+        log.info("삭제 들어옴?");
+        log.info(memberDTO.toString());
+        String token = memberDTO.getToken();
+        // 전달 받은 데이터로 변경 할 멤버 객체 만듬
+        String userId = tokenProvider.validateAndGetUserId(token);
+        log.info("받은 토큰을 이용해 유저 아이디 찾기 : " + userId);
+
+        // db에 있는 member 객체...
+        Member member = memberService.findByIdUser(userId);
+        member.setDeleteAccountYN('Y');
+
+        Member updateMember = memberService.update(member);
+        MemberDTO responseDTO = memberService.createDTO(updateMember, token);
+
+        return ResponseEntity.ok().body(responseDTO);
     }
 }
