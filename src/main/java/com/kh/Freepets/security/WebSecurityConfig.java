@@ -29,6 +29,7 @@ public class WebSecurityConfig
                 .httpBasic().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeHttpRequests()
+                .requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/auth/login")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/auth/member/{id}")).hasAnyRole("ROLE_USER")
