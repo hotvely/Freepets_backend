@@ -5,6 +5,8 @@ import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.repo.board.information.HospitalReviewDAO;
 import com.kh.Freepets.repo.member.MemberDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,8 +20,8 @@ public class HospitalReviewService {
     private MemberDAO memberDAO;
 
     // 모든 게시글 보기
-    public List<HospitalReview> showAll() {
-        return hospitalReviewDAO.findAll();
+    public Page<HospitalReview> showAll(Pageable pageable) {
+        return hospitalReviewDAO.findAll(pageable);
     }
 
     // 게시글 한 개 보기
@@ -66,15 +68,4 @@ public class HospitalReviewService {
         hospitalReviewDAO.deleteLike(hospitalReviewCode);
         return hospitalReviewDAO.findById(hospitalReviewCode).orElse(null);
     }
-
-    // 좋아요 수 정렬 게시글 보기
-    public List<HospitalReview> showLike() {
-        return hospitalReviewDAO.showLike();
-    }
-
-    // 댓글 수 정렬 게시글 보기
-    public List<HospitalReview> showComment(){
-        return hospitalReviewDAO.showComment();
-    }
-
 }

@@ -1,7 +1,9 @@
 package com.kh.Freepets.controller.board.sitter;
 
+import com.kh.Freepets.domain.board.sitter.Sitter;
 import com.kh.Freepets.domain.board.sitter.SitterReview;
 import com.kh.Freepets.service.board.sitter.SitterReviewService;
+import com.kh.Freepets.service.board.sitter.SitterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,28 +17,33 @@ public class SitterReviewController {
 
     @Autowired
     private SitterReviewService service;
+    @Autowired
+    private SitterService sitterService;
 
-    @GetMapping("/sitterReview")
-    public ResponseEntity<List<SitterReview>> showAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(service.showall());
+    @GetMapping("/sitter/{id}/review") // 시터 한 명당 후기 전체 보기
+    public ResponseEntity<List<SitterReview>> showAll(@PathVariable String id) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.showall(id));
     }
 
-    @GetMapping("/sitterReview/{id}")
+    @GetMapping("/sitterReview/{id}") // 후기 한 개 보기
     public ResponseEntity<SitterReview> show(@PathVariable int id) {
         return ResponseEntity.status(HttpStatus.OK).body(service.show(id));
     }
 
-    @PostMapping("/sitterReview")
+    @PostMapping("/sitterReview") // 후기 작성
     public ResponseEntity<SitterReview> create(@RequestBody SitterReview sitterReview) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.create(sitterReview));
+        service.create(sitterReview);
+        SitterReview result = service.show(sitterReview.getSitterReviewCode());
+        sitterService.updateRatings(result.getSitter().getMember().getId());
+        return ResponseEntity.status(HttpStatus.OK).body(service.show(sitterReview.getSitterReviewCode()));
     }
 
-    @PutMapping("/sitterReview")
+    @PutMapping("/sitterReview") // 후기 수정
     public ResponseEntity<SitterReview> update(@RequestBody SitterReview sitterReview) {
         return ResponseEntity.status(HttpStatus.OK).body(service.create(sitterReview));
     }
 
-    @DeleteMapping("/sitterReview/{id}")
+    @DeleteMapping("/sitterReview/{id}") // 후기 삭제
     public ResponseEntity<SitterReview> delete(@PathVariable int id) {
         return ResponseEntity.status(HttpStatus.OK).body(service.delete(id));
     }

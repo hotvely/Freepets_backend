@@ -1,5 +1,6 @@
 package com.kh.Freepets.domain.board.sitter;
 
+
 import com.kh.Freepets.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

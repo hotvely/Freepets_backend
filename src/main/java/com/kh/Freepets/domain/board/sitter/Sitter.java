@@ -32,6 +32,9 @@ public class Sitter {
     @Column(name = "SITTER_PRICE")
     private int sitterPrice;
 
+    @Column(name = "SITTER_RATINGS")
+    private double sitterRatings;
+
     @Column(name = "SITTER_DESC")
     private String sitterDesc;
 

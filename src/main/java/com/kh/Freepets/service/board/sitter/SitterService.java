@@ -5,6 +5,8 @@ import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.repo.board.sitter.SitterDAO;
 import com.kh.Freepets.repo.member.MemberDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,8 +20,8 @@ public class SitterService {
     @Autowired
     private MemberDAO memberDAO;
 
-    public List<Sitter> showall() {
-        return sitterDAO.findAll();
+    public Page<Sitter> showall(Pageable pageable) {
+        return sitterDAO.findAll(pageable);
     }
 
     public Sitter show(int id) {
@@ -44,6 +46,14 @@ public class SitterService {
         Sitter freeMarket = show(id);
         sitterDAO.delete(freeMarket);
         return freeMarket;
+    }
+
+    public int updateRatings(String id) {
+        return sitterDAO.updateRatings(id);
+    }
+
+    public List<Sitter> isSitter(String id) {
+        return sitterDAO.isSitter(id);
     }
 
 }

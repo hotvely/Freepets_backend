@@ -36,7 +36,6 @@ public class HRCommentService {
     }
 
     public HRComment create(HRComment hrComment) {
-        // 댓글 작성할 때마다 게시글 총 댓글 수 증가
         int result = hospitalReviewDAO.updateCommentCount(hrComment.getHospitalReview().getHospitalReviewCode());
         return dao.save(hrComment);
     }
@@ -53,6 +52,7 @@ public class HRCommentService {
 
         HRComment hrComment = dao.findById(hrCommentCode).orElse(null);
         dao.delete(hrComment);
+        hospitalReviewDAO.deleteCommentCount(hrComment.getHospitalReview().getHospitalReviewCode());
         return hrComment;
     }
 }
