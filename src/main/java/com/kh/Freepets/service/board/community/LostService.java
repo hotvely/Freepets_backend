@@ -95,5 +95,11 @@ public class LostService {
         return dao.sortLostLike();
     }
 
+    // 분실 게시글 조회순 정렬
+    public List<Lost> sortLostViews(){
+        return dao.sortLostViews();
+
+    }
+
 
 }

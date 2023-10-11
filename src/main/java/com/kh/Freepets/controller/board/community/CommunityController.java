@@ -85,17 +85,41 @@ public class CommunityController {
     }
 
     //일반게시판 좋아요 추가 POST - http://localhost:8080/api/community/like/1
-    //추후 기능 부가 및 수정 필요
+    //중복 처리
     @PostMapping("/community/like")
     public ResponseEntity <CommunityLike> createCommonLike(@RequestBody CommunityLike commonLike){
-        return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.create(commonLike));
+        CommunityLike target = commonLikeService.duplicatedLike(commonLike.getMember().getId(),commonLike.getCommunity().getCommonCode());
+        if(target == null){
+            commonService.increaseCommonLikes(commonLike.getCommunity().getCommonCode());
+            return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.create(commonLike));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
     //일반게시판 좋아요 삭제 DELETE - http://localhost:8080/api/community/like/1
     //추후 기능 부가 및 수정 필요
     @DeleteMapping("/community/like/{commonLikeCode}")
     public ResponseEntity<CommunityLike>deleteCommonLike(@PathVariable int commonLikeCode){
-        return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.delete(commonLikeCode));
+        CommunityLike commonLike = commonLikeService.showCommonLike(commonLikeCode);
+        CommunityLike target = commonLikeService.duplicatedLike(commonLike.getMember().getId(),commonLike.getCommunity().getCommonCode());
+        if(target == null){
+            commonService.decreaseCommonLikes(commonLike.getCommunity().getCommonCode());
+            return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.delete(commonLikeCode));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
-    //일반게시판 댓글 수에 따른 게시글 정렬
-    //일반게시판 좋아요 수에 따른 게시글 정렬
+    //일반게시판 조회순 정렬 GET - http://localhost:8080/api/common/sortviews
+    @GetMapping("/community/sortviews")
+    public ResponseEntity<List<Community>> sortCommonViews(){
+        return ResponseEntity.status(HttpStatus.OK).body(commonService.sortCommonViews());
+    }
+    //일반게시판 좋아요순 정렬 GET - http://localhost:8080/api/common/sortlikes
+    @GetMapping("/community/sortlikes")
+    public ResponseEntity<List<Community>> sortCommonLikes(){
+        return ResponseEntity.status(HttpStatus.OK).body(commonService.sortCommonLikes());
+    }
+    //일반게시판 댓글순 정렬 GET - http://localhost:8080/api/common/sortcomments
+    @GetMapping("/community/sortcomments")
+    public ResponseEntity<List<Community>> sortCommonComments(){
+        return ResponseEntity.status(HttpStatus.OK).body(commonService.sortCommonComments());
+    }
 }

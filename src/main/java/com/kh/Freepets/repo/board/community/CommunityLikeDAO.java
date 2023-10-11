@@ -7,6 +7,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface CommunityLikeDAO extends JpaRepository<CommunityLike, Integer> {
     // 좋아요 중복 체크
-    @Query(value = "SELECT COUNT (*) FROM CommunityLike WHERE id = :id AND COMMON_CODE = :commonCode ", nativeQuery = true)
-    CommunityLike commonLikesByMemberAndCommunity(@Param("id") String id, @Param("commonCode") int commonCode);
+    @Query(value = "SELECT * FROM CommunityLike WHERE id = :id AND COMMON_CODE = :commonCode ", nativeQuery = true)
+    CommunityLike commonLikesByMemberAndCommunity(String id, int commonCode);
 }

@@ -38,8 +38,8 @@ public class CommunityLikeService {
         return target;
     }
 
-    public CommunityLike commonLikesByMemberAndCommunity(String id, int commonCode) {
-        CommunityLike communityLike = commonLikeDAO.commonLikesByMemberAndCommunity(id,commonCode);
-        return communityLike;
+    public CommunityLike duplicatedLike(String id, int commonCode) {
+        return commonLikeDAO.commonLikesByMemberAndCommunity(id, commonCode);
     }
+
 }

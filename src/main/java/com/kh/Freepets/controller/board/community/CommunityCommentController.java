@@ -71,5 +71,5 @@ public class CommunityCommentController {
         return ResponseEntity.status(HttpStatus.OK).body(commonCommentService.delete(commonCommentCode));
     }
 
-    //추후 부가 기능 추가 및 수정 예정..아마도..?
+    
 }
