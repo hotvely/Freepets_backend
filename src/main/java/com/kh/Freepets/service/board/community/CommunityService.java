@@ -46,36 +46,40 @@ public class CommunityService {
 
     // 게시글 좋아요 총 개수 증가
     public Community increaseCommonLikes(int commonCode){
-        Community target = commonDAO.findById(commonCode).orElse(null);
-        if(target != null){
-            return commonDAO.increaseCommonLikes(commonCode);
-        }
-        return null;
+//        Community target = commonDAO.findById(commonCode).orElse(null);
+//        if(target != null){
+//            return commonDAO.increaseCommonLikes(commonCode);
+//        }
+//        return null;
+        commonDAO.increaseCommonLikes(commonCode);
+        return commonDAO.findById(commonCode).orElse(null);
+
     }
 
     public Community decreaseCommonLikes(int commonCode){
-        Community target = commonDAO.findById(commonCode).orElse(null);
-        if(target != null){
-            return commonDAO.decreaseCommonLikes(commonCode);
-        }
-        return null;
+//        Community target = commonDAO.findById(commonCode).orElse(null);
+//        if(target != null){
+//            return commonDAO.decreaseCommonLikes(commonCode);
+//        }
+        commonDAO.decreaseCommonLikes(commonCode);
+        return commonDAO.findById(commonCode).orElse(null);
     }
 
-    public Community increaseCommonComments(int commonCode){
-        Community target = commonDAO.findById(commonCode).orElse(null);
-        if(target != null){
-            return commonDAO.increaseCommonComments(commonCode);
-        }
-        return null;
-    }
-
-    public Community decreaseCommonComments(int commonCode){
-        Community target = commonDAO.findById(commonCode).orElse(null);
-        if(target != null){
-            return commonDAO.decreaseCommonComments(commonCode);
-        }
-        return null;
-    }
+//    public Community increaseCommonComments(int commonCode){
+//        Community target = commonDAO.findById(commonCode).orElse(null);
+//        if(target != null){
+//            return commonDAO.increaseCommonComments(commonCode);
+//        }
+//        return null;
+//    }
+//
+//    public Community decreaseCommonComments(int commonCode){
+//        Community target = commonDAO.findById(commonCode).orElse(null);
+//        if(target != null){
+//            return commonDAO.decreaseCommonComments(commonCode);
+//        }
+//        return null;
+//    }
 
     // 게시글 정렬
     public List<Community> sortCommonViews(){
