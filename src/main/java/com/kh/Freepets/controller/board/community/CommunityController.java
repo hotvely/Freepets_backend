@@ -31,8 +31,8 @@ public class CommunityController {
     private CommunityService commonService;
     @Autowired
     private CommunityLikeService commonLikeService;
-    @Value("${spring.servlet.multipart.location}")
-    private String uploadPath;
+//    @Value("${spring.servlet.multipart.location}")
+//    private String uploadPath;
 
     //일반게시판 전체 조회 GET - http://localhost:8080/api/community
     //페이징 처리
@@ -47,24 +47,27 @@ public class CommunityController {
     }
     //일반게시판 추가 POST - http://localhost:8080/api/community
     @PostMapping("/community")
-    public ResponseEntity<Community> createCommon(MultipartFile file, String title, String desc){
+    public ResponseEntity<Community> createCommon(@RequestBody Community vo){
         //유튜브 첨부 찾아보기
         //파일 업로드
-        String originalFile = file.getOriginalFilename();
-        String realFile = originalFile.substring(originalFile.indexOf("\\")+1);
-        String uuid = UUID.randomUUID().toString();
-        String saveFile = uploadPath + File.separator + uuid + "_" + realFile;
-        Path pathFile = Paths.get(saveFile);
-        try{
-            file.transferTo(pathFile);
-        }catch (IOException e ) {
-            throw new RuntimeException(e);
-        }
 
-        Community vo = new Community();
-        vo.setCommonAddFileUrl(uuid + "_" + realFile);
-        vo.setCommonTitle(title);
-        vo.setCommonDesc(desc);
+//        MultipartFile file, String title, String desc
+//        String originalFile = file.getOriginalFilename();
+//        String realFile = originalFile.substring(originalFile.indexOf("\\")+1);
+//        String uuid = UUID.randomUUID().toString();
+//        String saveFile = uploadPath + File.separator + uuid + "_" + realFile;
+//        Path pathFile = Paths.get(saveFile);
+//        try{
+//            file.transferTo(pathFile);
+//        }catch (IOException e ) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        Community vo = new Community();
+//        vo.setCommonAddFileUrl(uuid + "_" + realFile);
+//        vo.setCommonTitle(title);
+//        vo.setCommonDesc(desc);
+//        return ResponseEntity.status(HttpStatus.OK).body(commonService.create(vo));
         return ResponseEntity.status(HttpStatus.OK).body(commonService.create(vo));
     }
     //일반게시판 수정 PUT - http://localhost:8080/api/community
