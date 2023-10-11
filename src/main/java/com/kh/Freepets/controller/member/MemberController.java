@@ -150,10 +150,12 @@ public class MemberController
     }
 
 
-    @PutMapping("/user")
-    public ResponseEntity<Member> updateUser(@RequestBody Member member)
+    @PutMapping("/update")
+    public ResponseEntity<Member> updateUser(@PathVariable String token, @RequestBody MemberDTO memberDTO)
     {
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.update(member));
+        log.info("token : " + token);
+        log.info(memberDTO.getNickname());
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.update(null));
     }
 
 //    @PutMapping("/admin")
