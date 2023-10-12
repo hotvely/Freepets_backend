@@ -34,8 +34,8 @@ public class CommunityCommentController {
     //일반 게시글 한 개에 따른 댓글 전체 조회 GET - http://localhost:8080/api/community/1/comment
     @GetMapping("/community/{commonCode}/comment")
     private ResponseEntity<List<CommunityComment>> commonCommentList(@PathVariable int commonCode){
-        log.info("안오냑오");
-        return ResponseEntity.status(HttpStatus.OK).body(commonCommentService.findByCommonCode(commonCode));
+        log.info("여기서 나오냐고ㅜㅜ");
+      return ResponseEntity.status(HttpStatus.OK).body(commonCommentService.commonCommentAll(commonCode));
     }
 
     //일반 게시글 댓글 추가 POST - http://localhost:8080/api/community/comment

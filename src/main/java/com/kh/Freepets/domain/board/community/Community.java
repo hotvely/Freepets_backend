@@ -15,7 +15,6 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicInsert
-@Table(name = "COMMON")
 public class Community {
     @Id
     @Column(name="COMMON_CODE")
@@ -24,8 +23,6 @@ public class Community {
     private int commonCode;
     @Column(name="COMMON_DATE")
     private Date commonDate;
-    @Column(name="COMMON_VIEWS")
-    private int commonViews;
     @Column(name="COMMON_TITLE")
     private String commonTitle;
     @Column(name="COMMON_DESC")

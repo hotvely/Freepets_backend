@@ -1,5 +1,6 @@
 package com.kh.Freepets.domain.board.community;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kh.Freepets.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,7 +15,6 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicInsert
-@Table(name="COMMON_COMMENT")
 public class CommunityComment {
     @Id
     @Column(name="C_COMMENT_CODE")
@@ -31,11 +31,15 @@ public class CommunityComment {
     @Column(name="C_COMMENT_ADD_FILE_URL")
     private String commonCommentAddFileUrl;
 
-    // 댓글 신고
 
-    @ManyToOne
-    @JoinColumn(name="COMMON_CODE")
-    private Community community;
+    @Column(name="COMMON_CODE")
+    private int commonCode;
+
+    // 댓글 신고
+//    @ManyToOne
+//    @JoinColumn(name="COMMON_CODE")
+//    private Community community;
+
     @ManyToOne
     @JoinColumn(name="ID")
     private Member member;
