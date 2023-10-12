@@ -5,6 +5,10 @@ import com.kh.Freepets.domain.board.sitter.SitterReview;
 import com.kh.Freepets.service.board.sitter.SitterReviewService;
 import com.kh.Freepets.service.board.sitter.SitterService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +26,7 @@ public class SitterReviewController {
     private SitterService sitterService;
 
     @GetMapping("/sitter/{id}/review") // 시터 한 명당 후기 전체 보기
-    public ResponseEntity<List<SitterReview>> showAll(@PathVariable String id) {
+    public ResponseEntity<List<SitterReview>> showAll(@PathVariable String id, @RequestParam(name = "page", defaultValue = "1") int page) {
         return ResponseEntity.status(HttpStatus.OK).body(service.showall(id));
     }
 

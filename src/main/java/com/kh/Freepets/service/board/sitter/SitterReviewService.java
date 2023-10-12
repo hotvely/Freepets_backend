@@ -7,6 +7,7 @@ import com.kh.Freepets.repo.board.sitter.SitterDAO;
 import com.kh.Freepets.repo.board.sitter.SitterReviewDAO;
 import com.kh.Freepets.repo.member.MemberDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
