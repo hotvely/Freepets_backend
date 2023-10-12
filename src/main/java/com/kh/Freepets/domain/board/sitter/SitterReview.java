@@ -15,11 +15,12 @@ import org.hibernate.annotations.DynamicUpdate;
 @DynamicInsert
 @DynamicUpdate
 @Table(name = "SITTER_REVIEW")
-public class SitterReview {
+public class SitterReview
+{
     @Id
     @Column(name = "SITTER_REVIEW_CODE")
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "sitterReviewSequence")
-    @SequenceGenerator(name = "sitterReviewSequence", sequenceName = "SEQ_SITTER_REVIEW" ,allocationSize = 1)
+    @SequenceGenerator(name = "sitterReviewSequence", sequenceName = "SEQ_SITTER_REVIEW", allocationSize = 1)
     private int sitterReviewCode;
 
     @Column(name = "SITTER_REVIEW_DESC")
