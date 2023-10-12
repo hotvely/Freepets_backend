@@ -9,10 +9,4 @@ import java.util.List;
 import java.util.Vector;
 
 public interface SitterReviewDAO extends JpaRepository<SitterReview, Integer> {
-
-    @Query(value = "SELECT R.* FROM SITTER_REVIEW R JOIN SITTER S ON (R.SITTER_CODE = S.SITTER_CODE) WHERE S.ID = :id", nativeQuery = true)
-    List<SitterReview> findBySitter(String id);
-
-
-
 }

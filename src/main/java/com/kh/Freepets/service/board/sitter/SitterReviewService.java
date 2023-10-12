@@ -1,6 +1,7 @@
 package com.kh.Freepets.service.board.sitter;
 
 import com.kh.Freepets.domain.board.sitter.QSitter;
+import com.kh.Freepets.domain.board.sitter.QSitterReview;
 import com.kh.Freepets.domain.board.sitter.Sitter;
 import com.kh.Freepets.domain.board.sitter.SitterReview;
 import com.kh.Freepets.domain.member.Member;
@@ -29,13 +30,14 @@ public class SitterReviewService {
     @Autowired(required = true)
     private JPAQueryFactory queryFactory;
 
+    private final QSitterReview qSitterReview = QSitterReview.sitterReview;
     private final QSitter qSitter = QSitter.sitter;
 
     public List<SitterReview> showall(String id) {
-        queryFactory.selectFrom(qSitter)
+        return queryFactory.selectFrom(qSitterReview)
+                .join(qSitterReview.sitter, qSitter)
+                .where(qSitter.member.id.eq(id))
                 .fetch();
-        return null;
-
     }
 
     public SitterReview show(int id) {

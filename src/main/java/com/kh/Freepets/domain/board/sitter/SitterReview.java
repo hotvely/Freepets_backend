@@ -29,12 +29,6 @@ public class SitterReview
     @Column(name = "SITTER_REVIEW_RATINGS")
     private int sitterReviewRatings;
 
-    @Column(name="ID")
-    private String id;
-
-    @Column(name="SITTER_CODE")
-    private String sitterCode;
-
     @ManyToOne
     @JoinColumn(name = "ID")
     private Member member;

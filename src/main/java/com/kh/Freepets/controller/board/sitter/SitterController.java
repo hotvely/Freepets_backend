@@ -63,7 +63,7 @@ public class SitterController {
         member.setId(id);
         sitter.setMember(member);
         service.create(sitter);
-        if(service.ratingsCount(id) == 0) {
+        if(service.ratingsCount(id) == null || Integer.parseInt(service.ratingsCount(id)) == 0) {
             sitter.setSitterRatings(0);
         }
         else service.updateRatings(sitter.getMember().getId());

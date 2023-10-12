@@ -29,11 +29,9 @@ public class SitterReviewController {
 
     @GetMapping("/sitter/{id}/review") // 시터 한 명당 후기 전체 보기
     public ResponseEntity<List<SitterReview>> showAll(@PathVariable String id) {
-//        List<SitterReview> allList = service.showall(id);
-//        log.info("list : " + allList);
         return ResponseEntity.status(HttpStatus.OK).body(service.showall(id));
-//        return ResponseEntity.status(HttpStatus.OK).build();
     }
+
 
     @GetMapping("/sitterReview/{id}") // 후기 한 개 보기
     public ResponseEntity<SitterReview> show(@PathVariable int id) {
