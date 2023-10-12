@@ -87,19 +87,20 @@ public class CommunityController {
         return ResponseEntity.status(HttpStatus.OK).body(commonService.showCommon(commonCode));
     }
 
-    //일반게시판 좋아요 추가 POST - http://localhost:8080/api/community/like/1
+    //일반게시판 좋아요 추가 POST - http://localhost:8080/api/community/like
     //중복 처리
     @PostMapping("/community/like")
     public ResponseEntity <CommunityLike> createCommonLike(@RequestBody CommunityLike commonLike) {
-        try {
-            CommunityLike target = commonLikeService.duplicatedLike(commonLike.getMember().getId(), commonLike.getCommunity().getCommonCode());
-            if (target == null) {
-                commonService.increaseCommonLikes(commonLike.getCommunity().getCommonCode());
-                return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.create(commonLike));
-            } else return null;
-        } catch (Exception e){
+
+        CommunityLike target = commonLikeService.duplicatedLike(commonLike.getMember().getId(), commonLike.getCommunity().getCommonCode());
+        if(target == null){
+            commonService.increaseCommonLikes(commonLike.getCommunity().getCommonCode());
+            return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.create(commonLike));
+        } else {
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+
 }
     //일반게시판 좋아요 삭제 DELETE - http://localhost:8080/api/community/like/1
     //추후 기능 부가 및 수정 필요
