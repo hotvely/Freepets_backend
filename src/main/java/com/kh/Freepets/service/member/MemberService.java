@@ -1,6 +1,7 @@
 package com.kh.Freepets.service.member;
 
 import com.kh.Freepets.domain.member.Member;
+import com.kh.Freepets.domain.member.MemberDTO;
 import com.kh.Freepets.repo.member.MemberDAO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class MemberService
         return dao.findAll();
     }
 
-//    public List<Member> findAll_user_admin(String condition)
+    //    public List<Member> findAll_user_admin(String condition)
 //    {
 //        if (condition.equals("ADMIN") || condition.equals("USER"))
 //        {
@@ -48,15 +49,15 @@ public class MemberService
 //        return null;
 //    }
 //
-//    public Member findByIdUser(String id)
-//    {
-//        Member member = dao.findById(id).orElse(null);
-//        if (member != null && member.getAuthority().equals("USER"))
-//            return member;
-//
-//        log.info("없는 계정이거나 유저 계정이 아님");
-//        return null;
-//    }
+    public Member findByIdUser(String id)
+    {
+        Member member = dao.findById(id).orElse(null);
+        if (member != null)
+            return member;
+
+        log.info("없는 계정이거나 유저 계정이 아님");
+        return null;
+    }
 
     public Member create(Member member)
     {
@@ -106,8 +107,12 @@ public class MemberService
     public Member delete(String id)
     {
         Member target = dao.findById(id).orElse(null);
-        if (target != null)
+        if (target != null && target.getDeleteAccountYN() == 'N')
+        {
+            target.setDeleteAccountYN('Y');
+            dao.save(target);
             dao.delete(target);
+        }
 
         return target;
     }
@@ -120,6 +125,28 @@ public class MemberService
             return target;
         }
         return null;
+    }
+
+    public MemberDTO createDTO(Member member, String token)
+    {
+        MemberDTO responseDTO = MemberDTO.builder()
+                .id(member.getId())
+                .name(member.getName())
+                .nickname(member.getNickname())
+                .authority(member.getAuthority())
+                .email(member.getEmail())
+                .phone(member.getPhone())
+                .birth(member.getBirth())
+                .memberImg(member.getMemberImg())
+                .memberInfo(member.getMemberInfo())
+                .gender(member.getGender())
+                .address(member.getAddress())
+                .createAccountDate(member.getCreateAccountDate())
+                .deleteAccountYN(member.getDeleteAccountYN())
+                .token(token)
+                .build();
+
+        return responseDTO;
     }
 
 }
