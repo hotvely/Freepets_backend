@@ -4,6 +4,7 @@ import com.kh.Freepets.domain.board.sitter.Sitter;
 import com.kh.Freepets.domain.board.sitter.SitterReview;
 import com.kh.Freepets.service.board.sitter.SitterReviewService;
 import com.kh.Freepets.service.board.sitter.SitterService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @CrossOrigin(origins = {"*"}, maxAge = 6000)
 @RestController
 @RequestMapping("/api/*")
@@ -26,8 +28,11 @@ public class SitterReviewController {
     private SitterService sitterService;
 
     @GetMapping("/sitter/{id}/review") // 시터 한 명당 후기 전체 보기
-    public ResponseEntity<List<SitterReview>> showAll(@PathVariable String id, @RequestParam(name = "page", defaultValue = "1") int page) {
+    public ResponseEntity<List<SitterReview>> showAll(@PathVariable String id) {
+//        List<SitterReview> allList = service.showall(id);
+//        log.info("list : " + allList);
         return ResponseEntity.status(HttpStatus.OK).body(service.showall(id));
+//        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/sitterReview/{id}") // 후기 한 개 보기
