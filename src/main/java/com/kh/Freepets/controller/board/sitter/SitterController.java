@@ -4,6 +4,7 @@ import com.kh.Freepets.domain.board.sitter.Sitter;
 import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.service.board.sitter.SitterService;
 import com.kh.Freepets.service.file.FileInputHandler;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@CrossOrigin(origins = {"*"}, maxAge = 6000)
 @RestController
 @RequestMapping("/api/*")
 public class SitterController {
@@ -31,6 +33,14 @@ public class SitterController {
         Sort sort = Sort.by("sitterCode").descending();
         Pageable pageable = PageRequest.of(page-1, 10, sort);
 
+        Page<Sitter> result = service.showall(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
+    }
+
+    @GetMapping("/sitter/price")
+    public ResponseEntity<List<Sitter>> showAllPrice(@RequestParam(name = "page", defaultValue = "1") int page) {
+        Sort sort = Sort.by("sitterPrice").ascending();
+        Pageable pageable = PageRequest.of(page-1, 10, sort);
         Page<Sitter> result = service.showall(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
     }
@@ -53,10 +63,10 @@ public class SitterController {
         member.setId(id);
         sitter.setMember(member);
         service.create(sitter);
-        List<Sitter> target = service.isSitter(sitter.getMember().getId());
-        if(!target.isEmpty()) {
-            service.updateRatings(sitter.getMember().getId());
+        if(service.ratingsCount(id) == 0) {
+            sitter.setSitterRatings(0);
         }
+        else service.updateRatings(sitter.getMember().getId());
         return ResponseEntity.status(HttpStatus.OK).body(service.show(sitter.getSitterCode()));
     }
 

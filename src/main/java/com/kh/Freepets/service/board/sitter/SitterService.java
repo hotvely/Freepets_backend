@@ -52,8 +52,12 @@ public class SitterService {
         return sitterDAO.updateRatings(id);
     }
 
-    public List<Sitter> isSitter(String id) {
+    public String isSitter(String id) {
         return sitterDAO.isSitter(id);
+    }
+
+    public int ratingsCount(String id) {
+        return sitterDAO.ratingsCount(id);
     }
 
 }
