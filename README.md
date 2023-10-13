@@ -71,7 +71,56 @@
 - 10/7 - 10/8
   기존 작업 조정 및 오류 해결
 
-  ***----------------------------------- 로드맵 ----------------------------------***
+### 10월 2째 주  : Front + back 연결 + css작업 (각자 맡은 퍼블리싱 페이지)
+
+**승환**
+✔️ 백엔드 :
+
+1. user Security(비밀번호 암호화 등) + JWT TOKEN을 이용한 데이터 통신 처리
+
+ ```java
+ // 비밀번호 암호화 처리
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+private final PasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
+
+//        Member member=Member.builder()
+//        .id(dto.getId())
+//        .password(passwordEncoder.encode(dto.getPassword()))      <- encode함수 이용해서 전달받은 비밀번호를 암호화 처리
+ ```
+
+2. 시큐리티를 사용함에 따라서 MemberController 에 유저 추가, 수정, 삭제, 아이디찾기,
+   비밀번호 찾기(spring-boot-starter-mail 라이브러리를 통한 메일 전송) 기능 추가 및 수정
+
+ ```java
+    String token=tokenProvider.create(member);            // 직접 만든 TokenProvider 클래스를 이용해 token을 생성하고  
+        MemberDTO responseDTO=memberService.createDTO(member,token);  // 프론트로 보낼 멤버관련 객체를 생성할 때 token과 객체를 주입하여 생성
+
+        return ResponseEntity.ok().body(responseDTO); // 프론트로 response 처리
+   ```
+
+✔️ 프론트 :
+
+1. 유저 관련 기능을 redux를 사용한 상태 관리를 위해 비동기 함수들에 기능 API(추가,수정,삭제,비밀번호찾기,아이디찾기)를 추가
+   ```javascript
+    const {함수명} = createAsyncThunk("userSlice/{함수명}", async (data) => {
+        const response = await {함수명에 해당하는 API 호출}(data);
+        return response.data;   
+    });
+    ```
+
+2. Modal 라이브러리를 이용해 유저 정보 수정 기능을 컴포넌트 처리
+   ```javascript
+
+    ```
+
+3. redux 를 사용한 비동기 처리를 위해 react hook(useEffect)를 이용해 데이터 페이징 처리를 시도함
+   ```javascript
+
+    ```
+
+***----------------------------------- 로드맵 ----------------------------------***
 
 ## 해야 하는 퍼블리싱 페이지
 
@@ -83,17 +132,14 @@
 6. ✔️맵들어갈 틀...게시판? (병원 정보만...)
 7. ✔️펫시터 게시판
 8. 채팅....
-9. ✔️로그인페이지, ✔️회원가입, 아이디 비밀번호 찾기
-
-### 10월 2째 주
-
-1. Front + back 연결 + css작업 (각자 맡은 퍼블리싱 페이지)
+9. ✔️로그인페이지, ✔️회원가입, ✔️아이디,비밀번호 찾기
 
 ### 10월 3째 주
 
 - 10/16 ~ 10/22
 
-1. API 공공데이터 연결 + css
+1. Front + back 연결 + css작업 (각자 맡은 퍼블리싱 페이지)
+2. API 공공데이터 연결 + css
 
 ### 10월 4째 주
 
