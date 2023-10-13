@@ -1,23 +1,21 @@
 package com.kh.Freepets.controller.member;
 
+import com.kh.Freepets.domain.member.EmailService;
 import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.domain.member.MemberDTO;
 import com.kh.Freepets.security.TokenProvider;
 import com.kh.Freepets.service.member.MemberService;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -27,9 +25,14 @@ import java.util.List;
 @RequestMapping("/auth")
 public class MemberController
 {
+    static final int tempPwd_size = 8;       //만드려고 하는 임시 비밀번호의 사이즈
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final String tempPwd = RandomStringUtils.randomAlphanumeric(tempPwd_size);
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private TokenProvider tokenProvider;
@@ -39,6 +42,50 @@ public class MemberController
     {
 
         return ResponseEntity.status(HttpStatus.OK).body(memberService.findAll());
+    }
+
+    @PostMapping("/findId")
+    public ResponseEntity<String> findId(@RequestBody MemberDTO memberDTO)
+    {
+
+        log.info("memberController 아이디 찾기 기능");
+        log.info(memberDTO.toString());
+        String userid = memberService.findId(memberDTO);
+        log.info(userid);
+
+        return ResponseEntity.ok().body(userid);
+    }
+
+    @PostMapping("/findPwd")
+    public ResponseEntity<String> findPwd(@RequestBody MemberDTO memberDTO)
+    {
+        String userPwd = memberService.findPwd(memberDTO);
+        log.info("DB저장되어 있는 PWD : " + userPwd);
+        log.info("랜덤하게 생성한 비밀번호 : " + tempPwd);
+        try
+        {
+            String result = emailService.sendEmail(memberDTO.getEmail(), tempPwd);
+            // 이메일 보내기가 성공하게 되면 DB에 정보 바꿔야 사용자가 변경된 비밀번호로 접근이 가능함
+            if (result.equals("Success"))
+            {
+                // DB에서 맴버 객체 들고와서
+                Member member = memberService.findByIdUser(memberDTO.getId());
+                // 랜덤 생성한 비밀번호를 DB에 넣을 때에는 무조건 암호화 해서 !
+                member.setPassword(passwordEncoder.encode(tempPwd));
+
+                Member updateMember = memberService.update(member);
+
+                if (updateMember != null)
+                    return ResponseEntity.ok().body(result);
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+        }
+        catch (MessagingException e)
+        {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @GetMapping("/showMember")
@@ -149,7 +196,6 @@ public class MemberController
     public ResponseEntity<MemberDTO> updateUser(@RequestBody MemberDTO memberDTO)
     {
         log.info("token : " + memberDTO.getToken());
-        log.info(memberDTO.getNickname());
         String token = memberDTO.getToken();
         // 전달 받은 데이터로 변경 할 멤버 객체 만듬
         String userId = tokenProvider.validateAndGetUserId(token);
@@ -159,6 +205,11 @@ public class MemberController
         Member member = memberService.findByIdUser(userId);
 
         log.info("member : " + member.toString());
+
+        if (!memberDTO.getPassword().isEmpty())
+        {
+            member.setPassword(passwordEncoder.encode(memberDTO.getPassword()));
+        }
 
         if (!memberDTO.getNickname().isEmpty())
         {
