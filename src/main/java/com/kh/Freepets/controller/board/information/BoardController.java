@@ -4,6 +4,7 @@ import com.kh.Freepets.service.file.FileInputHandler;
 import com.kh.Freepets.domain.board.information.*;
 import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.service.board.information.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/info/*")
 public class BoardController {
 
@@ -57,7 +59,9 @@ public class BoardController {
     @PostMapping("/hr")
     public ResponseEntity<HospitalReview> hrCreate(String hospitalName, String hospitalAddress, String title, String desc, String id, MultipartFile file) {
         try {
+            log.info("file : " + file);
             String fileName = handler.fileInput(file);
+            log.info("fileName : " + fileName);
             HospitalReview vo = new HospitalReview();
             vo.setHospitalName(hospitalName);
             vo.setHospitalAddress(hospitalAddress);
