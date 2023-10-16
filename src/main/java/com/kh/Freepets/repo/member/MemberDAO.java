@@ -11,4 +11,10 @@ public interface MemberDAO extends JpaRepository<Member, String>
     @Query(value = "SELECT * FROM member WHERE authority=:condition", nativeQuery = true)
     List<Member> findByAuthority(String condition);
 
+    @Query(value = "SELECT id FROM member WHERE name=:name AND email=:email", nativeQuery = true)
+    String findId(String name, String email);
+
+    @Query(value = "SELECT password FROM member WHERE id=:id AND email=:email", nativeQuery = true)
+    String findPwd(String id, String email);
+
 }

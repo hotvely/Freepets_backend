@@ -71,7 +71,122 @@
 - 10/7 - 10/8
   기존 작업 조정 및 오류 해결
 
-  ***----------------------------------- 로드맵 ----------------------------------***
+### 10월 2째 주  : Front + back 연결 + css작업 (각자 맡은 퍼블리싱 페이지)
+
+**승환**
+✔️ 백엔드 :
+
+1. user Security(비밀번호 암호화 등) + JWT TOKEN을 이용한 데이터 통신 처리
+
+   ```java
+    // 비밀번호 암호화 처리
+   
+   import org.springframework.security.crypto.password.PasswordEncoder;
+   
+   private final PasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
+   
+   //        Member member=Member.builder()
+   //        .id(dto.getId())
+   //        .password(passwordEncoder.encode(dto.getPassword()))      <- encode함수 이용해서 전달받은 비밀번호를 암호화 처리
+   ```
+
+2. 시큐리티를 사용함에 따라서 MemberController 에 유저 추가, 수정, 삭제, 아이디찾기,
+   비밀번호 찾기(spring-boot-starter-mail 라이브러리를 통한 메일 전송) 기능 추가 및 수정
+
+   ```java
+    String token=tokenProvider.create(member);            // 직접 만든 TokenProvider 클래스를 이용해 token을 생성하고  
+        MemberDTO responseDTO=memberService.createDTO(member,token);  // 프론트로 보낼 멤버관련 객체를 생성할 때 token과 객체를 주입하여 생성
+
+        return ResponseEntity.ok().body(responseDTO); // 프론트로 response 처리
+   ```
+
+3. 유저 관련 기능을 redux를 사용한 상태 관리를 위해 비동기 함수들에 기능 API(추가,수정,삭제,비밀번호찾기,아이디찾기)를 추가
+   ```javascript
+    const {함수명} = createAsyncThunk("userSlice/{함수명}", async (data) => {
+        const response = await {함수명에 해당하는 API 호출}(data);
+        return response.data;   
+    });
+    ```
+
+4. Modal 라이브러리를 이용해 유저 정보 수정 기능을 컴포넌트 처리
+   ```javascript
+   // MemberUpdate 컴포넌트가 적용될 컴포넌트에서 필요한 매개변수 받기
+   const MemberUpdate = (isOpen, setIsOpen, user, dispatch) => {
+
+   const openModalHandler = () => {
+   setIsOpen(!isOpen);
+   };
+   
+   const formDataHandler = (e) => {
+   e.preventDefault();
+    const formData = {
+      //서버로 보낼 데이터 연결...
+    };
+    //... 데이터 전송 관련 체크 기능    
+    return false;
+   };
+   
+   return (
+   <> 
+      <div
+        onClick={(e) => {
+          if (e.target.className.includes("Overlay")) openModalHandler();
+        }}
+      >
+        <Modal isOpen={isOpen} style={customModalStyled} ariaHideApp={false}>
+          <FormInput>
+               //유저에게 데이터 받는 기능...
+          </FormInput>
+        </Modal>
+      </div>
+    </>
+
+   );
+   };
+
+   ```
+
+5. redux 를 사용한 비동기 처리를 위해 react hook(useEffect)를 이용해 데이터 페이징 처리를 시도함
+   ```javascript
+
+   useEffect(() => {
+
+    if (user === null && !localStorage.getItem("user")) {
+      alert("존재하지 않는 유저입니다.");
+      dispatch(userReset());
+      return navigate("/auth/login");
+    }
+    if (user !== null && Object.keys(user).length !== 0) {
+      if (user.deleteAccountYN === "Y" && !localStorage.getItem("user")) {
+        alert("이미 탈퇴한 회원");
+        return navigate("/auth/login");
+      }
+      if (user.deleteAccountYN === "N" && localStorage.getItem("user")) {
+        alert("로그인 성공!");
+        return navigate("/main");
+      }
+    }
+
+   }, [user]);
+
+   ```
+
+**지우**
+
+✔️ 프론트 :
+
+1. 페이지 이동 함수 추가
+2. 미디어 보기 타입 (서버 연결 했지만 데이터가 들어가지 않음 )
+   (-> 추후 작업 예정 : 오류 수정, 데이터 전송, 일반페이지 글쓰기, 목록보기, 페이지css수정)
+
+✔️ 백엔드 :
+
+1. 파일 업로드 기능수정
+2. 좋아요 기능 및 정렬 기능 추가,수정 완료
+3. 커뮤니티, 커뮤니티 댓글 컨트롤러 체크 완료
+   ( -> 로스트(일반게시판) 컨트롤러로 통합 예정)
+
+***----------------------------------- 로드맵 ----------------------------------***
 
 ## 해야 하는 퍼블리싱 페이지
 
@@ -83,17 +198,14 @@
 6. ✔️맵들어갈 틀...게시판? (병원 정보만...)
 7. ✔️펫시터 게시판
 8. 채팅....
-9. ✔️로그인페이지, ✔️회원가입, 아이디 비밀번호 찾기
-
-### 10월 2째 주
-
-1. Front + back 연결 + css작업 (각자 맡은 퍼블리싱 페이지)
+9. ✔️로그인페이지, ✔️회원가입, ✔️아이디,비밀번호 찾기
 
 ### 10월 3째 주
 
 - 10/16 ~ 10/22
 
-1. API 공공데이터 연결 + css
+1. Front + back 연결 + css작업 (각자 맡은 퍼블리싱 페이지)
+2. API 공공데이터 연결 + css
 
 ### 10월 4째 주
 

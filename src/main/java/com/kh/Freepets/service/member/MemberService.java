@@ -17,6 +17,18 @@ public class MemberService
     @Autowired
     private MemberDAO dao;
 
+    public String findId(MemberDTO memberDTO)
+    {
+        return dao.findId(memberDTO.getName(), memberDTO.getEmail());
+
+    }
+
+    public String findPwd(MemberDTO memberDTO)
+    {
+        return dao.findPwd(memberDTO.getId(), memberDTO.getEmail());
+    }
+
+
     public List<Member> findAll()
     {
         //SELECT * FROM MEMBER

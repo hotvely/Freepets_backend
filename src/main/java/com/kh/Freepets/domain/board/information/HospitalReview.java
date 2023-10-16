@@ -18,7 +18,8 @@ import java.util.Date;
 @AllArgsConstructor
 @DynamicInsert
 @DynamicUpdate
-public class HospitalReview {
+public class HospitalReview
+{
     @Id
     @Column(name = "hospital_review_code")
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "hospitalReviewSequence")
@@ -56,7 +57,7 @@ public class HospitalReview {
     private int hospitalReviewCommentCount;
 
     @Column(name = "hospital_review_report_yn")
-    private char hospitalReviewReportYn;
+    private char hospitalReviewDeleteYn;
 
     @ManyToOne
     @JoinColumn(name = "id")
