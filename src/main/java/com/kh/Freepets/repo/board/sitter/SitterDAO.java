@@ -21,7 +21,7 @@ public interface SitterDAO extends JpaRepository<Sitter, Integer> {
     int updateRatings(String id);
 
     @Query(value = "SELECT COUNT(*) FROM SITTER_REVIEW R JOIN SITTER S ON (S.SITTER_CODE = R.SITTER_CODE) WHERE S.ID = :id GROUP BY S.ID", nativeQuery = true)
-    int ratingsCount(String id);
+    String ratingsCount(String id);
 
     @Query(value = "SELECT DISTINCT ID FROM SITTER WHERE ID = :id", nativeQuery = true)
     String isSitter(String id);
