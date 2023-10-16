@@ -37,4 +37,9 @@ public class FileController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(uuid + "_" + realFile);
     }
+
+    @DeleteMapping("/img/{fileName}")
+    public ResponseEntity<String> imgDelete(String fileName) {
+        return null;
+    }
 }
