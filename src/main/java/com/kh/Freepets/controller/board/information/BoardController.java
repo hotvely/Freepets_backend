@@ -66,16 +66,9 @@ public class BoardController
 
     // 게시글 작성
     @PostMapping("/hr")
-<<<<<<< HEAD
-    public ResponseEntity<HospitalReview> hrCreate(String hospitalName, String hospitalAddress, String title, String desc, String id, MultipartFile file)
-    {
-        try
-        {
-=======
     public ResponseEntity<HospitalReview> hrCreate(String hospitalName, String hospitalAddress, String title, String desc, String id, MultipartFile file) {
         try {
             log.info("file : " + file);
->>>>>>> dev
             String fileName = handler.fileInput(file);
             log.info("fileName : " + fileName);
             HospitalReview vo = new HospitalReview();
