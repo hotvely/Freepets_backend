@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+<<<<<<< HEAD
+=======
+import org.springframework.web.multipart.MultipartFile;
+>>>>>>> dev
 
 import java.util.Date;
 
@@ -27,10 +31,12 @@ public class BoardDTO
     private MemberDTO memberDTO;    //게시글에서 들고 있어야 하는 멤버 관련 정보?
 
 
-    //이제 각자 테이블 에서 프론트로 데이터 밀어 넣으면서.. 필요한 데이터 추가 해주시면 됩니다.
     // 도경
-
-    // 지우
+    private int sitterPrice;
+    private double sitterRatings;
+    private String sitterLoc;
+    private String hospitalName;
+    private String hospitalAddress;
 
 
 }

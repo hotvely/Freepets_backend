@@ -1,5 +1,6 @@
 package com.kh.Freepets.repo.board.sitter;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kh.Freepets.domain.board.sitter.Sitter;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,6 +20,9 @@ public interface SitterDAO extends JpaRepository<Sitter, Integer> {
             "WHERE ID = :id", nativeQuery = true)
     int updateRatings(String id);
 
-    @Query(value = "SELECT * FROM SITTER WHERE ID = :id", nativeQuery = true)
-    List<Sitter> isSitter(String id);
+    @Query(value = "SELECT COUNT(*) FROM SITTER_REVIEW R JOIN SITTER S ON (S.SITTER_CODE = R.SITTER_CODE) WHERE S.ID = :id GROUP BY S.ID", nativeQuery = true)
+    String ratingsCount(String id);
+
+    @Query(value = "SELECT DISTINCT ID FROM SITTER WHERE ID = :id", nativeQuery = true)
+    String isSitter(String id);
 }

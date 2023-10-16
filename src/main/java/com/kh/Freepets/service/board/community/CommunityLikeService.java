@@ -2,10 +2,12 @@ package com.kh.Freepets.service.board.community;
 
 import com.kh.Freepets.domain.board.community.CommunityLike;
 import com.kh.Freepets.repo.board.community.CommunityLikeDAO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+@Slf4j
 @Service
 public class CommunityLikeService {
     @Autowired
@@ -35,4 +37,9 @@ public class CommunityLikeService {
         commonLikeDAO.delete(target);
         return target;
     }
+
+    public CommunityLike duplicatedLike(String id, int commonCode) {
+        return commonLikeDAO.commonLikesByMemberAndCommunity(id, commonCode);
+    }
+
 }

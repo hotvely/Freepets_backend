@@ -96,5 +96,11 @@ public class LostController {
          return ResponseEntity.status(HttpStatus.OK).body(service.sortLostLike());
     }
 
+    // 분실게시판 조회순 정렬 GET - http://localhost:8080/api/lost/sortviews
+    @GetMapping("/lost/sortviews")
+    public ResponseEntity <List<Lost>> sortLostViews(){
+         return ResponseEntity.status(HttpStatus.OK).body(service.sortLostViews());
+    }
+
 
 }
