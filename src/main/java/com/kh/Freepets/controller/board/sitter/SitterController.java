@@ -32,26 +32,7 @@ import java.util.UUID;
 public class SitterController {
 
     @Autowired
-    private FileInputHandler handler;
-    @Value("${freepets.upload.path}")
-    private String uploadPath;
-    @Autowired
     private SitterService service;
-
-    @PostMapping("/img")
-    public ResponseEntity<String> imgReturn(@RequestParam(name = "file", required = true) MultipartFile file) {
-        String originalFile = file.getOriginalFilename();
-        String realFile = originalFile.substring(originalFile.lastIndexOf("\\")+1);
-        String uuid = UUID.randomUUID().toString();
-        String saveFile = uploadPath + File.separator + uuid + "_" + realFile;
-        Path pathFile = Paths.get(saveFile);
-        try {
-            file.transferTo(pathFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(uuid + "_" + realFile);
-    }
 
     @GetMapping("/sitter")
     public ResponseEntity<List<Sitter>> showAll(@RequestParam(name = "page", defaultValue = "1") int page) {
