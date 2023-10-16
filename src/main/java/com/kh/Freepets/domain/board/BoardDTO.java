@@ -36,4 +36,5 @@ public class BoardDTO
     private String hospitalAddress;
 
 
+
 }

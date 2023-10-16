@@ -1,5 +1,6 @@
 package com.kh.Freepets.controller.board.community;
 
+import com.kh.Freepets.domain.board.BoardDTO;
 import com.kh.Freepets.domain.board.community.Community;
 import com.kh.Freepets.domain.board.community.CommunityLike;
 import com.kh.Freepets.domain.member.Member;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Slf4j
+@CrossOrigin(origins = {"*"},maxAge = 6000)
 @RestController
 @RequestMapping("/api/*")
 public class CommunityController {
@@ -52,16 +54,23 @@ public class CommunityController {
 
     //일반게시판 추가 POST - http://localhost:8080/api/community
     @PostMapping("/community")
-    public ResponseEntity<Community> createCommon(String commonTitle, String commonDesc, String id, MultipartFile file) {
+    public ResponseEntity<Community> createCommon(BoardDTO dto) {
         //파일 업로드
         try {
-            String fileName = handler.fileInput(file);
-            Community vo = new Community();
-            vo.setCommonTitle(commonTitle);
-            vo.setCommonDesc(commonDesc);
-            vo.setCommonAddFileUrl(fileName);
-            Member member = new Member();
-            member.setId(id);
+            Member member = Member.builder()
+                    .id(dto.getMemberDTO().getId())
+                    .build();
+            Community vo = Community.builder()
+                    .commonTitle(dto.getTitle())
+                    .commonDesc(dto.getDesc())
+                    .commonAddFileUrl(dto.getUploadfileUrl())
+                    .member(member)
+                    .build();
+//            vo.setCommonTitle(commonTitle);
+//            vo.setCommonDesc(commonDesc);
+//            vo.setCommonAddFileUrl(fileName);
+//            Member member = new Member();
+//            member.setId(id);
             vo.setMember(member);
             return ResponseEntity.status(HttpStatus.OK).body(commonService.create(vo));
         } catch (Exception e) {
