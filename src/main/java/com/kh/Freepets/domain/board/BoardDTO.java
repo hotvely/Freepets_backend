@@ -22,7 +22,7 @@ public class BoardDTO
     private int viewCount;          //게시글 조회 수
     private int likeCount;          //게시글 좋아요 수
     private int commentCount;       //게시글 댓글 수
-    private String uploadfileUrl;   //게시글 첨부 upload file url (사진,동영상등)
+    private MultipartFile[] uploadfileUrl;   //게시글 첨부 upload file url (사진,동영상등)
     private char deleteYN;          //게시글이 삭제 되었나? (됬으면 Y, 아니면 N)
 
     private MemberDTO memberDTO;    //게시글에서 들고 있어야 하는 멤버 관련 정보?
