@@ -4,6 +4,7 @@ import com.kh.Freepets.domain.board.sitter.Sitter;
 import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.repo.board.sitter.SitterDAO;
 import com.kh.Freepets.repo.member.MemberDAO;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,9 @@ import java.util.List;
 
 @Service
 public class SitterService {
+
+    @Autowired(required = true)
+    private JPAQueryFactory queryFactory;
 
     @Autowired
     private SitterDAO sitterDAO;
@@ -56,7 +60,7 @@ public class SitterService {
         return sitterDAO.isSitter(id);
     }
 
-    public int ratingsCount(String id) {
+    public String ratingsCount(String id) {
         return sitterDAO.ratingsCount(id);
     }
 

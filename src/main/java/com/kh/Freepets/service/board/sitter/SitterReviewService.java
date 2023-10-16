@@ -1,12 +1,16 @@
 package com.kh.Freepets.service.board.sitter;
 
+import com.kh.Freepets.domain.board.sitter.QSitter;
+import com.kh.Freepets.domain.board.sitter.QSitterReview;
 import com.kh.Freepets.domain.board.sitter.Sitter;
 import com.kh.Freepets.domain.board.sitter.SitterReview;
 import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.repo.board.sitter.SitterDAO;
 import com.kh.Freepets.repo.board.sitter.SitterReviewDAO;
 import com.kh.Freepets.repo.member.MemberDAO;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,8 +27,17 @@ public class SitterReviewService {
     @Autowired
     private SitterDAO sitterDAO;
 
+    @Autowired(required = true)
+    private JPAQueryFactory queryFactory;
+
+    private final QSitterReview qSitterReview = QSitterReview.sitterReview;
+    private final QSitter qSitter = QSitter.sitter;
+
     public List<SitterReview> showall(String id) {
-        return sitterReviewDAO.findBySitter(id);
+        return queryFactory.selectFrom(qSitterReview)
+                .join(qSitterReview.sitter, qSitter)
+                .where(qSitter.member.id.eq(id))
+                .fetch();
     }
 
     public SitterReview show(int id) {
