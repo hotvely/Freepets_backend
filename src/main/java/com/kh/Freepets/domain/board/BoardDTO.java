@@ -5,10 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-<<<<<<< HEAD
-=======
 import org.springframework.web.multipart.MultipartFile;
->>>>>>> dev
 
 import java.util.Date;
 
