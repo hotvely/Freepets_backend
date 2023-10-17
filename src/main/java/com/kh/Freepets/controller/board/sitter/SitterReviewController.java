@@ -39,7 +39,7 @@ public class SitterReviewController {
     }
 
     @PostMapping("/sitterReview") // 후기 작성
-    public ResponseEntity<SitterReview> create(@RequestBody SitterReview sitterReview) {
+    public ResponseEntity<SitterReview> create(SitterReview sitterReview) {
         service.create(sitterReview);
         SitterReview result = service.show(sitterReview.getSitterReviewCode());
         sitterService.updateRatings(result.getSitter().getMember().getId());
