@@ -1,6 +1,8 @@
 package com.kh.Freepets.controller.file;
 
+import com.kh.Freepets.domain.board.FileDataDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpStatus;
@@ -24,18 +26,21 @@ public class FileController {
     private String uploadPath;
 
     @PostMapping("/img")
-    public ResponseEntity<String> imgReturn(@RequestParam(name = "file", required = true) MultipartFile file) {
+    public ResponseEntity<FileDataDTO> imgReturn(@RequestParam(name = "file", required = true) MultipartFile file) {
         String originalFile = file.getOriginalFilename();
         String realFile = originalFile.substring(originalFile.lastIndexOf("\\")+1);
         String uuid = UUID.randomUUID().toString();
         String saveFile = uploadPath + File.separator + uuid + "_" + realFile;
         Path pathFile = Paths.get(saveFile);
         try {
+            FileDataDTO fileDataDTO = new FileDataDTO();
             file.transferTo(pathFile);
+            fileDataDTO.setTitle(realFile);
+            fileDataDTO.setUrl("http://localhost:3000/upload/" + uuid + "_" + realFile);
+            return ResponseEntity.status(HttpStatus.OK).body(fileDataDTO);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(uuid + "_" + realFile);
     }
 
     @DeleteMapping("/img/{fileName}")
