@@ -1,5 +1,6 @@
 package com.kh.Freepets.service.board.notice;
 
+import com.kh.Freepets.domain.board.notice.Notice;
 import com.kh.Freepets.domain.board.notice.NoticeComment;
 import com.kh.Freepets.repo.board.notice.NoticeCommentDAO;
 import lombok.extern.slf4j.Slf4j;
@@ -52,8 +53,12 @@ public class NoticeCommentService
 
     public List<NoticeComment> findByNoticeCode(int code)
     {
-
         return dao.findByNoticeCode(code);
+    }
+
+    public List<NoticeComment> findByReComment(int pCode)
+    {
+        return dao.findByReComment(pCode);
     }
 
 

@@ -47,8 +47,15 @@ public class NoticeCommentController
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
+    @GetMapping("/notice/comment/{parentCode}")
+    private ResponseEntity<List<NoticeComment>> reCommentList(@PathVariable int parentCode)
+    {
+        List<NoticeComment> list = noticecommentService.findByReComment(parentCode);
+        log.info(list.toString());
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
 
-    //분실신고 게시글 댓글 추가하기 POST - http://localhost:8080/api/notice/comment
+    //공지사항 게시글 댓글 추가하기 POST - http://localhost:8080/api/notice/comment
     // 동시에 댓글 갯수 추가(NoticeDAO - NoticeService 작성)
     @PostMapping("/notice/comment")
     private ResponseEntity<NoticeComment> createNoticeComment(@RequestBody CommentDTO commentDTO)
@@ -67,6 +74,8 @@ public class NoticeCommentController
             if (commentDTO.getParentCommentCode() == 0)
                 commentDTO.setParentCommentCode(-1);
 
+            log.info("부모 코드.. : " + commentDTO.getParentCommentCode());
+            
             NoticeComment vo = NoticeComment.builder()
                     .noticeCommentDesc(commentDTO.getCommentDesc())
                     .noticeCommentDate(new Date())
@@ -87,14 +96,14 @@ public class NoticeCommentController
 //        return ResponseEntity.status(HttpStatus.OK).body(noticecomment.create(vo));
     }
 
-    //분실신고 게시글 댓글 수정하기 PUT -http://localhost:8080/api/notice/comment
+    //공지사항 게시글 댓글 수정하기 PUT -http://localhost:8080/api/notice/comment
     @PutMapping("/notice/comment")
     private ResponseEntity<NoticeComment> updateNoticeComment(@RequestBody NoticeComment vo)
     {
         return ResponseEntity.status(HttpStatus.OK).body(noticecommentService.update(vo));
     }
 
-    //분실신고 게시글 댓글 삭제하기 DELETE - http://localhost:8080/api/notice/comment/{lCommentCode}
+    //공지사항 게시글 댓글 삭제하기 DELETE - http://localhost:8080/api/notice/comment/{lCommentCode}
     // 동시에 댓글 갯수 삭제 (NoticeDAO - NoticeService 작성)
     @DeleteMapping("/notice/comment/{id}")
     private ResponseEntity<NoticeComment> deleteNoticeComment(int lCommentCode)

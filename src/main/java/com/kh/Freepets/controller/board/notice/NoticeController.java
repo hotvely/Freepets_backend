@@ -50,7 +50,7 @@ public class NoticeController
             Pageable pageable = PageRequest.of(page - 1, 10, sort);
             Page<Notice> result = noticeService.showAll(pageable);
 
-            log.info("게시글 페이지징 별로 보기.. : " + result.getContent());
+//            log.info("게시글 페이지징 별로 보기.. : " + result.getContent());
             return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
         }
         catch (Exception e)
@@ -61,10 +61,9 @@ public class NoticeController
     }
 
     // 공지사항 게시글 상세보기
-    @GetMapping("/notice/post/{noticeCode}")
+    @GetMapping("/notice/{noticeCode}")
     public ResponseEntity<Notice> showNotice(@PathVariable int noticeCode)
     {
-
         return ResponseEntity.status(HttpStatus.OK).body(noticeService.show(noticeCode));
     }
 

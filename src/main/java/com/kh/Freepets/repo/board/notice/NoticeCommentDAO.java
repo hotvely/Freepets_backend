@@ -9,8 +9,10 @@ import java.util.List;
 public interface NoticeCommentDAO extends JpaRepository<NoticeComment, Integer>
 {
     //  SELECT * FROM NOTICE_COMMENT WHERE NOTICE_CODE = ?
-    @Query(value = "SELECT * FROM NOTICE_COMMENT WHERE NOTICE_CODE = :code", nativeQuery = true)
+    @Query(value = "SELECT * FROM NOTICE_COMMENT WHERE NOTICE_CODE = :code ORDER BY NOTICE_COMMENT_CODE", nativeQuery = true)
     List<NoticeComment> findByNoticeCode(int code);
 
+    @Query(value = "SELECT * FROM NOTICE_COMMENT WHERE NOTICE_COMMENT_CODE_SUPER = :pCode ORDER BY NOTICE_COMMENT_CODE", nativeQuery = true)
+    List<NoticeComment> findByReComment(int pCode);
 
 }
