@@ -3,6 +3,7 @@ package com.kh.Freepets.controller.board.sitter;
 import com.kh.Freepets.domain.board.BoardDTO;
 import com.kh.Freepets.domain.board.sitter.Sitter;
 import com.kh.Freepets.domain.member.Member;
+import com.kh.Freepets.domain.member.MemberDTO;
 import com.kh.Freepets.service.board.sitter.SitterService;
 import com.kh.Freepets.service.file.FileInputHandler;
 import lombok.extern.java.Log;
@@ -53,13 +54,27 @@ public class SitterController {
     }
 
     @GetMapping("/sitter/{id}")
-    public ResponseEntity<Sitter> show(@PathVariable int id) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.show(id));
+    public ResponseEntity<BoardDTO> show(@PathVariable int id) {
+        Sitter sitter = service.show(id);
+        MemberDTO memberDTO = MemberDTO.builder()
+                .id(sitter.getMember().getId())
+                .nickname(sitter.getMember().getNickname())
+                .memberImg(sitter.getMember().getMemberImg())
+                .build();
+        BoardDTO boardDTO = BoardDTO.builder()
+                .boardCode(sitter.getSitterCode())
+                .title(sitter.getSitterTitle())
+                .desc(sitter.getSitterDesc())
+                .sitterLoc(sitter.getSitterLoc())
+                .sitterRatings(sitter.getSitterRatings())
+                .sitterPrice(sitter.getSitterPrice())
+                .memberDTO(memberDTO)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(boardDTO);
     }
 
     @PostMapping("/sitter")
     public ResponseEntity<Sitter> create(BoardDTO boardDTO) {
-        log.info("file 잘 들어 왔니 : " + boardDTO.getUploadfileUrl());
         Member member = Member.builder()
                 .id(boardDTO.getMemberDTO().getId())
                 .build();
