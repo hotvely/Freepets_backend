@@ -22,7 +22,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @CrossOrigin
-@RequestMapping("/auth")
+@RequestMapping("/auth/*")
 public class MemberController
 {
     static final int tempPwd_size = 8;       //만드려고 하는 임시 비밀번호의 사이즈
@@ -132,6 +132,7 @@ public class MemberController
     @PostMapping("/register")
     public ResponseEntity<MemberDTO> register(@RequestBody MemberDTO dto)
     {
+        log.info("회원가입 들어옴");
         log.info("dto : " + dto);
 
         //기본 값 넣고..
