@@ -1,10 +1,12 @@
 package com.kh.Freepets.controller.board.notice;
 
 import com.kh.Freepets.domain.board.BoardDTO;
+import com.kh.Freepets.domain.board.notice.NoticeComment;
 import com.kh.Freepets.domain.board.notice.NoticeLike;
 import com.kh.Freepets.domain.board.notice.Notice;
 import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.security.TokenProvider;
+import com.kh.Freepets.service.board.notice.NoticeCommentService;
 import com.kh.Freepets.service.board.notice.NoticeLikeService;
 import com.kh.Freepets.service.board.notice.NoticeService;
 import com.kh.Freepets.service.member.MemberService;
@@ -39,6 +41,9 @@ public class NoticeController
     @Autowired
     private NoticeLikeService noticelikeservice;
 
+    @Autowired
+    private NoticeCommentService noticeCommentService;
+
     // 공지사항 게시글 전체보기
     @GetMapping("/notice")
     public ResponseEntity<List<Notice>> showAll(@RequestParam(name = "page", defaultValue = "1") int page)
@@ -64,6 +69,7 @@ public class NoticeController
     @GetMapping("/notice/{noticeCode}")
     public ResponseEntity<Notice> showNotice(@PathVariable int noticeCode)
     {
+        log.info("게시글 코드 :  " + noticeCode);
         return ResponseEntity.status(HttpStatus.OK).body(noticeService.show(noticeCode));
     }
 
@@ -92,16 +98,33 @@ public class NoticeController
 
     // 공지사항 게시글 수정하기
     @PutMapping("/notice")
-    public ResponseEntity<Notice> updateNotice(@RequestBody Notice notice)
+    public ResponseEntity<Notice> updateNotice(@RequestBody BoardDTO boardDTO)
     {
+        Notice dbNotice = noticeService.show(boardDTO.getBoardCode());
+        String userId = tokenProvider.validateAndGetUserId(boardDTO.getToken());
+        if (dbNotice.getMember().getId().equals(userId))
+        {
+            Member member = memberService.findByIdUser(userId);
+            Notice vo = Notice.builder()
+                    .noticeCode(boardDTO.getBoardCode())
+                    .noticeTitle(boardDTO.getTitle())
+                    .noticeAddFileUrl(boardDTO.getUploadfileUrl())
+                    .noticeDesc(boardDTO.getDesc())
+                    .member(member)
+                    .build();
+            return ResponseEntity.status(HttpStatus.OK).body(noticeService.update(vo));
+        }
 
-        return ResponseEntity.status(HttpStatus.OK).body(noticeService.update(notice));
+        return ResponseEntity.badRequest().build();
     }
 
     // 공지사항 게시글 삭제하기
-    @DeleteMapping("/notice/{id}")
+    @DeleteMapping("/notice/{noticeCode}")
     public ResponseEntity<Notice> deleteNotice(@PathVariable int noticeCode)
     {
+        log.info("NOTICE CODE : " + noticeCode);
+
+
         return ResponseEntity.status(HttpStatus.OK).body(noticeService.delete(noticeCode));
     }
 
