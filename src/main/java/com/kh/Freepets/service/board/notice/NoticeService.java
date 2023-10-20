@@ -47,7 +47,9 @@ public class NoticeService
         Notice target = dao.findById(notice.getNoticeCode()).orElse(null);
         if (target != null)
         {
-            return dao.save(notice);
+            target.setNoticeTitle(notice.getNoticeTitle());
+            target.setNoticeDesc(notice.getNoticeDesc());
+            return dao.save(target);
         }
         return null;
     }

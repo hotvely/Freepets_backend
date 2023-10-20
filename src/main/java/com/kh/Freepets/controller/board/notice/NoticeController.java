@@ -1,5 +1,6 @@
 package com.kh.Freepets.controller.board.notice;
 
+import com.kh.Freepets.BoardType;
 import com.kh.Freepets.domain.board.BoardDTO;
 import com.kh.Freepets.domain.board.notice.NoticeComment;
 import com.kh.Freepets.domain.board.notice.NoticeLike;
@@ -82,6 +83,7 @@ public class NoticeController
         String userId = tokenProvider.validateAndGetUserId(boardDTO.getToken());
         Member member = memberService.findByIdUser(userId);
 
+
         log.info("back에서 만든 member : " + member.toString());
 
         Notice vo = Notice.builder()
@@ -100,6 +102,7 @@ public class NoticeController
     @PutMapping("/notice")
     public ResponseEntity<Notice> updateNotice(@RequestBody BoardDTO boardDTO)
     {
+        log.info("UpdateNOTICE : " + boardDTO.toString());
         Notice dbNotice = noticeService.show(boardDTO.getBoardCode());
         String userId = tokenProvider.validateAndGetUserId(boardDTO.getToken());
         if (dbNotice.getMember().getId().equals(userId))
