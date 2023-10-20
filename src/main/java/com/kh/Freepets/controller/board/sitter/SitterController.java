@@ -4,12 +4,14 @@ import com.kh.Freepets.domain.board.BoardDTO;
 import com.kh.Freepets.domain.board.sitter.Sitter;
 import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.domain.member.MemberDTO;
+import com.kh.Freepets.domain.util.Paging;
+import com.kh.Freepets.security.TokenProvider;
 import com.kh.Freepets.service.board.sitter.SitterService;
 import com.kh.Freepets.service.file.FileInputHandler;
+import com.kh.Freepets.service.member.MemberService;
 import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,14 +19,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 
 @CrossOrigin(origins = {"*"}, maxAge = 6000)
 @RestController
@@ -34,6 +30,12 @@ public class SitterController {
 
     @Autowired
     private SitterService service;
+    @Autowired
+    private TokenProvider provider;
+    @Autowired
+    private Paging paging;
+    @Autowired
+    private MemberService memberService;
 
     @GetMapping("/sitter")
     public ResponseEntity<List<Sitter>> showAll(@RequestParam(name = "page", defaultValue = "1") int page) {
@@ -42,6 +44,7 @@ public class SitterController {
         Pageable pageable = PageRequest.of(page-1, 10, sort);
 
         Page<Sitter> result = service.showall(pageable);
+
         return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
     }
 
@@ -88,8 +91,11 @@ public class SitterController {
 
     @PostMapping("/sitter")
     public ResponseEntity<Sitter> create(BoardDTO boardDTO) {
+        log.info("token : " + boardDTO.getToken());
+        String id = provider.validateAndGetUserId(boardDTO.getToken());
+        log.info("id : " + id);
         Member member = Member.builder()
-                .id(boardDTO.getMemberDTO().getId())
+                .id(id)
                 .build();
         Sitter sitter = Sitter.builder()
                 .sitterCode(boardDTO.getBoardCode())
@@ -101,7 +107,7 @@ public class SitterController {
                 .member(member)
                 .build();
         service.create(sitter);
-        if(service.ratingsCount(boardDTO.getMemberDTO().getId()) == null || Integer.parseInt(service.ratingsCount(boardDTO.getMemberDTO().getId())) == 0) {
+        if(service.ratingsCount(id) == null || Integer.parseInt(service.ratingsCount(id)) == 0) {
             sitter.setSitterRatings(0);
         }
         else service.updateRatings(sitter.getMember().getId());
