@@ -15,6 +15,8 @@ import java.util.Date;
 @AllArgsConstructor
 public class BoardDTO
 {
+    private String token;           //게시글을 작성한 유저를 판별하기 위한 token
+
     private int boardCode;          //게시판 코드 번호
     private String title;           //게시글 제목
     private Date commonDate;        //게시글 작성 날짜

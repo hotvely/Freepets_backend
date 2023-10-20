@@ -1,6 +1,6 @@
 package com.kh.Freepets.controller.member;
 
-import com.kh.Freepets.domain.member.EmailService;
+import com.kh.Freepets.service.member.EmailService;
 import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.domain.member.MemberDTO;
 import com.kh.Freepets.security.TokenProvider;

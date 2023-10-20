@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 @Slf4j
 @Service
 public class BookmarkService
@@ -32,22 +31,10 @@ public class BookmarkService
         return dao.findByMemberId(id);
     }
 
-    // 특정 유저의 게시판 별 북마크리스트 부르기 !
-    public List<Bookmark> findByBoard(String id, BoardType type)
+    public List<Bookmark> findBy_id_code(String id, int code)
     {
-        List<Bookmark> bookmarks = findByMemberId(id);
-        List<Bookmark> bookmarkByBoardType = new ArrayList<>();
-
-        for(Bookmark elem : bookmarks)
-        {
-            if(elem.getBoardCode() == type.getValue()){
-                bookmarkByBoardType.add(elem);
-            }
-        }
-
-        return bookmarkByBoardType;
+        return dao.findBy_id_code(id, code);
     }
-
 
     public Bookmark create(Bookmark bookmark)
     {
@@ -62,12 +49,11 @@ public class BookmarkService
     public Bookmark delete(int id)
     {
         Bookmark target = dao.findById(id).orElse(null);
-        if(target!=null)
+        if (target != null)
             dao.delete(target);
 
         return target;
     }
-
 
 
 }

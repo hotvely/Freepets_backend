@@ -1,4 +1,4 @@
-package com.kh.Freepets.domain.member;
+package com.kh.Freepets.service.member;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
