@@ -21,6 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Slf4j
@@ -65,6 +67,32 @@ public class NoticeController
         }
 
     }
+
+    @GetMapping("/notice/search/{keyword}")
+    public ResponseEntity<List<Notice>> findByKeyword(@RequestParam(name = "keyword") String keyword, @RequestParam(name = "page", defaultValue = "1") int page)
+    {
+
+        // URL 서치 관련해서 받는거 에러남;;;
+        String s = URLDecoder.decode(keyword, StandardCharsets.UTF_8);
+        log.info("keyword" + s);
+        log.info("검색 관련 기능 드러옴");
+        try
+        {
+            Sort sort = Sort.by("noticeCode").descending();
+            Pageable pageable = PageRequest.of(page - 1, 10, sort);
+            Page<Notice> result = noticeService.search(pageable, keyword);
+
+//            log.info("게시글 페이지징 별로 보기.. : " + result.getContent());
+            return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+
+    }
+
 
     // 공지사항 게시글 상세보기
     @GetMapping("/notice/{noticeCode}")

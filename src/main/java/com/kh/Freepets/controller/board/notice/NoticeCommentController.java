@@ -9,6 +9,7 @@ import com.kh.Freepets.service.board.notice.NoticeCommentService;
 import com.kh.Freepets.service.board.notice.NoticeService;
 import com.kh.Freepets.service.member.MemberService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +44,7 @@ public class NoticeCommentController
     private ResponseEntity<List<NoticeComment>> noticeCommentList(@PathVariable int noticeCode)
     {
         List<NoticeComment> list = noticecommentService.findByNoticeCode(noticeCode);
-        log.info(list.toString());
+
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
@@ -51,7 +52,7 @@ public class NoticeCommentController
     private ResponseEntity<List<NoticeComment>> reCommentList(@PathVariable int parentCode)
     {
         List<NoticeComment> list = noticecommentService.findByReComment(parentCode);
-        log.info(list.toString());
+
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
@@ -60,7 +61,6 @@ public class NoticeCommentController
     @PostMapping("/notice/comment")
     private ResponseEntity<NoticeComment> createNoticeComment(@RequestBody CommentDTO commentDTO)
     {
-        log.info("notice 컴트롤러 post :    " + commentDTO.toString());
 
 
         if (commentDTO.getBoardName().equals("notice"))
@@ -74,8 +74,7 @@ public class NoticeCommentController
             if (commentDTO.getParentCommentCode() == 0)
                 commentDTO.setParentCommentCode(-1);
 
-            log.info("부모 코드.. : " + commentDTO.getParentCommentCode());
-            
+
             NoticeComment vo = NoticeComment.builder()
                     .noticeCommentDesc(commentDTO.getCommentDesc())
                     .noticeCommentDate(new Date())
@@ -98,20 +97,35 @@ public class NoticeCommentController
 
     //공지사항 게시글 댓글 수정하기 PUT -http://localhost:8080/api/notice/comment
     @PutMapping("/notice/comment")
-    private ResponseEntity<NoticeComment> updateNoticeComment(@RequestBody NoticeComment vo)
+    private ResponseEntity<NoticeComment> updateNoticeComment(@RequestBody CommentDTO commentDTO)
     {
-        return ResponseEntity.status(HttpStatus.OK).body(noticecommentService.update(vo));
+
+
+        NoticeComment comment = noticecommentService.showComment(commentDTO.getCommentCode());
+
+
+        if (commentDTO.getCommentDesc() != null)
+        {
+            comment.setNoticeCommentDesc(commentDTO.getCommentDesc());
+            comment.setNoticeCommentDate(new Date());
+            return ResponseEntity.ok().body(noticecommentService.update(comment));
+        }
+
+
+        return ResponseEntity.ok().build();
     }
 
     //공지사항 게시글 댓글 삭제하기 DELETE - http://localhost:8080/api/notice/comment/{lCommentCode}
     // 동시에 댓글 갯수 삭제 (NoticeDAO - NoticeService 작성)
-    @DeleteMapping("/notice/comment/{id}")
-    private ResponseEntity<NoticeComment> deleteNoticeComment(int lCommentCode)
+    @DeleteMapping("/notice/comment/{code}")
+    private ResponseEntity<NoticeComment> deleteNoticeComment(@PathVariable int code)
     {
-        NoticeComment target = noticecommentService.showNoticeComment(lCommentCode);
+        log.info("delete");
+        log.info("code : " + code);
+        NoticeComment target = noticecommentService.showComment(code);
 
-        noticeservice.deleteNoticeCommentCount(target.getNotice().getNoticeCode());
-        return ResponseEntity.status(HttpStatus.OK).body(noticecommentService.delete(lCommentCode));
+        return ResponseEntity.status(HttpStatus.OK).body(noticecommentService.delete(code));
+
     }
 
     // 댓글에 사진 첨부하기

@@ -27,6 +27,11 @@ public class NoticeService
         return dao.findAll(pageable);
     }
 
+    public Page<Notice> search(Pageable pageable, String keyword)
+    {
+        return dao.search(pageable, keyword);
+    }
+
     public Notice show(int noticeCode)
     {
         Notice notice = dao.findById(noticeCode).orElse(null);
