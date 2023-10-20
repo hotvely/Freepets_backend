@@ -9,14 +9,13 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 
-public interface NoticeDAO extends JpaRepository<Notice, Integer>
-{
+public interface NoticeDAO extends JpaRepository<Notice, Integer> {
     // 특정 유저의 분실 게시물 조회 // SELECT * FROM NOTICE WHERE ID=?
     @Query(value = "SELECT * FROM NOTICE WHERE ID= :id", nativeQuery = true)
     List<Notice> findByMemberId(String id);
 
-    @Query(value = "SELECT * FROM NOTICE WHERE NOTICE_TITLE LIKE keyword= :keyword", nativeQuery = true)
-    Page<Notice> search(Pageable pageable, String keyword);
+    @Query(value = "SELECT * FROM NOTICE WHERE NOTICE_TITLE LIKE %:keyword% OR NOTICE_DESC LIKE %:keyword%", nativeQuery = true)
+    Page<Notice> search(String keyword, Pageable pageable);
 
     // 게시글 좋아요 갯수 업데이트
     @Query(value = "UPDATE NOTICE SET NOTICE_LIKE =(NOTICE_LIKE +1) WHERE NOTICE_CODE = :noticeCode", nativeQuery = true)
