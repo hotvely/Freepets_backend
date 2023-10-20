@@ -64,8 +64,14 @@
 ⚠️ 스프링 부트 시큐리티 멤버 관련 설정중
 **지우**
 <img src="Weekly_Report/resources/Jiwoo/9_5week/지우_미디어영상썸네일화면구현_2.png" >
+
 **도경**
-<img src="Weekly_Report/resources/viper/9_5week/도경_펫시터페이지퍼블리싱.png" >
+✔️ 게시글 작성 페이지 수정, 시터 게시판 구현
+<img src="Weekly_Report/resources/viper/9_5week/도경_시터메인.png" >
+<img src="Weekly_Report/resources/viper/9_5week/도경_시터상세보기.png" >
+<img src="Weekly_Report/resources/viper/9_5week/도경_채팅.png" >
+
+
 **예진**
 
 - 10/7 - 10/8
@@ -185,6 +191,122 @@
 2. 좋아요 기능 및 정렬 기능 추가,수정 완료
 3. 커뮤니티, 커뮤니티 댓글 컨트롤러 체크 완료
    ( -> 로스트(일반게시판) 컨트롤러로 통합 예정)
+
+
+**도경** 
+
+- 백엔드 ✔️
+ 
+1. 이미지, 비디오 등 file 관련 처리 메소드, api 생성
+```java
+@Value("${freepets.upload.path}")
+    private String uploadPath;
+
+    public String fileInput(MultipartFile file) {
+        String originalFile = file.getOriginalFilename();
+        String realFile = originalFile.substring(originalFile.lastIndexOf("\\")+1);
+        String uuid = UUID.randomUUID().toString();
+        String saveFile = uploadPath + File.separator + uuid + "_" + realFile;
+        Path pathFile = Paths.get(saveFile);
+
+        try {
+            file.transferTo(pathFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return uuid + "_" + realFile;
+    }
+```
+```java
+@PostMapping("/img")
+    public ResponseEntity<FileDataDTO> imgReturn(@RequestParam(name = "file", required = true) MultipartFile file) {
+        String originalFile = file.getOriginalFilename();
+        String realFile = originalFile.substring(originalFile.lastIndexOf("\\")+1);
+        String uuid = UUID.randomUUID().toString();
+        String saveFile = uploadPath + File.separator + uuid + "_" + realFile;
+        Path pathFile = Paths.get(saveFile);
+        try {
+            FileDataDTO fileDataDTO = new FileDataDTO();
+            file.transferTo(pathFile);
+            fileDataDTO.setTitle(realFile);
+            fileDataDTO.setUrl("http://localhost:3000/upload/" + uuid + "_" + realFile);
+            return ResponseEntity.status(HttpStatus.OK).body(fileDataDTO);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+```
+
+2. QueryDSL 설정 후 일부 기능 querydsl 방식으로 전환
+```java
+@Autowired(required = true)
+    private JPAQueryFactory queryFactory;
+
+    private final QSitterReview qSitterReview = QSitterReview.sitterReview;
+    private final QSitter qSitter = QSitter.sitter;
+
+    public List<SitterReview> showall(String id) {
+        return queryFactory.selectFrom(qSitterReview)
+                .join(qSitterReview.sitter, qSitter)
+                .where(qSitter.member.id.eq(id))
+                .fetch();
+    }
+```
+
+- 프론트 ✔️
+
+1. Modal 라이브러리 사용해 1:1 채팅 팝업
+```javascript
+
+    const handleModalClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    const chattingClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setModalCheck(true);
+    };
+
+    const handleModalClose = () => {
+        setModalCheck(false);
+    };
+
+     const ModalStyle = {
+        content: {
+            top: '20vh',
+            left: '15vw',
+            bottom: '15vh',
+            right: '15vw',
+        }
+    };
+
+return (
+   <div className="main-content_end">
+    <p><span id="sitterPrice">{items.sitterPrice}</span>₩</p>
+      <div onClick={handleModalClick}>
+      <button onClick={chattingClick}>1:1 대화</button>
+      <Modal isOpen={modalCheck}  ariaHideApp={false} onRequestClose={handleModalClose} style={ModalStyle}>                                           
+      <Chatting/>
+      </Modal>
+    </div>
+)
+```
+
+2. 게시글 작성 컴포넌트를 생성하여 useState로 데이터를 관리하고 axios 비동기 처리 방식으로 데이터 넘기기, react-Quill 라이브러리 사용하여 글쓰기 쪽 image 관리
+
+```javascript
+<div className="main-content">
+  <ReactQuill
+    ref={quillRef}
+    style={{"width" : "100%", "height" : "500px"}} 
+    modules={modules} 
+    theme="snow"
+    onChange={InputDescHandler}
+    placeholder="내용을 입력해 주세요."/>
+</div>
+```
 
 ***----------------------------------- 로드맵 ----------------------------------***
 

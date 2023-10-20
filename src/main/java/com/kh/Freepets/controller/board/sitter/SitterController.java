@@ -45,9 +45,14 @@ public class SitterController {
         return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
     }
 
-    @GetMapping("/sitter/price")
-    public ResponseEntity<List<Sitter>> showAllPrice(@RequestParam(name = "page", defaultValue = "1") int page) {
-        Sort sort = Sort.by("sitterPrice").ascending();
+    @GetMapping("/sitter/price/{order}")
+    public ResponseEntity<List<Sitter>> showAllPrice(@RequestParam(name = "page", defaultValue = "1") int page, @PathVariable String order) {
+        Sort sort = null;
+        if(order.equals("asc")) {
+            sort = Sort.by("sitterPrice").ascending();
+        } else {
+            sort = Sort.by("sitterPrice").descending();
+        }
         Pageable pageable = PageRequest.of(page-1, 10, sort);
         Page<Sitter> result = service.showall(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
@@ -71,6 +76,14 @@ public class SitterController {
                 .memberDTO(memberDTO)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(boardDTO);
+    }
+
+    @GetMapping("/sitter/search")
+    public ResponseEntity<List<Sitter>> search(@RequestParam(name = "page", defaultValue = "1") int page, @RequestParam String keyword) {
+        Sort sort = Sort.by("sitterCode").descending();
+        Pageable pageable = PageRequest.of(page-1, 10, sort);
+        Page<Sitter> result = service.sitterSearch(keyword, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
     }
 
     @PostMapping("/sitter")

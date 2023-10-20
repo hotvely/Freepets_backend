@@ -1,5 +1,7 @@
 package com.kh.Freepets.controller.board.information;
 
+import com.kh.Freepets.domain.board.BoardDTO;
+import com.kh.Freepets.domain.member.MemberDTO;
 import com.kh.Freepets.service.file.FileInputHandler;
 import com.kh.Freepets.domain.board.information.*;
 import com.kh.Freepets.domain.member.Member;
@@ -19,6 +21,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@CrossOrigin(origins = {"*"}, maxAge = 6000)
 @RequestMapping("/api/info/*")
 public class BoardController
 {
@@ -58,25 +61,27 @@ public class BoardController
 
     // 게시글 작성
     @PostMapping("/hr")
-    public ResponseEntity<HospitalReview> hrCreate(String hospitalName, String hospitalAddress, String title, String desc, String id, MultipartFile file) {
-        try {
-            log.info("file : " + file);
-            String fileName = handler.fileInput(file);
-            log.info("fileName : " + fileName);
-            HospitalReview vo = new HospitalReview();
-            vo.setHospitalName(hospitalName);
-            vo.setHospitalAddress(hospitalAddress);
-            vo.setHospitalReviewTitle(title);
-            vo.setHospitalReviewDesc(desc);
-            vo.setHospitalReviewFileUrl(fileName);
-            vo.setHospitalReviewDeleteYn('N');
-            Member member = new Member();
-            member.setId(id);
-            vo.setMember(member);
-            return ResponseEntity.status(HttpStatus.OK).body(hrService.create(vo));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+    public ResponseEntity<HospitalReview> hrCreate(BoardDTO boardDTO) {
+        log.info("hospitalName : " + boardDTO.getHospitalName());
+        log.info("hospitalAddress : " + boardDTO.getHospitalAddress());
+        Member member = Member.builder()
+                    .id(boardDTO.getMemberDTO().getId())
+                    .build();
+            HospitalReview hospitalReview = HospitalReview.builder()
+                    .hospitalReviewCode(boardDTO.getBoardCode())
+                    .hospitalName(boardDTO.getHospitalName())
+                    .hospitalAddress(boardDTO.getHospitalAddress())
+                    .hospitalReviewTitle(boardDTO.getTitle())
+                    .hospitalReviewDesc(boardDTO.getDesc())
+                    .hospitalReviewCommentCount(boardDTO.getCommentCount())
+                    .hospitalReviewLike(boardDTO.getLikeCount())
+                    .hospitalReviewViews(boardDTO.getViewCount())
+                    .hospitalReviewDate(boardDTO.getCommonDate())
+                    .hospitalReviewDeleteYn('N')
+                    .member(member)
+                    .build();
+            hrService.create(hospitalReview);
+            return ResponseEntity.status(HttpStatus.OK).body(hrService.show(hospitalReview.getHospitalReviewCode()));
     }
 
     // 게시글 수정
