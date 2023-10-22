@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface NotificationDAO extends JpaRepository<Notification, Integer> {
 
-    @Query(value = "SELECT * FROM NOTIFICATION WHERE ID=:id", nativeQuery = true)
+    @Query(value = "SELECT * FROM NOTIFICATION WHERE ID=:id ORDER BY NOTI_CODE DESC", nativeQuery = true)
     List<Notification> showNotiByMember(String id);
 
 

@@ -11,10 +11,10 @@ import java.util.List;
 
 public interface NoticeDAO extends JpaRepository<Notice, Integer> {
     // 특정 유저의 분실 게시물 조회 // SELECT * FROM NOTICE WHERE ID=?
-    @Query(value = "SELECT * FROM NOTICE WHERE ID= :id", nativeQuery = true)
+    @Query(value = "SELECT * FROM NOTICE WHERE ID= :id ORDER BY NOTICE_CODE DESC", nativeQuery = true)
     List<Notice> findByMemberId(String id);
 
-    @Query(value = "SELECT * FROM NOTICE WHERE NOTICE_TITLE LIKE %:keyword% OR NOTICE_DESC LIKE %:keyword%", nativeQuery = true)
+    @Query(value = "SELECT * FROM NOTICE WHERE NOTICE_TITLE LIKE %:keyword% OR NOTICE_DESC LIKE %:keyword% ORDER BY NOTICE_CODE DESC", nativeQuery = true)
     Page<Notice> search(String keyword, Pageable pageable);
 
     // 게시글 좋아요 갯수 업데이트
