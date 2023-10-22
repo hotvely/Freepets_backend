@@ -86,7 +86,13 @@ public class NoticeController {
     @GetMapping("/notice/{noticeCode}")
     public ResponseEntity<Notice> showNotice(@PathVariable int noticeCode) {
         log.info("게시글 코드 :  " + noticeCode);
-        return ResponseEntity.status(HttpStatus.OK).body(noticeService.show(noticeCode));
+        Notice vo = noticeService.show(noticeCode);
+        vo.setNoticeViews(vo.getNoticeViews() + 1);
+
+        Notice updatedVo = noticeService.update(vo);
+
+
+        return ResponseEntity.status(HttpStatus.OK).body(updatedVo);
     }
 
     // 공지사항 게시글 추가하기
