@@ -53,7 +53,11 @@ public class SitterReviewController {
 
     @DeleteMapping("/sitterReview/{id}") // 후기 삭제
     public ResponseEntity<SitterReview> delete(@PathVariable int id) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.delete(id));
+        SitterReview result = service.show(id);
+        service.delete(id);
+        String memberId = result.getSitter().getMember().getId();
+        sitterService.updateRatings(memberId);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }
