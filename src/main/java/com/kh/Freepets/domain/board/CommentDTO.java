@@ -1,6 +1,6 @@
 package com.kh.Freepets.domain.board;
 
-import com.kh.Freepets.BoardType;
+import com.kh.Freepets.domain.member.MemberDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentDTO
-{
+public class CommentDTO {
     private String token;       //댓글 달려고 하는 유저 토큰
     private String boardName;   //댓글 달려고 하는 게시판 이름
     // boardName이 필요한 이유가 CommentDTO를 공용으로 사용하려고 하기 때문에 어떤 게시판의 몇번 게시글인지 알아야 하기 때문임!!!
@@ -23,5 +22,6 @@ public class CommentDTO
     private String commentDesc; //댓글 내용
     private int parentCommentCode;      // 부모 댓글 코드
 
+    private MemberDTO memberDTO;
 
 }
