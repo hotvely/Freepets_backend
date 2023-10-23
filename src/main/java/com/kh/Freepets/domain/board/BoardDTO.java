@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
@@ -13,11 +12,10 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BoardDTO
-{
+public class BoardDTO {
     private String token;           //게시글을 작성한 유저를 판별하기 위한 token
 
-    private String code;       //게시판 코드!
+    private String code;            //게시판 코드!
     private int boardCode;          //게시글 코드
     private String title;           //게시글 제목
     private Date commonDate;        //게시글 작성 날짜

@@ -14,39 +14,39 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class NoticeService
-{
+public class NoticeService {
     @Autowired
     private NoticeDAO dao;
 
     @Autowired
     private MemberDAO memberdao;
 
-    public Page<Notice> showAll(Pageable pageable)
-    {
+    public Page<Notice> showAll(Pageable pageable) {
         return dao.findAll(pageable);
     }
 
-    public Notice show(int noticeCode)
-    {
+    public Page<Notice> search(String keyword, Pageable pageable) {
+        Page<Notice> reuslt = dao.search(keyword, pageable);
+        log.info("reuslt.toString() : @@@@@@@@@@@" + reuslt.toString());
+        return reuslt;
+    }
+
+    public Notice show(int noticeCode) {
         Notice notice = dao.findById(noticeCode).orElse(null);
         // notice.setNoticeViews(notice.getNoticeViews()+1);  // 조회수 증가 메소드
         return notice;
     }
 
 
-    public Notice create(Notice notice)
-    {
+    public Notice create(Notice notice) {
         Member member = memberdao.findById(notice.getMember().getId()).orElse(null);
         notice.setMember(member);
         return dao.save(notice);
     }
 
-    public Notice update(Notice notice)
-    {
+    public Notice update(Notice notice) {
         Notice target = dao.findById(notice.getNoticeCode()).orElse(null);
-        if (target != null)
-        {
+        if (target != null) {
             target.setNoticeTitle(notice.getNoticeTitle());
             target.setNoticeDesc(notice.getNoticeDesc());
             return dao.save(target);
@@ -54,66 +54,57 @@ public class NoticeService
         return null;
     }
 
-    public Notice delete(int noticeCode)
-    {
+    public Notice delete(int noticeCode) {
         Notice target = dao.findById(noticeCode).orElse(null);
         dao.delete(target);
         return target;
     }
 
-    public List<Notice> showMember(String id)
-    { //특정 유저의 분실 게시물 조회
+    public List<Notice> showMember(String id) { //특정 유저의 분실 게시물 조회
         Member member = memberdao.findById(id).orElse(null);
         List<Notice> target = dao.findByMemberId(member.getId());
         return target;
     }
 
     // 게시글 좋아요 갯수 업데이트
-    public Notice updatelike(int noticeCode)
-    {
+    public Notice updatelike(int noticeCode) {
         dao.updateNoticelike(noticeCode);
         return dao.findById(noticeCode).orElse(null);
 
     }
 
     // 게시글 좋아요 갯수 차감
-    public Notice deletelike(int noticeCode)
-    {
+    public Notice deletelike(int noticeCode) {
         dao.deleteNoticelike(noticeCode);
         return dao.findById(noticeCode).orElse(null);
     }
 
     // 게시글 댓글 갯수 업데이트
-    public Notice updateNoticeCommentCount(int noticeCode)
-    {
+    public Notice updateNoticeCommentCount(int noticeCode) {
         dao.updateNoticeCommentCount(noticeCode);
         return dao.findById(noticeCode).orElse(null);
     }
 
 
     // 게시글 댓글 갯수 차감
-    public Notice deleteNoticeCommentCount(int noticeCode)
-    {
+    public Notice deleteNoticeCommentCount(int noticeCode) {
         dao.deleteNoticeCommentCount(noticeCode);
         return dao.findById(noticeCode).orElse(null);
     }
 
     // 게시글 댓글 갯수 정렬
-    public List<Notice> sortCommentCount()
-    {
+    public List<Notice> sortCommentCount() {
         return dao.sortCommentCount();
     }
 
 
     // 게시글 좋아요 수 정렬
-    public List<Notice> sortNoticeLike()
-    {
+    public List<Notice> sortNoticeLike() {
         return dao.sortNoticeLike();
     }
 
     // 분실 게시글 조회순 정렬
-    public List<Notice> sortNoticeViews()
-    {
+    public List<Notice> sortNoticeViews() {
         return dao.sortNoticeViews();
 
     }

@@ -3,8 +3,7 @@ package com.kh.Freepets;
 import lombok.Getter;
 
 @Getter
-public enum BoardType
-{
+public enum BoardType {
     None(0),
     community(1),
     lost(2),
@@ -19,13 +18,13 @@ public enum BoardType
 
 
     // enum 값 생성할때 각 값에 value 할당시키기,
-    BoardType(int i) {value = i;}
+    BoardType(int i) {
+        value = i;
+    }
 
 
-    public static BoardType getType(int idx)
-    {
-        return switch (idx)
-        {
+    public static BoardType getType(int idx) {
+        return switch (idx) {
             case 0 -> None;
             case 1 -> community;
             case 2 -> lost;
@@ -37,10 +36,8 @@ public enum BoardType
         };
     }
 
-    public static BoardType getType(String name)
-    {
-        return switch (name)
-        {
+    public static BoardType getType(String name) {
+        return switch (name) {
 
             case "community" -> community;
             case "lost" -> lost;
@@ -51,10 +48,8 @@ public enum BoardType
         };
     }
 
-    public static int getTypeCode(BoardType type)
-    {
-        return switch (type)
-        {
+    public static int getTypeCode(BoardType type) {
+        return switch (type) {
             case community -> 1;
             case lost -> 2;
             case sitter -> 3;
@@ -65,25 +60,34 @@ public enum BoardType
         };
     }
 
+    public static String getTypeName(BoardType type) {
+        return switch (type) {
+            case community -> "community";
+            case lost -> "lost";
+            case sitter -> "sitter";
+            case information -> "information";
+            case notice -> "notice";
+            case customerService -> "customerService";
+            default -> "";
+        };
+    }
+
+
 //    public int getValue() {
 //        return this.value;
 //    }
 
-    static public boolean isExist(BoardType type)
-    {
-        switch (type)
-        {
+    static public boolean isExist(BoardType type) {
+        switch (type) {
             case community,
                     lost,
                     sitter,
                     information,
                     customerService,
-                    notice ->
-            {
+                    notice -> {
                 return true;
             }
-            default ->
-            {
+            default -> {
                 return false;
             }
         }
