@@ -4,9 +4,11 @@ import com.kh.Freepets.domain.board.BoardDTO;
 import com.kh.Freepets.domain.board.community.Community;
 import com.kh.Freepets.domain.board.community.CommunityLike;
 import com.kh.Freepets.domain.member.Member;
+import com.kh.Freepets.security.TokenProvider;
 import com.kh.Freepets.service.board.community.CommunityLikeService;
 import com.kh.Freepets.service.board.community.CommunityService;
 import com.kh.Freepets.service.file.FileInputHandler;
+import com.kh.Freepets.service.member.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,6 +42,12 @@ public class CommunityController {
     @Autowired
     private FileInputHandler handler;
 
+    @Autowired
+    private TokenProvider tokenProvider;
+
+    @Autowired
+    private MemberService memberService;
+
     //일반게시판 전체 조회 GET - http://localhost:8080/api/community
     //페이징 처리
     @GetMapping("/community")
@@ -55,15 +63,16 @@ public class CommunityController {
     //일반게시판 추가 POST - http://localhost:8080/api/community
     @PostMapping("/community")
     public ResponseEntity<Community> createCommon(BoardDTO dto) {
+        log.info("community : " + dto.getTitle());
+        log.info("community : " +  dto.toString());
         //파일 업로드
-        try {
-            Member member = Member.builder()
-                    .id(dto.getMemberDTO().getId())
-                    .build();
+
+            String userId = tokenProvider.validateAndGetUserId(dto.getToken());
+            Member member = memberService.findByIdUser(userId);
+
             Community vo = Community.builder()
                     .commonTitle(dto.getTitle())
                     .commonDesc(dto.getDesc())
-                    .commonAddFileUrl(dto.getUploadfileUrl())
                     .member(member)
                     .build();
 //            vo.setCommonTitle(commonTitle);
@@ -71,17 +80,23 @@ public class CommunityController {
 //            vo.setCommonAddFileUrl(fileName);
 //            Member member = new Member();
 //            member.setId(id);
-            vo.setMember(member);
             return ResponseEntity.status(HttpStatus.OK).body(commonService.create(vo));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
-    }
 
     //일반게시판 수정 PUT - http://localhost:8080/api/community
     @PutMapping("/community")
-    public ResponseEntity<Community> updateCommon(@RequestBody Community vo) {
+    public ResponseEntity<Community> updateCommon(@RequestBody BoardDTO dto) {
+        log.info("community : " + dto.getToken());
+        log.info("community : " +  dto.toString());
+
+        String id = tokenProvider.validateAndGetUserId(dto.getToken());
+        Member member = memberService.findByIdUser(id);
+        Community vo = Community.builder()
+                .commonTitle(dto.getTitle())
+                .commonDesc(dto.getDesc())
+                .member(member)
+                .build();
         return ResponseEntity.status(HttpStatus.OK).body(commonService.update(vo));
     }
 
