@@ -4,12 +4,14 @@ import com.kh.Freepets.domain.board.BoardDTO;
 import com.kh.Freepets.domain.board.sitter.Sitter;
 import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.domain.member.MemberDTO;
+import com.kh.Freepets.domain.util.Paging;
+import com.kh.Freepets.security.TokenProvider;
 import com.kh.Freepets.service.board.sitter.SitterService;
 import com.kh.Freepets.service.file.FileInputHandler;
+import com.kh.Freepets.service.member.MemberService;
 import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,14 +19,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 
 @CrossOrigin(origins = {"*"}, maxAge = 6000)
 @RestController
@@ -34,19 +30,31 @@ public class SitterController {
 
     @Autowired
     private SitterService service;
+    @Autowired
+    private TokenProvider provider;
+    @Autowired
+    private MemberService memberService;
 
     @GetMapping("/sitter")
-    public ResponseEntity<List<Sitter>> showAll(@RequestParam(name = "page", defaultValue = "1") int page) {
+    public ResponseEntity<Paging> showAll(@RequestParam(name = "page", defaultValue = "1") int page) {
 
         Sort sort = Sort.by("sitterCode").descending();
         Pageable pageable = PageRequest.of(page-1, 10, sort);
-
         Page<Sitter> result = service.showall(pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
+        Paging paging = new Paging();
+        paging.setSitterList(result.getContent());
+        paging.setTotalCount(result.getTotalElements());
+        paging.setTotalPages(result.getTotalPages());
+        paging.setGetNumber(result.getNumber());
+        paging.setHasNext(result.hasNext());
+        paging.setHasPrev(result.hasPrevious());
+        paging.setFirst(result.isFirst());
+
+        return ResponseEntity.status(HttpStatus.OK).body(paging);
     }
 
     @GetMapping("/sitter/price/{order}")
-    public ResponseEntity<List<Sitter>> showAllPrice(@RequestParam(name = "page", defaultValue = "1") int page, @PathVariable String order) {
+    public ResponseEntity<Paging> showAllPrice(@RequestParam(name = "page", defaultValue = "1") int page, @PathVariable String order) {
         Sort sort = null;
         if(order.equals("asc")) {
             sort = Sort.by("sitterPrice").ascending();
@@ -55,7 +63,11 @@ public class SitterController {
         }
         Pageable pageable = PageRequest.of(page-1, 10, sort);
         Page<Sitter> result = service.showall(pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
+        Paging paging = new Paging();
+        paging.setSitterList(result.getContent());
+        paging.setTotalCount(result.getTotalElements());
+        paging.setTotalPages(result.getTotalPages());
+        return ResponseEntity.status(HttpStatus.OK).body(paging);
     }
 
     @GetMapping("/sitter/{id}")
@@ -79,17 +91,24 @@ public class SitterController {
     }
 
     @GetMapping("/sitter/search")
-    public ResponseEntity<List<Sitter>> search(@RequestParam(name = "page", defaultValue = "1") int page, @RequestParam String keyword) {
+    public ResponseEntity<Paging> search(@RequestParam(name = "page", defaultValue = "1") int page, @RequestParam String keyword) {
         Sort sort = Sort.by("sitterCode").descending();
         Pageable pageable = PageRequest.of(page-1, 10, sort);
         Page<Sitter> result = service.sitterSearch(keyword, pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
+        Paging paging = new Paging();
+        paging.setSitterList(result.getContent());
+        paging.setTotalCount(result.getTotalElements());
+        paging.setTotalPages(result.getTotalPages());
+        return ResponseEntity.status(HttpStatus.OK).body(paging);
     }
 
     @PostMapping("/sitter")
     public ResponseEntity<Sitter> create(BoardDTO boardDTO) {
+        log.info("token : " + boardDTO.getToken());
+        String id = provider.validateAndGetUserId(boardDTO.getToken());
+        log.info("id : " + id);
         Member member = Member.builder()
-                .id(boardDTO.getMemberDTO().getId())
+                .id(id)
                 .build();
         Sitter sitter = Sitter.builder()
                 .sitterCode(boardDTO.getBoardCode())
@@ -101,19 +120,31 @@ public class SitterController {
                 .member(member)
                 .build();
         service.create(sitter);
-        if(service.ratingsCount(boardDTO.getMemberDTO().getId()) == null || Integer.parseInt(service.ratingsCount(boardDTO.getMemberDTO().getId())) == 0) {
-            sitter.setSitterRatings(0);
-        }
-        else service.updateRatings(sitter.getMember().getId());
+        service.updateRatings(sitter.getMember().getId());
         return ResponseEntity.status(HttpStatus.OK).body(service.show(sitter.getSitterCode()));
     }
 
     @PutMapping("/sitter")
-    public ResponseEntity<Sitter> update(@RequestBody Sitter sitter) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.create(sitter));
+    public ResponseEntity<Sitter> update(BoardDTO boardDTO) {
+        String id = provider.validateAndGetUserId(boardDTO.getToken());
+        Member member = Member.builder()
+                .id(id)
+                .build();
+        Sitter sitter = Sitter.builder()
+                .sitterCode(boardDTO.getBoardCode())
+                .sitterTitle(boardDTO.getTitle())
+                .sitterLoc(boardDTO.getSitterLoc())
+                .sitterPrice(boardDTO.getSitterPrice())
+                .sitterRatings(boardDTO.getSitterRatings())
+                .sitterDesc(boardDTO.getDesc())
+                .member(member)
+                .build();
+        service.update(sitter);
+        service.updateRatings(sitter.getMember().getId());
+        return ResponseEntity.status(HttpStatus.OK).body(service.show(sitter.getSitterCode()));
     }
 
-    @DeleteMapping("/sitter/{id}") // 시터 글 삭제 X default y or n column 추가 글은 남는데 안 보이게
+    @DeleteMapping("/sitter/{id}")
     public ResponseEntity<Sitter> delete(@PathVariable int id) {
         return ResponseEntity.status(HttpStatus.OK).body(service.delete(id));
     }

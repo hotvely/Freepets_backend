@@ -23,10 +23,10 @@ public class NoticeCommentService
         return dao.findAll();
     }
 
-    public NoticeComment showNoticeComment(int lCommentCode)
+    public NoticeComment showComment(int code)
     {
-        NoticeComment noticecomment = dao.findById(lCommentCode).orElse(null);
-        return noticecomment;
+        NoticeComment comment = dao.findById(code).orElse(null);
+        return comment;
     }
 
     public NoticeComment create(NoticeComment noticecomment)
@@ -37,6 +37,11 @@ public class NoticeCommentService
     public NoticeComment update(NoticeComment noticecomment)
     {
         NoticeComment target = dao.findById(noticecomment.getNoticeCommentCode()).orElse(null);
+        if (noticecomment.getNoticeCommentDesc() != null)
+        {
+            target.setNoticeCommentDesc(noticecomment.getNoticeCommentDesc());
+        }
+
         if (target != null)
         {
             return dao.save(target);

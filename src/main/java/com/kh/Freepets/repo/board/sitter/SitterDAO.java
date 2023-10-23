@@ -14,9 +14,9 @@ public interface SitterDAO extends JpaRepository<Sitter, Integer> {
     @Transactional
     @Modifying
     @Query(value = "UPDATE SITTER " +
-            "SET SITTER_RATINGS = (SELECT ROUND(AVG(R.SITTER_REVIEW_RATINGS),1) " +
+            "SET SITTER_RATINGS = (SELECT NVL(ROUND(AVG(R.SITTER_REVIEW_RATINGS),1),0) " +
             "FROM SITTER_REVIEW R JOIN SITTER S ON (R.SITTER_CODE = S.SITTER_CODE) " +
-            "WHERE S.ID = :id GROUP BY S.ID) " +
+            "WHERE S.ID = :id) " +
             "WHERE ID = :id", nativeQuery = true)
     int updateRatings(String id);
 

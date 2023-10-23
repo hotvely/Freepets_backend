@@ -55,7 +55,7 @@ public class SitterService {
         return freeMarket;
     }
 
-    public int updateRatings(String id) {
+    public double updateRatings(String id) {
         return sitterDAO.updateRatings(id);
     }
 
@@ -63,8 +63,12 @@ public class SitterService {
         return sitterDAO.isSitter(id);
     }
 
-    public String ratingsCount(String id) {
-        return sitterDAO.ratingsCount(id);
+    public int ratingsCount(String id) {
+        String result = sitterDAO.ratingsCount(id);
+        if(result == null) {
+            return 0;
+        }
+        return Integer.parseInt(result);
     }
 
     public Page<Sitter> sitterSearch(String keyword, Pageable pageable) {
