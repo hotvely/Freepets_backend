@@ -103,7 +103,7 @@ public class SitterController {
     }
 
     @PostMapping("/sitter")
-    public ResponseEntity<Sitter> create(BoardDTO boardDTO) {
+    public ResponseEntity<BoardDTO> create(BoardDTO boardDTO) {
         log.info("token : " + boardDTO.getToken());
         String id = provider.validateAndGetUserId(boardDTO.getToken());
         log.info("id : " + id);
@@ -121,11 +121,11 @@ public class SitterController {
                 .build();
         service.create(sitter);
         service.updateRatings(sitter.getMember().getId());
-        return ResponseEntity.status(HttpStatus.OK).body(service.show(sitter.getSitterCode()));
+        return ResponseEntity.status(HttpStatus.OK).body(boardDTO);
     }
 
     @PutMapping("/sitter")
-    public ResponseEntity<Sitter> update(BoardDTO boardDTO) {
+    public ResponseEntity<BoardDTO> update(@RequestBody BoardDTO boardDTO) {
         String id = provider.validateAndGetUserId(boardDTO.getToken());
         Member member = Member.builder()
                 .id(id)
@@ -141,7 +141,7 @@ public class SitterController {
                 .build();
         service.update(sitter);
         service.updateRatings(sitter.getMember().getId());
-        return ResponseEntity.status(HttpStatus.OK).body(service.show(sitter.getSitterCode()));
+        return ResponseEntity.status(HttpStatus.OK).body(boardDTO);
     }
 
     @DeleteMapping("/sitter/{id}")
