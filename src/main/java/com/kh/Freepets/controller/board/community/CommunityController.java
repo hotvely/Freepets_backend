@@ -107,9 +107,14 @@ public class CommunityController {
     }
 
     //일반게시판 한 개 조회 GET - http://localhost:8080/api/community/1
+    //조회할 때마다 조회수 추가
     @GetMapping("/community/{commonCode}")
     public ResponseEntity<Community> showCommon(@PathVariable int commonCode) {
-        return ResponseEntity.status(HttpStatus.OK).body(commonService.showCommon(commonCode));
+        Community vo = commonService.showCommon(commonCode);
+        vo.setCommonViewCount(vo.getCommonViewCount() + 1);
+        Community updateVo = commonService.update(vo);
+
+        return ResponseEntity.status(HttpStatus.OK).body(updateVo);
     }
 
     //일반게시판 좋아요 추가 POST - http://localhost:8080/api/community/like
@@ -117,7 +122,7 @@ public class CommunityController {
     @PostMapping("/community/like")
     public ResponseEntity<CommunityLike> createCommonLike(@RequestBody CommunityLike commonLike) {
 
-        CommunityLike target = commonLikeService.duplicatedLike(commonLike.getMember().getId(), commonLike.getCommunity().getCommonCode());
+        CommunityLike target = commonLikeService.duplicatedLike(commonLike.getCommunity().getMember().getId(), commonLike.getCommunity().getCommonCode());
         if (target == null) {
             commonService.increaseCommonLikes(commonLike.getCommunity().getCommonCode());
             return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.create(commonLike));
