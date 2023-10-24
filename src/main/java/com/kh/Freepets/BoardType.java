@@ -11,10 +11,11 @@ public enum BoardType {
     information(4),
     notice(5),
     customerService(6),
+
     end(999);
 
+ private final int value;
 
-    private final int value;
 
     // enum 값 생성할때 각 값에 value 할당시키기,
     BoardType(int i) {
