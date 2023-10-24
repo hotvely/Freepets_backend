@@ -43,17 +43,17 @@ public interface CommunityDAO extends JpaRepository<Community, Integer> {
     @Query(value= "UPDATE COMMON SET COMMON_VIEW_COUNT = (COMMON_VIEW_COUNT + 1 ) WHERE COMMON_CODE = :commonCode", nativeQuery = true)
     int increaseViews (int commonCode);
 
-    // 게시글 정렬
-    // 조회순
-    @Query(value = "SELECT * FROM COMMON ORDER BY COMMON_VIEW_COUNT DESC", nativeQuery = true)
-    List<Community> sortCommonViews();
-
-    // 추천순
-    @Query(value = "SELECT * FROM COMMON ORDER BY COMMON_LIKE_COUNT DESC", nativeQuery = true)
-    List<Community> sortCommonLikes();
-
-    // 댓글순
-    @Query(value = "SELECT * FROM COMMON ORDER BY COMMON_COMMENT_COUNT DESC", nativeQuery = true)
-    List<Community> sortCommonComments();
+//    // 게시글 정렬
+//    // 조회순
+//    @Query(value = "SELECT * FROM COMMON ORDER BY COMMON_VIEW_COUNT DESC", nativeQuery = true)
+//    List<Community> sortCommonViews();
+//
+//    // 추천순
+//    @Query(value = "SELECT * FROM COMMON ORDER BY COMMON_LIKE_COUNT DESC", nativeQuery = true)
+//    List<Community> sortCommonLikes();
+//
+//    // 댓글순
+//    @Query(value = "SELECT * FROM COMMON ORDER BY COMMON_COMMENT_COUNT DESC", nativeQuery = true)
+//    List<Community> sortCommonComments();
 
 }

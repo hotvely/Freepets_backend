@@ -4,6 +4,7 @@ import com.kh.Freepets.domain.board.BoardDTO;
 import com.kh.Freepets.domain.board.community.Community;
 import com.kh.Freepets.domain.board.community.CommunityLike;
 import com.kh.Freepets.domain.member.Member;
+import com.kh.Freepets.domain.util.Paging;
 import com.kh.Freepets.security.TokenProvider;
 import com.kh.Freepets.service.board.community.CommunityLikeService;
 import com.kh.Freepets.service.board.community.CommunityService;
@@ -51,13 +52,25 @@ public class CommunityController {
     //일반게시판 전체 조회 GET - http://localhost:8080/api/community
     //페이징 처리
     @GetMapping("/community")
-    public ResponseEntity<List<Community>> commonList(@RequestParam(name = "page", defaultValue = "1") int page) {
-        //말머리는...
+    public ResponseEntity<Paging> commonList(
+            @RequestParam(name = "page", defaultValue = "1") int page){
+//            @RequestParam(name = "orderBy", defaultValue = "commonCode")String oderBy) {
+
         //기본정렬
         Sort sort = Sort.by("commonCode").descending();
+
         Pageable pageable = PageRequest.of(page - 1, 20, sort);
         Page<Community> result = commonService.commonAll(pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
+        Paging paging = new Paging();
+        paging.setCommunityList(result.getContent());
+        paging.setTotalCount(result.getTotalElements());
+        paging.setTotalPages(result.getTotalPages());
+        paging.setGetNumber(result.getNumber());
+        paging.setHasNext(result.hasNext());
+        paging.setHasPrev(result.hasPrevious());
+        paging.setFirst(result.isFirst());
+
+        return ResponseEntity.status(HttpStatus.OK).body(paging);
     }
 
     //일반게시판 추가 POST - http://localhost:8080/api/community
@@ -148,31 +161,31 @@ public class CommunityController {
         }
 
     }
-
-    //일반게시판 조회순 정렬 GET - http://localhost:8080/api/community/sortviews
-    @GetMapping("/community/sortviews")
-    public ResponseEntity<List<Community>> sortCommonViews(@RequestParam(name = "page", defaultValue = "1") int page) {
-        Sort sort = Sort.by("commonViewCount").descending();
-        Pageable pageable = PageRequest.of(page - 1, 10, sort);
-        Page<Community> result = commonService.commonAll(pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
-    }
-
-    //일반게시판 좋아요순 정렬 GET - http://localhost:8080/api/community/sortlikes
-    @GetMapping("/community/sortlikes")
-    public ResponseEntity<List<Community>> sortCommonLikes(@RequestParam(name = "page", defaultValue = "1") int page) {
-        Sort sort = Sort.by("commonLikeCount").descending();
-        Pageable pageable = PageRequest.of(page - 1, 10, sort);
-        Page<Community> result = commonService.commonAll(pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
-    }
-
-    //일반게시판 댓글순 정렬 GET - http://localhost:8080/api/community/sortcomments
-    @GetMapping("/community/sortcomments")
-    public ResponseEntity<List<Community>> sortCommonComments(@RequestParam(name = "page", defaultValue = "1") int page) {
-        Sort sort = Sort.by("commonCommentCount").descending();
-        Pageable pageable = PageRequest.of(page - 1, 10, sort);
-        Page<Community> result = commonService.commonAll(pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
-    }
+//
+//    //일반게시판 조회순 정렬 GET - http://localhost:8080/api/community/sortviews
+//    @GetMapping("/community/sortviews")
+//    public ResponseEntity<List<Community>> sortCommonViews(@RequestParam(name = "page", defaultValue = "1") int page) {
+//        Sort sort = Sort.by("commonViewCount").descending();
+//        Pageable pageable = PageRequest.of(page - 1, 10, sort);
+//        Page<Community> result = commonService.commonAll(pageable);
+//        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
+//    }
+//
+//    //일반게시판 좋아요순 정렬 GET - http://localhost:8080/api/community/sortlikes
+//    @GetMapping("/community/sortlikes")
+//    public ResponseEntity<List<Community>> sortCommonLikes(@RequestParam(name = "page", defaultValue = "1") int page) {
+//        Sort sort = Sort.by("commonLikeCount").descending();
+//        Pageable pageable = PageRequest.of(page - 1, 10, sort);
+//        Page<Community> result = commonService.commonAll(pageable);
+//        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
+//    }
+//
+//    //일반게시판 댓글순 정렬 GET - http://localhost:8080/api/community/sortcomments
+//    @GetMapping("/community/sortcomments")
+//    public ResponseEntity<List<Community>> sortCommonComments(@RequestParam(name = "page", defaultValue = "1") int page) {
+//        Sort sort = Sort.by("commonCommentCount").descending();
+//        Pageable pageable = PageRequest.of(page - 1, 10, sort);
+//        Page<Community> result = commonService.commonAll(pageable);
+//        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
+//    }
 }
