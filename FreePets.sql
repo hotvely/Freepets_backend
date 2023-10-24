@@ -39,9 +39,6 @@ DROP SEQUENCE SEQ_COMMON_COMMENT;
 DROP SEQUENCE SEQ_COMMON;
 DROP SEQUENCE SEQ_COMMON_LIKE;
 
------ NOTIFICATION
-DROP SEQUENCE SEQ_NOTIFICATION;
-
 ----- member
 DROP SEQUENCE SEQ_BOOKMARK;
 
@@ -93,7 +90,6 @@ DROP TABLE EVENT;
 
 ---- member
 DROP TABLE BOOKMARK;
-DROP TABLE NOTIFICATION;
 DROP TABLE MEMBER;
 
 
@@ -120,10 +116,10 @@ CREATE TABLE MEMBER
     
     CONSTRAINT ID_PK PRIMARY KEY(ID)
 );  
---INSERT INTO MEMBER(id,password,name,birth,gender,phone,address,nickname,email, member_img, member_info) 
---VALUES('test','test','testName',sysdate, 'm', '010-0000-0000','test Address','test','test@naver.com',NULL,NULL);
---INSERT INTO MEMBER(id,password,name,birth,gender,phone,address,nickname,email,  authority, member_img, member_info) 
---VALUES('admin','admin','admin',sysdate, 'f', '010-1111-1111','admin Address','admin','admin@naver.com','ADMIN',NULL,NULL);
+INSERT INTO MEMBER(id,password,name,birth,gender,phone,address,nickname,email, member_img, member_info) 
+VALUES('test','test','testName',sysdate, 'm', '010-0000-0000','test Address','test','test@naver.com',NULL,NULL);
+INSERT INTO MEMBER(id,password,name,birth,gender,phone,address,nickname,email,  authority, member_img, member_info) 
+VALUES('admin','admin','admin',sysdate, 'f', '010-1111-1111','admin Address','admin','admin@naver.com','ADMIN',NULL,NULL);
 
 CREATE TABLE BOOKMARK
 (
@@ -134,23 +130,6 @@ CREATE TABLE BOOKMARK
     ID VARCHAR2(100)
 );
 
-CREATE TABLE NOTIFICATION
-(
-      NOTI_CODE NUMBER PRIMARY KEY,              -- 알림 테이블 고유 코드
-      ID VARCHAR2(30),                         -- 저장할 멤버 아이디
-      NOTI_BOARDCODE NUMBER,
-      NOTI_POSTCODE NUMBER,
-      NOTI_CHILD_COMMENTCODE NUMBER,
-      NOTI_PARENT_COMMENTCODE NUMBER,
-      NOTI_URL VARCHAR2(500)
-      
-
-);
-ALTER TABLE NOTIFICATION ADD CONSTRAINT NOTIFICATION_ID_FK FOREIGN KEY(ID) REFERENCES MEMBER; 
-
-
-CREATE SEQUENCE SEQ_NOTIFICATION;
-CREATE SEQUENCE SEQ_NOTICODE;
 CREATE SEQUENCE SEQ_BOOKMARK;
 
 
@@ -241,7 +220,7 @@ CREATE TABLE COMMON(
 );
 
 ALTER TABLE COMMON ADD CONSTRAINT COMMON_ID_FK FOREIGN KEY(ID) REFERENCES MEMBER;
-ALTER TABLE COMMON MODIFY COMMON_DESC VARCHAR2(100000);
+ALTER TABLE COMMON MODIFY COMMON_DESC VARCHAR2(2000);
 
 
 CREATE TABLE COMMON_COMMENT(

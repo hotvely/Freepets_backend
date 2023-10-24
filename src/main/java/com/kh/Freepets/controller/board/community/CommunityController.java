@@ -55,7 +55,7 @@ public class CommunityController {
         //말머리는...
         //기본정렬
         Sort sort = Sort.by("commonCode").descending();
-        Pageable pageable = PageRequest.of(page - 1, 10, sort);
+        Pageable pageable = PageRequest.of(page - 1, 20, sort);
         Page<Community> result = commonService.commonAll(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
     }
@@ -93,6 +93,7 @@ public class CommunityController {
         String id = tokenProvider.validateAndGetUserId(dto.getToken());
         Member member = memberService.findByIdUser(id);
         Community vo = Community.builder()
+                .commonCode(dto.getBoardCode())
                 .commonTitle(dto.getTitle())
                 .commonDesc(dto.getDesc())
                 .member(member)
