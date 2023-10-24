@@ -86,6 +86,7 @@ public class BoardController
                 .hospitalAddress(hospitalReview.getHospitalAddress())
                 .title(hospitalReview.getHospitalReviewTitle())
                 .desc(hospitalReview.getHospitalReviewDesc())
+                .commonDate(hospitalReview.getHospitalReviewDate())
                 .viewCount(hospitalReview.getHospitalReviewViews())
                 .commentCount(hospitalReview.getHospitalReviewCommentCount())
                 .likeCount(hospitalReview.getHospitalReviewLike())
@@ -130,60 +131,63 @@ public class BoardController
     }
 
 
-    // 게시글 좋아요 & 좋아요 개수 처리
+    // 게시글 좋아요, 좋아요 취소 & 개수 처리
     @PostMapping("/hr/like")
-    public ResponseEntity<HrLike> hrUpdateLike(@RequestBody HrLike hrLike) {
-        try {
-            HrLike target = hrLikeService.likeMember(hrLike.getMember().getId(), hrLike.getHospitalReview().getHospitalReviewCode());
-            if (target == null) {
-                hrService.updateLike(hrLike.getHospitalReview().getHospitalReviewCode());
-                return ResponseEntity.status(HttpStatus.OK).body(hrLikeService.hrAddLike(hrLike));
-            }
-            else return null;
+    public ResponseEntity<BoardDTO> hrUpdateLike(HrLike hrLike) {
+        HrLike target = hrLikeService.likeMember(hrLike.getMember().getId(), hrLike.getHospitalReview().getHospitalReviewCode());
+        if (target == null) { // 유저가 해당 글 좋아요 한 적이 없으면 좋아요, 좋아요 + 1
+            hrService.updateLike(hrLike.getHospitalReview().getHospitalReviewCode());
+            log.info("좋아요 누름");
+            hrLikeService.hrAddLike(hrLike);
+        } else { // 한 적 있으면 좋아요 취소, 좋아요 - 1
+            hrService.deleteLike(hrLike.getHospitalReview().getHospitalReviewCode());
+            log.info("좋아요 취소 누름");
+            hrLikeService.hrDeleteLike(target.getHrLikeCode());
         }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-    }
-
-    // 게시글 좋아요 취소 & 좋아요 개수 처리
-    @DeleteMapping("/hr/like/{hrLikeCode}")
-    public ResponseEntity<HrLike> hrDeleteLike(@PathVariable int hrLikeCode)
-    {
-        try
-        {
-            HrLike hrLike = hrLikeService.show(hrLikeCode);
-            HrLike target = hrLikeService.likeMember(hrLike.getMember().getId(), hrLike.getHospitalReview().getHospitalReviewCode());
-            if (target != null)
-            {
-                hrService.deleteLike(hrLike.getHospitalReview().getHospitalReviewCode());
-                return ResponseEntity.status(HttpStatus.OK).body(hrLikeService.hrDeleteLike(hrLikeCode));
-            }
-            else return null;
-        }
-        catch (Exception e)
-        {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        HospitalReview hospitalReview = hrService.show(hrLike.getHospitalReview().getHospitalReviewCode());
+        MemberDTO memberDTO = MemberDTO.builder()
+                .id(hospitalReview.getMember().getId())
+                .nickname(hospitalReview.getMember().getNickname())
+                .memberImg(hospitalReview.getMember().getMemberImg())
+                .build();
+        BoardDTO boardDTO = BoardDTO.builder()
+                .boardCode(hospitalReview.getHospitalReviewCode())
+                .hospitalName(hospitalReview.getHospitalName())
+                .hospitalAddress(hospitalReview.getHospitalAddress())
+                .title(hospitalReview.getHospitalReviewTitle())
+                .desc(hospitalReview.getHospitalReviewDesc())
+                .commonDate(hospitalReview.getHospitalReviewDate())
+                .viewCount(hospitalReview.getHospitalReviewViews())
+                .commentCount(hospitalReview.getHospitalReviewCommentCount())
+                .likeCount(hospitalReview.getHospitalReviewLike())
+                .memberDTO(memberDTO)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(boardDTO);
     }
 
     // 게시글 좋아요 별로 보기
     @GetMapping("/hr/orderlike")
-    public ResponseEntity<List<HospitalReview>> hrShowLike(@RequestParam(name = "page", defaultValue = "1") int page)
+    public ResponseEntity<Paging> hrShowLike(@RequestParam(name = "page", defaultValue = "1") int page)
     {
         Sort sort = Sort.by("hospitalReviewLike").descending();
         Pageable pageable = PageRequest.of(page - 1, 10, sort);
         Page<HospitalReview> result = hrService.showAll(pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
+        Paging paging = new Paging();
+        paging.setTotalPages(result.getTotalPages());
+        paging.setHospitalReviewList(result.getContent());
+        return ResponseEntity.status(HttpStatus.OK).body(paging);
     }
 
     // 게시글 댓글 수 별로 보기
     @GetMapping("/hr/ordercomment")
-    public ResponseEntity<List<HospitalReview>> hrShowComment(@RequestParam(name = "page", defaultValue = "1") int page)
+    public ResponseEntity<Paging> hrShowComment(@RequestParam(name = "page", defaultValue = "1") int page)
     {
         Sort sort = Sort.by("hospitalReviewCommentCount").descending();
         Pageable pageable = PageRequest.of(page - 1, 10, sort);
         Page<HospitalReview> result = hrService.showAll(pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
+        Paging paging = new Paging();
+        paging.setTotalPages(result.getTotalPages());
+        paging.setHospitalReviewList(result.getContent());
+        return ResponseEntity.status(HttpStatus.OK).body(paging);
     }
 }
