@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -28,6 +29,21 @@ public class NoticeLikeService
 
         NoticeLike noticelike = dao.findById(noticelikeCode).orElse(null);
         return noticelike;
+    }
+
+    public NoticeLike showById(String id, int noticeCode)
+    {
+        try
+        {
+            NoticeLike noticeLike = dao.findById(id, noticeCode);
+            return noticeLike;
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+
+
     }
 
 

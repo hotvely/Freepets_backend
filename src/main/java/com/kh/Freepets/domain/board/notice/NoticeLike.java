@@ -4,6 +4,7 @@ import com.kh.Freepets.domain.board.notice.Notice;
 import com.kh.Freepets.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
@@ -15,13 +16,14 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicInsert
+@Builder
 public class NoticeLike
 {
 
     @Id
     @Column(name = "NOTICE_LIKE_CODE")
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "noticelikeSequence")
-    @SequenceGenerator(name = "noticelikeSequence", sequenceName = "SEQ_LIKE_NOTICE", allocationSize = 1)
+    @SequenceGenerator(name = "noticelikeSequence", sequenceName = "SEQ_NOTICE_LIKE", allocationSize = 1)
     private int noticeLikeCode;
 
 
