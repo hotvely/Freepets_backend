@@ -58,16 +58,16 @@ public class NoticeController
             switch (sortNum)
             {
                 case 1:
-                    sort = Sort.by("noticeLike").descending()
-                            .and(Sort.by("noticeCode").descending());
+                    sort = Sort.by("noticeCode").descending();
                     break;
                 case 2:
-                    sort = Sort.by("noticeCommentCount").descending()
-                            .and(Sort.by("noticeCode").descending());
+                    sort = Sort.by("noticeLike").descending();
                     break;
                 case 3:
-                    sort = Sort.by("noticeViews").descending()
-                            .and(Sort.by("noticeCode").descending());
+                    sort = Sort.by("noticeCommentCount").descending();
+                    break;
+                case 4:
+                    sort = Sort.by("noticeViews").descending();
                     break;
                 default:
                     sort = Sort.by("noticeCode").descending();
@@ -96,26 +96,47 @@ public class NoticeController
     }
 
 
-    @GetMapping("/notice/search/{keyword}")
-    public ResponseEntity<List<Notice>> findByKeyword(@PathVariable String keyword)
+    @GetMapping("/notice/search/{keyword}/{sortNum}")
+    public ResponseEntity<Paging> findByKeyword(@PathVariable String keyword, @PathVariable int sortNum)
     {
 
         // URL 서치 관련해서 받는거 에러남;;;
         int page = 1;
-        log.info("page : " + page);
-        log.info("keyword" + keyword);
-        log.info("검색 관련 기능 드러옴");
+
+
         try
         {
-            Sort sort = Sort.by("NOTICE_CODE").descending();
-            Pageable pageable = PageRequest.of(page - 1, 10, sort);
-            Page<Notice> result = noticeService.search(keyword, pageable);
 
-//            log.info("게시글 페이지징 별로 보기.. : " + result.getContent());
-            return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
+            Page<Notice> result = null;
+            Pageable pageable = PageRequest.of(page - 1, 10);
+
+            switch (sortNum)
+            {
+                case 1:
+                    result = noticeService.searchTitleContent(keyword, pageable);
+                    break;
+                case 2:
+                    result = noticeService.searchTitle(keyword, pageable);
+                    break;
+                case 3:
+                    result = noticeService.searchContent(keyword, pageable);
+                    break;
+
+            }
+            Paging paging = new Paging();
+            paging.setNoticeList(result.getContent());
+            paging.setTotalCount(result.getTotalElements());
+            paging.setTotalPages(result.getTotalPages());
+            paging.setGetNumber(result.getNumber());
+            paging.setHasNext(result.hasNext());
+            paging.setHasPrev(result.hasPrevious());
+            paging.setFirst(result.isFirst());
+            log.info(paging.toString());
+            return ResponseEntity.ok().body(paging);
         }
         catch (Exception e)
         {
+            log.info(e.toString());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
@@ -127,7 +148,6 @@ public class NoticeController
     @GetMapping("/notice/{noticeCode}")
     public ResponseEntity<Notice> showNotice(@PathVariable int noticeCode)
     {
-        log.info("게시글 코드 :  " + noticeCode);
         Notice vo = noticeService.show(noticeCode);
         vo.setNoticeViews(vo.getNoticeViews() + 1);
 
@@ -231,7 +251,7 @@ public class NoticeController
             {
                 Notice notice = noticeService.deletelike(dto.getPostCode());
                 NoticeLike noticeLike = noticelikeservice.delete(target.getNoticeLikeCode());
-                
+
 
                 return ResponseEntity.ok().body(null);
             }

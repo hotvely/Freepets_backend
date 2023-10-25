@@ -37,70 +37,86 @@ public class BoardController
 
     // 게시글 전체 보기
     @GetMapping("/hr")
-    public ResponseEntity<List<HospitalReview>> hrShowAll(@RequestParam(name = "page", defaultValue = "1") int page) {
-        try {
+    public ResponseEntity<List<HospitalReview>> hrShowAll(@RequestParam(name = "page", defaultValue = "1") int page)
+    {
+        try
+        {
             Sort sort = Sort.by("hospitalReviewCode").descending();
             Pageable pageable = PageRequest.of(page - 1, 10, sort);
 
             Page<HospitalReview> result = hrService.showAll(pageable);
             return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
     // 게시글 한 개 보기
     @GetMapping("/hr/{hospitalReviewCode}")
-    public ResponseEntity<HospitalReview> hrShow(@PathVariable int hospitalReviewCode) {
-        try {
+    public ResponseEntity<HospitalReview> hrShow(@PathVariable int hospitalReviewCode)
+    {
+        try
+        {
             return ResponseEntity.status(HttpStatus.OK).body(hrService.show(hospitalReviewCode));
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
     // 게시글 작성
     @PostMapping("/hr")
-    public ResponseEntity<HospitalReview> hrCreate(BoardDTO boardDTO) {
+    public ResponseEntity<HospitalReview> hrCreate(BoardDTO boardDTO)
+    {
         log.info("hospitalName : " + boardDTO.getHospitalName());
         log.info("hospitalAddress : " + boardDTO.getHospitalAddress());
         Member member = Member.builder()
-                    .id(boardDTO.getMemberDTO().getId())
-                    .build();
-            HospitalReview hospitalReview = HospitalReview.builder()
-                    .hospitalReviewCode(boardDTO.getBoardCode())
-                    .hospitalName(boardDTO.getHospitalName())
-                    .hospitalAddress(boardDTO.getHospitalAddress())
-                    .hospitalReviewTitle(boardDTO.getTitle())
-                    .hospitalReviewDesc(boardDTO.getDesc())
-                    .hospitalReviewCommentCount(boardDTO.getCommentCount())
-                    .hospitalReviewLike(boardDTO.getLikeCount())
-                    .hospitalReviewViews(boardDTO.getViewCount())
-                    .hospitalReviewDate(boardDTO.getCommonDate())
-                    .hospitalReviewDeleteYn('N')
-                    .member(member)
-                    .build();
-            hrService.create(hospitalReview);
-            return ResponseEntity.status(HttpStatus.OK).body(hrService.show(hospitalReview.getHospitalReviewCode()));
+                .id(boardDTO.getMemberDTO().getId())
+                .build();
+        HospitalReview hospitalReview = HospitalReview.builder()
+                .hospitalReviewCode(boardDTO.getBoardCode())
+                .hospitalName(boardDTO.getHospitalName())
+                .hospitalAddress(boardDTO.getHospitalAddress())
+                .hospitalReviewTitle(boardDTO.getTitle())
+                .hospitalReviewDesc(boardDTO.getDesc())
+                .hospitalReviewCommentCount(boardDTO.getCommentCount())
+                .hospitalReviewLike(boardDTO.getLikeCount())
+                .hospitalReviewViews(boardDTO.getViewCount())
+                .hospitalReviewDate(boardDTO.getDate())
+                .hospitalReviewDeleteYn('N')
+                .member(member)
+                .build();
+        hrService.create(hospitalReview);
+        return ResponseEntity.status(HttpStatus.OK).body(hrService.show(hospitalReview.getHospitalReviewCode()));
     }
 
     // 게시글 수정
     @PutMapping("/hr")
-    public ResponseEntity<HospitalReview> hrUpdate(@RequestBody HospitalReview hospitalReview) {
-        try {
+    public ResponseEntity<HospitalReview> hrUpdate(@RequestBody HospitalReview hospitalReview)
+    {
+        try
+        {
             return ResponseEntity.status(HttpStatus.OK).body(hrService.update(hospitalReview));
         }
-        catch (Exception e) {
+        catch (Exception e)
+        {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
     // 게시글 삭제
     @DeleteMapping("/hr/{hospitalReviewCode}")
-    public ResponseEntity<HospitalReview> hrDelete(@PathVariable int hospitalReviewCode) {
-        try {
+    public ResponseEntity<HospitalReview> hrDelete(@PathVariable int hospitalReviewCode)
+    {
+        try
+        {
             return ResponseEntity.status(HttpStatus.OK).body(hrService.delete(hospitalReviewCode));
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
@@ -108,16 +124,20 @@ public class BoardController
 
     // 게시글 좋아요 & 좋아요 개수 처리
     @PostMapping("/hr/like")
-    public ResponseEntity<HrLike> hrUpdateLike(@RequestBody HrLike hrLike) {
-        try {
+    public ResponseEntity<HrLike> hrUpdateLike(@RequestBody HrLike hrLike)
+    {
+        try
+        {
             HrLike target = hrLikeService.likeMember(hrLike.getMember().getId(), hrLike.getHospitalReview().getHospitalReviewCode());
-            if (target == null) {
+            if (target == null)
+            {
                 hrService.updateLike(hrLike.getHospitalReview().getHospitalReviewCode());
                 return ResponseEntity.status(HttpStatus.OK).body(hrLikeService.hrAddLike(hrLike));
             }
             else return null;
         }
-        catch (Exception e) {
+        catch (Exception e)
+        {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }

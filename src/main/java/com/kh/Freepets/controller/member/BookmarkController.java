@@ -1,11 +1,20 @@
 package com.kh.Freepets.controller.member;
 
+import com.kh.Freepets.domain.board.BoardDTO;
+import com.kh.Freepets.domain.board.community.Community;
+import com.kh.Freepets.domain.board.information.HospitalReview;
+import com.kh.Freepets.domain.board.notice.Notice;
+import com.kh.Freepets.domain.board.sitter.Sitter;
 import com.kh.Freepets.domain.member.Bookmark;
 import com.kh.Freepets.BoardType;
 import com.kh.Freepets.domain.member.BookmarkDTO;
 import com.kh.Freepets.domain.member.Member;
+import com.kh.Freepets.domain.member.MemberDTO;
 import com.kh.Freepets.security.TokenProvider;
+import com.kh.Freepets.service.board.community.CommunityService;
+import com.kh.Freepets.service.board.information.HospitalReviewService;
 import com.kh.Freepets.service.board.notice.NoticeService;
+import com.kh.Freepets.service.board.sitter.SitterService;
 import com.kh.Freepets.service.member.BookmarkService;
 import com.kh.Freepets.service.member.MemberService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,16 +33,26 @@ import java.util.List;
 public class BookmarkController
 {
     @Autowired
-    BookmarkService bookmarkService;
+    private BookmarkService bookmarkService;
 
     @Autowired
-    MemberService memberService;
+    private MemberService memberService;
 
     @Autowired
-    NoticeService noticeService;
+    private NoticeService noticeService;
 
     @Autowired
-    TokenProvider tokenProvider;
+    private CommunityService communityService;
+
+    @Autowired
+    private SitterService sitterService;
+
+    @Autowired
+    private HospitalReviewService hospitalReviewService;
+
+
+    @Autowired
+    private TokenProvider tokenProvider;
 
     @GetMapping("/bookmark")
     public ResponseEntity<List<Bookmark>> showAll()
@@ -41,10 +61,115 @@ public class BookmarkController
     }
 
 
-    @GetMapping("/bookmark/{id}")
-    public ResponseEntity<List<Bookmark>> show(@PathVariable String id)
+    @GetMapping("/bookmark/{token}")
+    public ResponseEntity<List<BookmarkDTO>> show(@PathVariable String token)
     {  // 특정 유저 북마크 가져오기
-        return ResponseEntity.status(HttpStatus.OK).body(bookmarkService.findByMemberId(id));
+        String userId = tokenProvider.validateAndGetUserId(token);
+        List<Bookmark> list = bookmarkService.findByMemberId(userId);
+        List<BookmarkDTO> responseDTO = new ArrayList<BookmarkDTO>();
+
+        for (Bookmark item : list)
+        {
+            BoardDTO boardDTO = null;
+            MemberDTO mDTO = null;
+            int bookmarkCode = item.getBookmarkCode();
+            switch (item.getBoardCode())
+            {
+
+                case 1:
+                    log.info("1번 스위치");
+                    Community community = communityService.showCommon(item.getPostCode());
+
+                    mDTO = MemberDTO.builder()
+                            .nickname(community.getMember().getNickname())
+                            .memberImg(community.getMember().getMemberImg())
+                            .build();
+
+                    boardDTO = BoardDTO.builder()
+                            .memberDTO(mDTO)
+                            .title(community.getCommonTitle())
+                            .date(community.getCommonDate())
+                            .boardCode(community.getCommonCode())
+                            .postPath("../community/common/commonview/" + item.getPostCode())
+                            .build();
+                    break;
+                case 2:
+                    //lost
+                    break;
+                case 3:
+                    log.info("3번 스위치");
+                    Sitter sitter = sitterService.show(item.getPostCode());
+                    mDTO = MemberDTO.builder()
+                            .nickname(sitter.getMember().getNickname())
+                            .memberImg(sitter.getMember().getMemberImg())
+                            .build();
+
+                    boardDTO = BoardDTO.builder()
+                            .memberDTO(mDTO)
+                            .postPath("../sitter/view/" + item.getPostCode())
+                            .title(sitter.getSitterTitle())
+                            .date(null)
+                            .boardCode(sitter.getSitterCode())
+                            .build();
+
+                    break;
+                case 4:
+                    log.info("4번 스위치");
+                    HospitalReview hospitalReview = hospitalReviewService.show(item.getPostCode());
+                    mDTO = MemberDTO.builder()
+                            .nickname(hospitalReview.getMember().getNickname())
+                            .memberImg(hospitalReview.getMember().getMemberImg())
+                            .build();
+
+                    boardDTO = BoardDTO.builder()
+                            .memberDTO(mDTO)
+
+                            .title(hospitalReview.getHospitalReviewTitle())
+                            .date(hospitalReview.getHospitalReviewDate())
+                            .boardCode(hospitalReview.getHospitalReviewCode())
+                            .postPath("../information/hospital/" + item.getPostCode())
+                            .build();
+
+                    break;
+                case 5:
+                    log.info("5번 스위치");
+                    Notice notice = noticeService.show(item.getPostCode());
+                    mDTO = MemberDTO.builder()
+                            .nickname(notice.getMember().getNickname())
+                            .memberImg(notice.getMember().getMemberImg())
+                            .build();
+
+                    boardDTO = BoardDTO.builder()
+                            .memberDTO(mDTO)
+                            .title(notice.getNoticeTitle())
+                            .date(notice.getNoticeDate())
+                            .boardCode(notice.getNoticeCode())
+                            .postPath("../notice/noticeView/" + item.getPostCode())
+                            .build();
+                    break;
+                case 6:
+                    //customerService
+                    break;
+                default:
+                    return ResponseEntity.ok().body(null);
+
+            }
+
+            BookmarkDTO bookmarkDTO = BookmarkDTO.builder()
+                    .bookmarkCode(bookmarkCode)
+                    .boardDTO(boardDTO)
+                    .boardName(BoardType.getTypeName(BoardType.getType(item.getBoardCode())))
+                    .nickname(mDTO.getNickname())
+                    .postCode(boardDTO.getBoardCode())
+                    .url(boardDTO.getPostPath())
+                    .build();
+//            log.info(bookmarkDTO.toString());
+            responseDTO.add(bookmarkDTO);
+        }
+
+        log.info(responseDTO.toString());
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
 //    // 특정 유저의 특정 게시판 가져오기
@@ -75,16 +200,16 @@ public class BookmarkController
     @PostMapping("/bookmark")
     public ResponseEntity<Bookmark> create(@RequestBody BookmarkDTO bookmarkDTO)
     {
-        log.info("BOOKMARK : " + bookmarkDTO.toString());
+
 
         String userId = tokenProvider.validateAndGetUserId(bookmarkDTO.getToken());
         Member member = memberService.findByIdUser(userId);
 
 
-        int code = BoardType.getTypeCode(BoardType.getType(bookmarkDTO.getBoardName()));
-        log.info("code : " + code);
-        List<Bookmark> list = bookmarkService.findBy_id_code(userId, code);
-        log.info("list@@@@@@@@@@@ : " + list.toString());
+        int boardCode = BoardType.getTypeCode(BoardType.getType(bookmarkDTO.getBoardName()));
+
+        List<Bookmark> list = bookmarkService.findBy_id_code(userId, boardCode);
+
 
         for (Bookmark bm : list)
         {
@@ -92,12 +217,13 @@ public class BookmarkController
             if (bm.getPostCode() == bookmarkDTO.getPostCode())
             {
                 log.info("이미 들어가 있음..");
-                return ResponseEntity.badRequest().build();
+                return ResponseEntity.ok().body(null);
             }
         }
 
+
         Bookmark bookmark = Bookmark.builder()
-                .boardCode(code)
+                .boardCode(boardCode)
                 .postCode(bookmarkDTO.getPostCode())
                 .member(member)
                 .build();
@@ -106,12 +232,6 @@ public class BookmarkController
         return ResponseEntity.status(HttpStatus.OK).body(bookmarkService.create(bookmark));
     }
 
-
-    @PutMapping("/bookmark")
-    public ResponseEntity<Bookmark> update(@RequestBody Bookmark bookmark)
-    {
-        return ResponseEntity.status(HttpStatus.OK).body(bookmarkService.update(bookmark));
-    }
 
     @DeleteMapping("/bookmark/{code}")
     public ResponseEntity<Bookmark> delete(@PathVariable int code)

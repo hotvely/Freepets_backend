@@ -9,6 +9,7 @@ import com.kh.Freepets.service.board.notice.NoticeCommentService;
 import com.kh.Freepets.service.board.notice.NoticeService;
 import com.kh.Freepets.service.member.MemberService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,7 @@ public class NoticeCommentController
 
     // 게시물 1개에 따른 댓글 전체 보기 GET - http://localhost:8080/api/notice/1/comment
     //SELECT * FROM NOTICE_COMMENT WHERE NOTICE_CODE = ?
-    @GetMapping("/notice/{noticeCode}/comment")
+    @GetMapping("/notice/{noticeCode}/comments")
     private ResponseEntity<List<NoticeComment>> noticeCommentList(@PathVariable int noticeCode)
     {
         List<NoticeComment> list = noticecommentService.findByNoticeCode(noticeCode);
@@ -47,7 +48,14 @@ public class NoticeCommentController
         return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
-    @GetMapping("/notice/comment/{parentCode}")
+    @GetMapping("/notice/comment/{code}")
+    private ResponseEntity<NoticeComment> getComment(@PathVariable int code)
+    {
+
+        return ResponseEntity.ok().body(noticecommentService.showComment(code));
+    }
+
+    @GetMapping("/notice/comments/{parentCode}")
     private ResponseEntity<List<NoticeComment>> reCommentList(@PathVariable int parentCode)
     {
         List<NoticeComment> list = noticecommentService.findByReComment(parentCode);

@@ -12,13 +12,15 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BoardDTO {
+public class BoardDTO
+{
     private String token;           //게시글을 작성한 유저를 판별하기 위한 token
 
+    private String postPath;
     private String code;            //게시판 코드!
     private int boardCode;          //게시글 코드
     private String title;           //게시글 제목
-    private Date commonDate;        //게시글 작성 날짜
+    private Date date;        //게시글 작성 날짜
     private String desc;            //게시글 설명(내용)
     private int viewCount;          //게시글 조회 수
     private int likeCount;          //게시글 좋아요 수
@@ -35,7 +37,6 @@ public class BoardDTO {
     private String sitterLoc;
     private String hospitalName;
     private String hospitalAddress;
-
 
 
 }

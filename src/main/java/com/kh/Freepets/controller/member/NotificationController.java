@@ -20,7 +20,8 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @RequestMapping("/auth")
-public class NotificationController {
+public class NotificationController
+{
 
     @Autowired
     private NotificationService notificationService;
@@ -33,14 +34,16 @@ public class NotificationController {
     private TokenProvider tokenProvider;
 
     @GetMapping("/noti/{token}")
-    public ResponseEntity<List<NotificationDTO>> showByMember(@PathVariable String token) {
+    public ResponseEntity<List<NotificationDTO>> showByMember(@PathVariable String token)
+    {
 
         String userId = tokenProvider.validateAndGetUserId(token);
         log.info(userId);
         List<Notification> notiList = notificationService.showNotiByMember(userId);
         List<NotificationDTO> dtoList = new ArrayList<>();
 
-        for (Notification elem : notiList) {
+        for (Notification elem : notiList)
+        {
             NotificationDTO notificationDTO = NotificationDTO.builder()
                     .code(elem.getNotiCode())
                     .id(userId)
@@ -53,8 +56,10 @@ public class NotificationController {
             CommentDTO parentCommentDTO = null;
             BoardDTO boardDTO = null;
 
-            switch (elem.getBoardCode()) {
-                case 1: {
+            switch (elem.getBoardCode())
+            {
+                case 1:
+                {
 
                 }
                 break;
@@ -64,13 +69,15 @@ public class NotificationController {
                     break;
                 case 4:
                     break;
-                case 5: {
+                case 5:
+                {
                     NoticeComment childNoticeComment = noticeCommentService.showComment(elem.getChildCommentCode());
                     NoticeComment parentNoticeComment = null;
 
                     childCommentDTO = notificationService.createCommentDTO(childNoticeComment);
 
-                    if (elem.getParentCommentCode() > 0) {
+                    if (elem.getParentCommentCode() > 0)
+                    {
                         parentNoticeComment = noticeCommentService.showComment(elem.getParentCommentCode());
 
                         parentCommentDTO = notificationService.createCommentDTO(parentNoticeComment);
@@ -96,11 +103,12 @@ public class NotificationController {
     }
 
     @PostMapping("/noti/register")
-    public ResponseEntity<Notification> save(@RequestBody NotificationDTO dto) {
+    public ResponseEntity<Notification> save(@RequestBody NotificationDTO dto)
+    {
 
-        String userId = tokenProvider.validateAndGetUserId(dto.getToken());
+
         Notification vo = Notification.builder()
-                .id(userId)
+                .id(dto.getId())
                 .boardCode(dto.getBoardCode())
                 .postCode(dto.getPostCode())
                 .childCommentCode(dto.getChildCommentCode())
@@ -112,10 +120,12 @@ public class NotificationController {
     }
 
     @DeleteMapping("/noti/{code}")
-    public ResponseEntity<Boolean> delete(@PathVariable int code) {
+    public ResponseEntity<Boolean> delete(@PathVariable int code)
+    {
         Notification target = notificationService.deleteNoti(code);
 
-        if (target != null) {
+        if (target != null)
+        {
             return ResponseEntity.ok().body(true);
         }
 

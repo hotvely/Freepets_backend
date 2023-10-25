@@ -28,12 +28,21 @@ public class NoticeService
     }
 
 
-    public Page<Notice> search(String keyword, Pageable pageable)
+    public Page<Notice> searchTitleContent(String keyword, Pageable pageable)
     {
-        Page<Notice> reuslt = dao.search(keyword, pageable);
-        log.info("reuslt.toString() : @@@@@@@@@@@" + reuslt.toString());
-        return reuslt;
+        return dao.searchTitleContent(keyword, pageable);
     }
+
+    public Page<Notice> searchTitle(String keyword, Pageable pageable)
+    {
+        return dao.searchTitle(keyword, pageable);
+    }
+
+    public Page<Notice> searchContent(String keyword, Pageable pageable)
+    {
+        return dao.searchContent(keyword, pageable);
+    }
+
 
     public Notice show(int noticeCode)
     {

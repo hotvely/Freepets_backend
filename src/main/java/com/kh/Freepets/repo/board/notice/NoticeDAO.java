@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -17,8 +18,18 @@ public interface NoticeDAO extends JpaRepository<Notice, Integer>
     @Query(value = "SELECT * FROM NOTICE WHERE ID= :id ORDER BY NOTICE_CODE DESC", nativeQuery = true)
     List<Notice> findByMemberId(String id);
 
-    @Query(value = "SELECT * FROM NOTICE WHERE NOTICE_TITLE LIKE %:keyword% OR NOTICE_DESC LIKE %:keyword% ORDER BY NOTICE_CODE DESC", nativeQuery = true)
-    Page<Notice> search(String keyword, Pageable pageable);
+
+    @Query(value = "SELECT * FROM NOTICE WHERE NOTICE_TITLE LIKE %:keyword% OR NOTICE_DESC LIKE %:keyword% ORDER BY NOTICE_CODE", nativeQuery = true)
+    Page<Notice> searchTitleContent(String keyword, Pageable pageable);
+
+
+    @Query(value = "SELECT * FROM NOTICE WHERE NOTICE_DESC LIKE %:keyword% ORDER BY NOTICE_CODE", nativeQuery = true)
+    Page<Notice> searchTitle(String keyword, Pageable pageable);
+
+
+    @Query(value = "SELECT * FROM NOTICE WHERE NOTICE_TITLE LIKE %:keyword% ORDER BY NOTICE_CODE", nativeQuery = true)
+    Page<Notice> searchContent(String keyword, Pageable pageable);
+
 
     // 게시글 좋아요 갯수 업데이트
     @Transactional
