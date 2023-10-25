@@ -56,4 +56,17 @@ public class CommunityService {
         return commonDAO.findById(commonCode).orElse(null);
     }
 
+    // 검색 기능
+    public Page<Community> searchTitleAndDesc(String keyword, Pageable pageable){
+        return commonDAO.searchTitleAndDesc(keyword, pageable);
+    }
+
+    public Page<Community> searchTitle(String keyword, Pageable pageable){
+        return commonDAO.searchTitle(keyword, pageable);
+    }
+
+    public Page<Community> searchDesc(String keyword, Pageable pageable){
+        return commonDAO.searchDesc(keyword, pageable);
+    }
+
 }

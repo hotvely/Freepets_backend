@@ -2,9 +2,12 @@ package com.kh.Freepets.repo.board.community;
 
 import com.kh.Freepets.domain.board.community.Community;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -43,7 +46,23 @@ public interface CommunityDAO extends JpaRepository<Community, Integer> {
     @Query(value= "UPDATE COMMON SET COMMON_VIEW_COUNT = (COMMON_VIEW_COUNT + 1 ) WHERE COMMON_CODE = :commonCode", nativeQuery = true)
     int increaseViews (int commonCode);
 
-//    // 게시글 정렬
+    // 키워드 검색
+    @Transactional
+    @Modifying
+    @Query(value="SELECT * FROM COMMON WHERE COMMON_TITLE LIKE %:keyword% OR COMMON_DESC LIKE %:keyword% ORDER BY COMMON_CODE DESC" , nativeQuery = true)
+    Page<Community> searchTitleAndDesc(@Param("keyword") String keyword, Pageable pageable);
+
+    @Transactional
+    @Modifying
+    @Query(value="SELECT * FROM COMMON WHERE COMMON_TITLE LIKE %:keyword% ORDER BY COMMON_CODE DESC" , nativeQuery = true)
+    Page<Community> searchTitle(@Param("keyword") String keyword, Pageable pageable);
+
+    @Transactional
+    @Modifying
+    @Query(value="SELECT * FROM COMMON WHERE COMMON_DESC LIKE %:keyword% ORDER BY COMMON_CODE DESC" , nativeQuery = true)
+    Page<Community> searchDesc(@Param("keyword") String keyword, Pageable pageable);
+}
+
 //    // 조회순
 //    @Query(value = "SELECT * FROM COMMON ORDER BY COMMON_VIEW_COUNT DESC", nativeQuery = true)
 //    List<Community> sortCommonViews();
@@ -56,4 +75,4 @@ public interface CommunityDAO extends JpaRepository<Community, Integer> {
 //    @Query(value = "SELECT * FROM COMMON ORDER BY COMMON_COMMENT_COUNT DESC", nativeQuery = true)
 //    List<Community> sortCommonComments();
 
-}
+
