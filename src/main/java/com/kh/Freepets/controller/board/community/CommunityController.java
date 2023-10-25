@@ -53,13 +53,26 @@ public class CommunityController {
     //페이징 처리
     @GetMapping("/community")
     public ResponseEntity<Paging> commonList(
-            @RequestParam(name = "page", defaultValue = "1") int page){
-//            @RequestParam(name = "orderBy", defaultValue = "commonCode")String oderBy) {
+            @RequestParam(name = "page", defaultValue = "1") int page, @RequestParam(name = "orderBy", defaultValue = "commonCode") int orderBy) {
+//        log.info("orderBy : " + orderBy);
 
-        //기본정렬
-        Sort sort = Sort.by("commonCode").descending();
+        Sort sort;
+        switch (orderBy) {
+            case 1:
+            sort = Sort.by("commonCode").descending();
+            break;
+            case 2:
+                sort = Sort.by("commonViewCount").descending();
+                break;
+            case 3:
+            sort = Sort.by("commonCommentCount").descending();
+                break;
+            case 4:
+            sort = Sort.by("commonViewCount").descending();
+                break;
+        }
 
-        Pageable pageable = PageRequest.of(page - 1, 20, sort);
+        Pageable pageable = PageRequest.of(page - 1, 15);
         Page<Community> result = commonService.commonAll(pageable);
         Paging paging = new Paging();
         paging.setCommunityList(result.getContent());
