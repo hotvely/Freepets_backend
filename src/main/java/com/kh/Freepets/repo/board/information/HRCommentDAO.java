@@ -9,4 +9,7 @@ import java.util.List;
 public interface HRCommentDAO extends JpaRepository<HRComment, Integer> {
     @Query(value = "SELECT * FROM HR_COMMENT WHERE HOSPITAL_REVIEW_CODE = :hospitalReviewCode", nativeQuery = true)
     List<HRComment> showBoardAll(int hospitalReviewCode);
+
+    @Query(value = "SELECT * FROM HR_COMMENT WHERE SUPER_HR_COMMENT_CODE = :superCommentCode", nativeQuery = true)
+    List<HRComment> showReCommentAll(int superCommentCode);
 }

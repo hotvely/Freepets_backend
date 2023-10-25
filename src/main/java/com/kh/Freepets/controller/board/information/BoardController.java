@@ -115,7 +115,7 @@ public class BoardController
                     .build();
 
         hrService.create(hospitalReview);
-        return ResponseEntity.status(HttpStatus.OK).body(hrService.show(hospitalReview.getHospitalReviewCode()));
+        return ResponseEntity.status(HttpStatus.OK).body(hospitalReview);
     }
 
     // 게시글 수정

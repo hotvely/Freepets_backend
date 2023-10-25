@@ -30,6 +30,7 @@ public class WebSecurityConfig
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeHttpRequests()
                 .requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/api/sitter/{id}/review")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/auth/login")).permitAll()

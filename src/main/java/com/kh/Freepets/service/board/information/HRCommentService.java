@@ -35,6 +35,10 @@ public class HRCommentService {
         return hrComment;
     }
 
+    public List<HRComment> showReCommentAll(int superCommnetCode) {
+        return dao.showReCommentAll(superCommnetCode);
+    }
+
     public HRComment create(HRComment hrComment) {
         int result = hospitalReviewDAO.updateCommentCount(hrComment.getHospitalReview().getHospitalReviewCode());
         return dao.save(hrComment);

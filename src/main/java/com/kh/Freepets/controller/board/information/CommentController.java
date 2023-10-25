@@ -1,8 +1,11 @@
 package com.kh.Freepets.controller.board.information;
 
+import com.kh.Freepets.domain.board.CommentDTO;
 import com.kh.Freepets.domain.board.information.HRComment;
 import com.kh.Freepets.domain.board.information.HospitalReview;
 import com.kh.Freepets.domain.member.Member;
+import com.kh.Freepets.domain.member.MemberDTO;
+import com.kh.Freepets.security.TokenProvider;
 import com.kh.Freepets.service.board.information.HRCommentService;
 import com.kh.Freepets.service.file.FileInputHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,54 +18,48 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/info/*")
+@CrossOrigin(value = {"*"}, maxAge = 6000)
 public class CommentController {
 
     @Autowired
-    private FileInputHandler handler;
-    @Autowired
     private HRCommentService hrService;
+    @Autowired
+    private TokenProvider provider;
 
     // hrComment
 
     // 게시글 한 개 댓글 전체 보기
     @GetMapping("/hr/{hospitalReviewCode}/comment")
     public ResponseEntity<List<HRComment>> hrShowAll(@PathVariable int hospitalReviewCode) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(hrService.showBoardAll(hospitalReviewCode));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(hrService.showBoardAll(hospitalReviewCode));
     }
 
-    // 댓글 한 개 보기
-    @GetMapping("/hr/comment/{hrCommentCode}")
-    public ResponseEntity<HRComment> hrShow(@PathVariable int hrCommentCode) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(hrService.show(hrCommentCode));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+    // 부모 댓글에 달린 대댓글들 불러 오기
+    @GetMapping("/hr/comment/{superCode}")
+    public ResponseEntity<List<HRComment>> hrShow(@PathVariable int superCode) {
+        return ResponseEntity.status(HttpStatus.OK).body(hrService.showReCommentAll(superCode));
     }
 
     // 댓글 작성
     @PostMapping("/hr/comment")
-    public ResponseEntity<HRComment> hrCreate(String desc, MultipartFile img, int hospitalReviewCode, String id) {
-        try {
-            String imgName = handler.fileInput(img);
-            HRComment vo = new HRComment();
-            vo.setHrCommentDesc(desc);
-            vo.setHrCommentImg(imgName);
-            vo.setHrCommentReportYn('N');
-            HospitalReview hospitalReview = new HospitalReview();
-            hospitalReview.setHospitalReviewCode(hospitalReviewCode);
-            vo.setHospitalReview(hospitalReview);
-            Member member = new Member();
-            member.setId(id);
-            vo.setMember(member);
-            return ResponseEntity.status(HttpStatus.OK).body(hrService.create(vo));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+    public ResponseEntity<HRComment> hrCreate(@RequestBody CommentDTO commentDTO) {
+        String id = provider.validateAndGetUserId(commentDTO.getToken());
+        Member member = Member.builder()
+                .id(id)
+                .build();
+        HospitalReview hospitalReview = HospitalReview.builder()
+                .hospitalReviewCode(commentDTO.getPostCode())
+                .build();
+        HRComment hrComment = HRComment.builder()
+                .hospitalReview(hospitalReview)
+                .hrCommentCode(commentDTO.getCommentCode())
+                .hrCommentDesc(commentDTO.getCommentDesc())
+                .superHrCommentCode(commentDTO.getParentCommentCode())
+                .hrCommentReportYn('N')
+                .member(member)
+                .build();
+        hrService.create(hrComment);
+        return ResponseEntity.status(HttpStatus.OK).body(hrComment);
     }
 
     // 댓글 수정
@@ -78,11 +75,7 @@ public class CommentController {
     // 댓글 삭제
     @DeleteMapping("/hr/comment/{hrCommentCode}")
     public ResponseEntity<HRComment> hrDelete(@PathVariable int hrCommentCode) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(hrService.delete(hrCommentCode));
-        } catch(Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(hrService.delete(hrCommentCode));
     }
 
 }
