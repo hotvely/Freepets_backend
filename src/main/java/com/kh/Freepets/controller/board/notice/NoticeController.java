@@ -97,12 +97,8 @@ public class NoticeController
 
 
     @GetMapping("/notice/search/{keyword}/{sortNum}")
-    public ResponseEntity<Paging> findByKeyword(@PathVariable String keyword, @PathVariable int sortNum)
+    public ResponseEntity<Paging> findByKeyword(@PathVariable String keyword, @PathVariable int sortNum, @RequestParam(name = "page") int page)
     {
-
-        // URL 서치 관련해서 받는거 에러남;;;
-        int page = 1;
-
 
         try
         {
