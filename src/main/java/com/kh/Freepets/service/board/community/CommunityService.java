@@ -1,10 +1,17 @@
 package com.kh.Freepets.service.board.community;
 
 import com.kh.Freepets.domain.board.community.Community;
+import com.kh.Freepets.domain.board.community.QCommunity;
+import com.kh.Freepets.domain.board.sitter.Sitter;
 import com.kh.Freepets.repo.board.community.CommunityDAO;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.QueryFactory;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -14,59 +21,86 @@ import java.util.List;
 public class CommunityService {
     @Autowired
     private CommunityDAO commonDAO;
+    @Autowired
+    private JPAQueryFactory queryFactory;
+    private QCommunity qCommunity = QCommunity.community;
 
-    public Page<Community> commonAll(Pageable pageable){
+    public Page<Community> commonAll(Pageable pageable) {
         return commonDAO.findAll(pageable);
     }
+
     public Community showCommon(int id) {
         return commonDAO.findById(id).orElse(null);
     }
 
-    public List<Community> findByMemberId (String id){
+    public List<Community> findByMemberId(String id) {
         return commonDAO.findByMemberId(id);
     }
 
-    public Community create(Community common){
+    public Community create(Community common) {
         return commonDAO.save(common);
     }
 
-    public Community update(Community common){
+    public Community update(Community common) {
         Community target = commonDAO.findById(common.getCommonCode()).orElse(null);
-        if(target != null){
+        if (target != null) {
             return commonDAO.save(common);
         }
         return null;
     }
 
-    public Community delete(int commonCode){
+    public Community delete(int commonCode) {
         Community target = commonDAO.findById(commonCode).orElse(null);
         commonDAO.delete(target);
         return target;
     }
 
     // 게시글 좋아요 총 개수 증가
-    public Community increaseCommonLikes(int commonCode){
+    public Community increaseCommonLikes(int commonCode) {
         commonDAO.increaseCommonLikes(commonCode);
         return commonDAO.findById(commonCode).orElse(null);
 
     }
 
-    public Community decreaseCommonLikes(int commonCode){
+    public Community decreaseCommonLikes(int commonCode) {
         commonDAO.decreaseCommonLikes(commonCode);
         return commonDAO.findById(commonCode).orElse(null);
     }
 
     // 검색 기능
-    public Page<Community> searchTitleAndDesc(String keyword, Pageable pageable){
-        return commonDAO.searchTitleAndDesc(keyword, pageable);
-    }
+    public Page<Community> searchKeyword(String keyword, int keywordType, Pageable pageable) {
+        JPAQuery result;
+        BooleanBuilder builder = new BooleanBuilder();
+        switch (keywordType) {
+            case 1:
+                builder.or(qCommunity.commonTitle.contains(keyword));
+                builder.or(qCommunity.commonDesc.contains(keyword));
+                result = queryFactory.selectFrom(qCommunity).where(builder)
+                        .orderBy(qCommunity.commonCode.desc());
+                break;
+            case 2:
+                result = queryFactory.selectFrom(qCommunity).where(qCommunity.commonTitle.contains(keyword))
+                        .orderBy(qCommunity.commonCode.desc());
+                break;
+            case 3:
+                result = queryFactory.selectFrom(qCommunity).where(qCommunity.commonTitle.contains(keyword))
+                        .orderBy(qCommunity.commonCode.desc());
+                break;
 
-    public Page<Community> searchTitle(String keyword, Pageable pageable){
-        return commonDAO.searchTitle(keyword, pageable);
-    }
+            default:
+                result = null;
+                break;
+        }
+//        log.info("keyword"+ keyword);
+//        log.info("keywordType"+ keywordType);
 
-    public Page<Community> searchDesc(String keyword, Pageable pageable){
-        return commonDAO.searchDesc(keyword, pageable);
+        long totalCount = result.fetchCount();
+        result.offset(pageable.getOffset())
+                .limit(pageable.getPageSize());
+
+        List<Community> resultList = result.fetch();
+
+        return new PageImpl<>(resultList, pageable, totalCount);
     }
 
 }

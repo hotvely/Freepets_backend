@@ -19,15 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @CrossOrigin(origins = {"*"},maxAge = 6000)
@@ -55,6 +47,7 @@ public class CommunityController {
     public ResponseEntity<Paging> commonList(
             @RequestParam(name = "page", defaultValue = "1") int page, @RequestParam(name = "orderBy", defaultValue = "1") int orderBy) {
         Sort sort;
+
         switch (orderBy) {
             case 1: sort = Sort.by("commonCode").descending();
             break;
@@ -71,6 +64,30 @@ public class CommunityController {
 
         Pageable pageable = PageRequest.of(page - 1, 15, sort);
         Page<Community> result = commonService.commonAll(pageable);
+        Paging paging = new Paging();
+        paging.setCommunityList(result.getContent());
+        paging.setTotalCount(result.getTotalElements());
+        paging.setTotalPages(result.getTotalPages());
+        paging.setGetNumber(result.getNumber());
+        paging.setHasNext(result.hasNext());
+        paging.setHasPrev(result.hasPrevious());
+        paging.setFirst(result.isFirst());
+
+        return ResponseEntity.status(HttpStatus.OK).body(paging);
+    }
+
+    //일반게시판 검색 GET - http://localhost:8080/api/community/search
+    @GetMapping("/community/search")
+    public ResponseEntity<Paging> searchCommon(
+            @RequestParam(name = "page", defaultValue = "1") int page, @RequestParam String searchKeyword, @RequestParam(name="searchType", defaultValue = "1") int searchType){
+//        log.info("page" + page);
+//        log.info("searchKeyword" + searchKeyword);
+//        log.info("searchType" + searchType);
+
+
+        Pageable pageable = PageRequest.of(page - 1, 15);
+
+        Page<Community> result = commonService.searchKeyword(searchKeyword, searchType, pageable);
         Paging paging = new Paging();
         paging.setCommunityList(result.getContent());
         paging.setTotalCount(result.getTotalElements());
@@ -171,31 +188,5 @@ public class CommunityController {
         }
 
     }
-//
-//    //일반게시판 조회순 정렬 GET - http://localhost:8080/api/community/sortviews
-//    @GetMapping("/community/sortviews")
-//    public ResponseEntity<List<Community>> sortCommonViews(@RequestParam(name = "page", defaultValue = "1") int page) {
-//        Sort sort = Sort.by("commonViewCount").descending();
-//        Pageable pageable = PageRequest.of(page - 1, 10, sort);
-//        Page<Community> result = commonService.commonAll(pageable);
-//        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
-//    }
-//
-//    //일반게시판 좋아요순 정렬 GET - http://localhost:8080/api/community/sortlikes
-//    @GetMapping("/community/sortlikes")
-//    public ResponseEntity<List<Community>> sortCommonLikes(@RequestParam(name = "page", defaultValue = "1") int page) {
-//        Sort sort = Sort.by("commonLikeCount").descending();
-//        Pageable pageable = PageRequest.of(page - 1, 10, sort);
-//        Page<Community> result = commonService.commonAll(pageable);
-//        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
-//    }
-//
-//    //일반게시판 댓글순 정렬 GET - http://localhost:8080/api/community/sortcomments
-//    @GetMapping("/community/sortcomments")
-//    public ResponseEntity<List<Community>> sortCommonComments(@RequestParam(name = "page", defaultValue = "1") int page) {
-//        Sort sort = Sort.by("commonCommentCount").descending();
-//        Pageable pageable = PageRequest.of(page - 1, 10, sort);
-//        Page<Community> result = commonService.commonAll(pageable);
-//        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
-//    }
+
 }
