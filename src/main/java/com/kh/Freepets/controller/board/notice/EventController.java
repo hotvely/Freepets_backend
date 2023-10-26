@@ -20,10 +20,10 @@ public class EventController
     EventService eventService;
 
     @GetMapping("/event")
-    public ResponseEntity<List<Event>> showAll()
+    public ResponseEntity<List<Event>> showAll(@RequestParam(name = "year") int year)
     {
         log.info("일단 전체 조회 들어는 옴..");
-        return ResponseEntity.ok().body(eventService.showAll());
+        return ResponseEntity.ok().body(eventService.showYear(year));
     }
 
 

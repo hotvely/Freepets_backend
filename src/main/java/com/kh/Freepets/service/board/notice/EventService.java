@@ -20,6 +20,13 @@ public class EventService
         return dao.findAll();
     }
 
+    public List<Event> showYear(int year)
+    {
+        return dao.showYear(year);
+
+    }
+
+
     public Event create(Event event)
     {
         return dao.save(event);
