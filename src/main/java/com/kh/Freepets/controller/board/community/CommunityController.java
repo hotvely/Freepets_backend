@@ -1,9 +1,14 @@
 package com.kh.Freepets.controller.board.community;
 
+import com.kh.Freepets.domain.board.BoardDTO;
 import com.kh.Freepets.domain.board.community.Community;
 import com.kh.Freepets.domain.board.community.CommunityLike;
+import com.kh.Freepets.domain.member.Member;
+import com.kh.Freepets.security.TokenProvider;
 import com.kh.Freepets.service.board.community.CommunityLikeService;
 import com.kh.Freepets.service.board.community.CommunityService;
+import com.kh.Freepets.service.file.FileInputHandler;
+import com.kh.Freepets.service.member.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,8 +18,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,6 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Slf4j
+@CrossOrigin(origins = {"*"},maxAge = 6000)
 @RestController
 @RequestMapping("/api/*")
 public class CommunityController {
@@ -31,6 +39,14 @@ public class CommunityController {
     private CommunityLikeService commonLikeService;
 //    @Value("${spring.servlet.multipart.location}")
 //    private String uploadPath;
+    @Autowired
+    private FileInputHandler handler;
+
+    @Autowired
+    private TokenProvider tokenProvider;
+
+    @Autowired
+    private MemberService memberService;
 
     //일반게시판 전체 조회 GET - http://localhost:8080/api/community
     //페이징 처리
@@ -46,33 +62,41 @@ public class CommunityController {
 
     //일반게시판 추가 POST - http://localhost:8080/api/community
     @PostMapping("/community")
-    public ResponseEntity<Community> createCommon(@RequestBody Community vo) {
-        //유튜브 첨부 찾아보기
+    public ResponseEntity<Community> createCommon(BoardDTO dto) {
+        log.info("community : " + dto.getTitle());
+        log.info("community : " +  dto.toString());
         //파일 업로드
 
-//        MultipartFile file, String title, String desc
-//        String originalFile = file.getOriginalFilename();
-//        String realFile = originalFile.substring(originalFile.indexOf("\\")+1);
-//        String uuid = UUID.randomUUID().toString();
-//        String saveFile = uploadPath + File.separator + uuid + "_" + realFile;
-//        Path pathFile = Paths.get(saveFile);
-//        try{
-//            file.transferTo(pathFile);
-//        }catch (IOException e ) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        Community vo = new Community();
-//        vo.setCommonAddFileUrl(uuid + "_" + realFile);
-//        vo.setCommonTitle(title);
-//        vo.setCommonDesc(desc);
-//        return ResponseEntity.status(HttpStatus.OK).body(commonService.create(vo));
-        return ResponseEntity.status(HttpStatus.OK).body(commonService.create(vo));
-    }
+            String userId = tokenProvider.validateAndGetUserId(dto.getToken());
+            Member member = memberService.findByIdUser(userId);
+
+            Community vo = Community.builder()
+                    .commonTitle(dto.getTitle())
+                    .commonDesc(dto.getDesc())
+                    .member(member)
+                    .build();
+//            vo.setCommonTitle(commonTitle);
+//            vo.setCommonDesc(commonDesc);
+//            vo.setCommonAddFileUrl(fileName);
+//            Member member = new Member();
+//            member.setId(id);
+            return ResponseEntity.status(HttpStatus.OK).body(commonService.create(vo));
+        }
+
 
     //일반게시판 수정 PUT - http://localhost:8080/api/community
     @PutMapping("/community")
-    public ResponseEntity<Community> updateCommon(@RequestBody Community vo) {
+    public ResponseEntity<Community> updateCommon(@RequestBody BoardDTO dto) {
+        log.info("community : " + dto.getToken());
+        log.info("community : " +  dto.toString());
+
+        String id = tokenProvider.validateAndGetUserId(dto.getToken());
+        Member member = memberService.findByIdUser(id);
+        Community vo = Community.builder()
+                .commonTitle(dto.getTitle())
+                .commonDesc(dto.getDesc())
+                .member(member)
+                .build();
         return ResponseEntity.status(HttpStatus.OK).body(commonService.update(vo));
     }
 

@@ -22,7 +22,7 @@ public class Notice
     @Id
     @Column(name = "NOTICE_CODE")
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "noticeSequence")
-    @SequenceGenerator(name = "noticeSequence", sequenceName = "SEQ_NOTICE", allocationSize = 1)
+    @SequenceGenerator(name = "noticeSequence", sequenceName = "SEQ_NOTICE", allocationSize = 1, initialValue = 1)
     private int noticeCode;
 
 

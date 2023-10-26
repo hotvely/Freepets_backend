@@ -3,6 +3,7 @@ package com.kh.Freepets.domain.board.community;
 import com.kh.Freepets.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
@@ -11,6 +12,7 @@ import org.springframework.boot.context.properties.bind.Name;
 import java.util.Date;
 
 @Data
+@Builder
 @Entity
 @Table(name = "COMMON")
 @NoArgsConstructor
