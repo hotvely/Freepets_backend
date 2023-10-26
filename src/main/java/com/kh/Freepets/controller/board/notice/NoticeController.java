@@ -155,7 +155,7 @@ public class NoticeController
 
     // 공지사항 게시글 추가하기
     @PostMapping("/notice")
-    public ResponseEntity<Notice> createNotice(BoardDTO boardDTO)
+    public ResponseEntity<Notice> createNotice(@RequestBody BoardDTO boardDTO)
     {
         log.info("프론트에서 받은 boardDTO : " + boardDTO.toString());
 
