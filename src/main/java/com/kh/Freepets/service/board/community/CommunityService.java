@@ -91,8 +91,9 @@ public class CommunityService {
                 result = null;
                 break;
         }
-//        log.info("keyword"+ keyword);
-//        log.info("keywordType"+ keywordType);
+        log.info("keyword"+ keyword);
+        log.info("keywordType"+ keywordType);
+//        log.info("orderBy"+orderBy);
 
         long totalCount = result.fetchCount();
         result.offset(pageable.getOffset())
@@ -102,5 +103,18 @@ public class CommunityService {
 
         return new PageImpl<>(resultList, pageable, totalCount);
     }
+
+
+//        if (orderBy == 2) {
+//            result.orderBy(qCommunity.commonLikeCount.desc());
+//        } else if (orderBy == 3) {
+//            result.orderBy(qCommunity.commonCommentCount.desc());
+//        } else if (orderBy == 4) {
+//            result.orderBy(qCommunity.commonViewCount.desc());
+//        } else {
+//            result.orderBy(qCommunity.commonCode.desc());
+//        }
+
+
 
 }

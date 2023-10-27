@@ -20,10 +20,15 @@ public class CommunityCommentService {
         log.info("왜 안나와아ㅏㅏ");
         return commonCommentDAO.commonCommentAll(commonCode);
     }
+    public List<CommunityComment> commonReCommentAll(int commonCommentCodeSuper){
+        return commonCommentDAO.commonReCommentAll(commonCommentCodeSuper);
+    }
     public CommunityComment showCommonComment(int commonCommentCode) {
         log.info("왜 안나와아ㅏㅏ");
         return commonCommentDAO.findById(commonCommentCode).orElse(null);
     }
+
+
 
     public CommunityComment create(CommunityComment commonComment){
         return commonCommentDAO.save(commonComment);

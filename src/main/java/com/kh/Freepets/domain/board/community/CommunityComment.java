@@ -32,8 +32,8 @@ public class CommunityComment {
     private String commonCommentAddFileUrl;
 
 
-    @Column(name="COMMON_CODE")
-    private int commonCode;
+//    @Column(name="COMMON_CODE")
+//    private int commonCode;
 
     // 댓글 신고
 //    @ManyToOne
@@ -43,6 +43,10 @@ public class CommunityComment {
     @ManyToOne
     @JoinColumn(name="ID")
     private Member member;
+
+    @ManyToOne
+    @JoinColumn(name="commonCode")
+    private Community community;
 
     //private Report report;
 }

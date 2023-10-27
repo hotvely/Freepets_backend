@@ -23,6 +23,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequestMapping("/api/*")
+@CrossOrigin
 public class CommunityCommentController {
     @Autowired
     private CommunityService commonService;
@@ -32,10 +33,16 @@ public class CommunityCommentController {
 //    private String uploadPath;
 
     //일반 게시글 한 개에 따른 댓글 전체 조회 GET - http://localhost:8080/api/community/1/comment
-    @GetMapping("/community/{commonCode}/comment")
+    @GetMapping("/community/{commonCode}/comments")
     private ResponseEntity<List<CommunityComment>> commonCommentList(@PathVariable int commonCode){
         log.info("여기서 나오냐고ㅜㅜ");
       return ResponseEntity.status(HttpStatus.OK).body(commonCommentService.commonCommentAll(commonCode));
+    }
+
+    // 부모 댓글에 따른 자식 댓글 보기 GET - http://localhost:8080/api/community/comment/{commonCommentCode}
+    @GetMapping("/community/comment/{commonCommentCodeSuper}")
+    private ResponseEntity<List<CommunityComment>> showCommonComment(@PathVariable int commonCommentCodeSuper) {
+        return ResponseEntity.status(HttpStatus.OK).body(commonCommentService.commonReCommentAll(commonCommentCodeSuper));
     }
 
     //일반 게시글 댓글 추가 POST - http://localhost:8080/api/community/comment

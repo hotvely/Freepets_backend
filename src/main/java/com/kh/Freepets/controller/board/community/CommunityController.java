@@ -3,6 +3,7 @@ package com.kh.Freepets.controller.board.community;
 import com.kh.Freepets.domain.board.BoardDTO;
 import com.kh.Freepets.domain.board.community.Community;
 import com.kh.Freepets.domain.board.community.CommunityLike;
+import com.kh.Freepets.domain.board.community.QCommunity;
 import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.domain.util.Paging;
 import com.kh.Freepets.security.TokenProvider;
@@ -10,6 +11,9 @@ import com.kh.Freepets.service.board.community.CommunityLikeService;
 import com.kh.Freepets.service.board.community.CommunityService;
 import com.kh.Freepets.service.file.FileInputHandler;
 import com.kh.Freepets.service.member.MemberService;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,6 +44,9 @@ public class CommunityController {
 
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private JPAQueryFactory queryFactory;
+    private QCommunity qCommunity = QCommunity.community;
 
     //일반게시판 전체 조회 GET - http://localhost:8080/api/community
     //페이징 처리
@@ -83,6 +90,18 @@ public class CommunityController {
 //        log.info("page" + page);
 //        log.info("searchKeyword" + searchKeyword);
 //        log.info("searchType" + searchType);
+
+//        Sort sort = Sort.by("commonCode").descending();
+//        BooleanBuilder builder = new BooleanBuilder();
+//        if (orderBy == 2) {
+//            BooleanExpression expression = qCommunity.commonLikeCount.eq(orderBy);
+//        } else if (orderBy == 3) {
+//            BooleanExpression expression = qCommunity.commonCommentCount.eq(orderBy);
+//        } else if (orderBy == 4) {
+//            BooleanExpression expression = qCommunity.commonViewCount.eq(orderBy);
+//        } else {
+//            BooleanExpression expression = qCommunity.commonCode.eq(orderBy);
+//        }
 
 
         Pageable pageable = PageRequest.of(page - 1, 15);
