@@ -50,9 +50,9 @@ public class SitterService {
     }
 
     public Sitter delete(int id) {
-        Sitter freeMarket = show(id);
-        sitterDAO.delete(freeMarket);
-        return freeMarket;
+        Sitter sitter = show(id);
+        sitterDAO.delete(sitter);
+        return sitter;
     }
 
     public double updateRatings(String id) {

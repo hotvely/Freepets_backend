@@ -47,6 +47,7 @@ public enum BoardType
 
             case "community" -> community;
             case "lost" -> lost;
+            case "sitter" -> sitter;
             case "hospitalReview" -> hospitalReview;
             case "notice" -> notice;
             case "customerService" -> customerService;
