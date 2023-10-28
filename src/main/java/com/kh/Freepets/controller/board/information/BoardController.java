@@ -120,8 +120,26 @@ public class BoardController
 
     // 게시글 수정
     @PutMapping("/hr")
-    public ResponseEntity<HospitalReview> hrUpdate(@RequestBody HospitalReview hospitalReview) {
-        return ResponseEntity.status(HttpStatus.OK).body(hrService.update(hospitalReview));
+    public ResponseEntity<HospitalReview> hrUpdate(@RequestBody BoardDTO boardDTO) {
+        String id = provider.validateAndGetUserId(boardDTO.getToken());
+        Member member = Member.builder()
+                .id(id)
+                .build();
+        HospitalReview hospitalReview = hrService.show(boardDTO.getBoardCode());
+        HospitalReview result = HospitalReview.builder()
+                .hospitalReviewCode(boardDTO.getBoardCode())
+                .hospitalReviewTitle(boardDTO.getTitle())
+                .hospitalReviewDesc(boardDTO.getDesc())
+                .hospitalReviewViews(hospitalReview.getHospitalReviewViews())
+                .hospitalReviewLike(hospitalReview.getHospitalReviewLike())
+                .hospitalReviewCommentCount(hospitalReview.getHospitalReviewCommentCount())
+                .hospitalReviewDate(hospitalReview.getHospitalReviewDate())
+                .hospitalName(boardDTO.getHospitalName())
+                .hospitalAddress(boardDTO.getHospitalAddress())
+                .hospitalReviewDeleteYn('N')
+                .member(member)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(hrService.update(result));
     }
 
     // 게시글 삭제
