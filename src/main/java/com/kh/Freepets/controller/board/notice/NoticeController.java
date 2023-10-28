@@ -19,18 +19,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/*")
 @CrossOrigin
-public class NoticeController
-{
+public class NoticeController {
     @Autowired
     private TokenProvider tokenProvider;
 
@@ -49,14 +46,11 @@ public class NoticeController
 
     // 공지사항 게시글 전체보기
     @GetMapping("/notice")
-    public ResponseEntity<Paging> showAll(@RequestParam(name = "page", defaultValue = "1") int page, @RequestParam(name = "sortNum", defaultValue = "0") int sortNum)
-    {
+    public ResponseEntity<Paging> showAll(@RequestParam(name = "page", defaultValue = "1") int page, @RequestParam(name = "sortNum", defaultValue = "0") int sortNum) {
         log.info("get ShowALL 들어옴");
-        try
-        {
+        try {
             Sort sort = null;
-            switch (sortNum)
-            {
+            switch (sortNum) {
                 case 1:
                     sort = Sort.by("noticeCode").descending();
                     break;
@@ -87,9 +81,7 @@ public class NoticeController
 
 //            log.info("게시글 페이지징 별로 보기.. : " + result.getContent());
             return ResponseEntity.status(HttpStatus.OK).body(paging);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
@@ -97,17 +89,14 @@ public class NoticeController
 
 
     @GetMapping("/notice/search/{keyword}/{sortNum}")
-    public ResponseEntity<Paging> findByKeyword(@PathVariable String keyword, @PathVariable int sortNum, @RequestParam(name = "page") int page)
-    {
+    public ResponseEntity<Paging> findByKeyword(@PathVariable String keyword, @PathVariable int sortNum, @RequestParam(name = "page") int page) {
 
-        try
-        {
+        try {
 
             Page<Notice> result = null;
             Pageable pageable = PageRequest.of(page - 1, 10);
 
-            switch (sortNum)
-            {
+            switch (sortNum) {
                 case 1:
                     result = noticeService.searchTitleContent(keyword, pageable);
                     break;
@@ -129,9 +118,7 @@ public class NoticeController
             paging.setFirst(result.isFirst());
             log.info(paging.toString());
             return ResponseEntity.ok().body(paging);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             log.info(e.toString());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
@@ -142,8 +129,7 @@ public class NoticeController
 
     // 공지사항 게시글 상세보기
     @GetMapping("/notice/{noticeCode}")
-    public ResponseEntity<Notice> showNotice(@PathVariable int noticeCode)
-    {
+    public ResponseEntity<Notice> showNotice(@PathVariable int noticeCode) {
         Notice vo = noticeService.show(noticeCode);
         vo.setNoticeViews(vo.getNoticeViews() + 1);
 
@@ -155,8 +141,7 @@ public class NoticeController
 
     // 공지사항 게시글 추가하기
     @PostMapping("/notice")
-    public ResponseEntity<Notice> createNotice(@RequestBody BoardDTO boardDTO)
-    {
+    public ResponseEntity<Notice> createNotice(@RequestBody BoardDTO boardDTO) {
         log.info("프론트에서 받은 boardDTO : " + boardDTO.toString());
 
         String userId = tokenProvider.validateAndGetUserId(boardDTO.getToken());
@@ -179,33 +164,25 @@ public class NoticeController
 
     // 공지사항 게시글 수정하기
     @PutMapping("/notice")
-    public ResponseEntity<Notice> updateNotice(@RequestBody BoardDTO boardDTO)
-    {
+    public ResponseEntity<Notice> updateNotice(@RequestBody BoardDTO boardDTO) {
         log.info("UpdateNOTICE : " + boardDTO.toString());
-        Notice dbNotice = noticeService.show(boardDTO.getBoardCode());
-        String userId = tokenProvider.validateAndGetUserId(boardDTO.getToken());
-        if (dbNotice.getMember().getId().equals(userId))
-        {
-            Member member = memberService.findByIdUser(userId);
-            Notice vo = Notice.builder()
-                    .noticeCode(boardDTO.getBoardCode())
-                    .noticeTitle(boardDTO.getTitle())
-                    .noticeAddFileUrl(boardDTO.getUploadfileUrl())
-                    .noticeDesc(boardDTO.getDesc())
-                    .noticeCommentCount(boardDTO.getCommentCount())
-                    .noticeLike(boardDTO.getLikeCount())
-                    .member(member)
-                    .build();
-            return ResponseEntity.status(HttpStatus.OK).body(noticeService.update(vo));
-        }
 
-        return ResponseEntity.badRequest().build();
+        Notice vo = Notice.builder()
+                .noticeCode(boardDTO.getBoardCode())
+                .noticeTitle(boardDTO.getTitle())
+                .noticeAddFileUrl(boardDTO.getUploadfileUrl())
+                .noticeDesc(boardDTO.getDesc())
+                .noticeCommentCount(boardDTO.getCommentCount())
+                .noticeLike(boardDTO.getLikeCount())
+
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(noticeService.update(vo));
+
     }
 
     // 공지사항 게시글 삭제하기
     @DeleteMapping("/notice/{noticeCode}")
-    public ResponseEntity<Notice> deleteNotice(@PathVariable int noticeCode)
-    {
+    public ResponseEntity<Notice> deleteNotice(@PathVariable int noticeCode) {
         log.info("NOTICE CODE : " + noticeCode);
 
 
@@ -216,8 +193,7 @@ public class NoticeController
     // 동시에 좋아요 갯수 추가 (NoticeDAO에 쿼리문 작성 )
     // 동시에 좋아요 갯수 중복 처리 (NoticeLikeDAO에 쿼리문 작성 )
     @PostMapping("/notice/like")
-    public ResponseEntity<NoticeLike> createNoticeLike(@RequestBody NoticeLikeDTO dto)
-    {
+    public ResponseEntity<NoticeLike> createNoticeLike(@RequestBody NoticeLikeDTO dto) {
         //
         log.info("공지사항 좋아요 추가 삭제");
         log.info(dto.getToken());
@@ -238,21 +214,17 @@ public class NoticeController
                     .build();
             return ResponseEntity.status(HttpStatus.OK).body(noticelikeservice.create(noticeLike));
 
-        }
-        else        //DB에 정보가 있는 경우 처리 !
+        } else        //DB에 정보가 있는 경우 처리 !
         {
             log.info("target이 널아니앙야아아아아@#@@ !!");
             // 전달받은 아이디,게시글코드 하고 공지사항좋아요 DB에 있는 아이디,게시글 코드가 같으면 삭제하고
-            if (target.getMember().getId().equals(userId) && target.getNotice().getNoticeCode() == dto.getPostCode())
-            {
+            if (target.getMember().getId().equals(userId) && target.getNotice().getNoticeCode() == dto.getPostCode()) {
                 Notice notice = noticeService.deletelike(dto.getPostCode());
                 NoticeLike noticeLike = noticelikeservice.delete(target.getNoticeLikeCode());
 
 
                 return ResponseEntity.ok().body(null);
-            }
-            else
-            {
+            } else {
                 //유저 이름이 다르거나, 게시글 번호가 다르거나 등과 같은 현상이 일어남..
                 return ResponseEntity.ok().build();
             }
