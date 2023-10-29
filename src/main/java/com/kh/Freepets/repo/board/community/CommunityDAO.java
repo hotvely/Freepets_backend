@@ -20,13 +20,13 @@ public interface CommunityDAO extends JpaRepository<Community, Integer> {
     @Transactional
     @Modifying
     @Query(value = "UPDATE COMMON SET COMMON_LIKE_COUNT = (COMMON_LIKE_COUNT + 1) WHERE COMMON_CODE = :commonCode", nativeQuery = true)
-    int increaseCommonLikes(int commonCode);
+    int updateCommonLike(int commonCode);
 
     // 게시글 좋아요 총 개수 감소
     @Transactional
     @Modifying
     @Query(value = "UPDATE COMMON SET COMMON_LIKE_COUNT = (COMMON_LIKE_COUNT - 1) WHERE COMMON_CODE = :commonCode", nativeQuery = true)
-    int decreaseCommonLikes(int commonCode);
+    int deleteCommonLike(int commonCode);
 
     // 댓글 총 개수 증가
     @Transactional

@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kh.Freepets.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.util.Date;
 @Data
+@Builder
 @Entity
 @Table(name = "COMMON_COMMENT")
 @NoArgsConstructor

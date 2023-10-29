@@ -5,6 +5,7 @@ import com.kh.Freepets.domain.board.community.Community;
 import com.kh.Freepets.domain.board.community.CommunityLike;
 import com.kh.Freepets.domain.board.community.QCommunity;
 import com.kh.Freepets.domain.member.Member;
+import com.kh.Freepets.domain.member.MemberDTO;
 import com.kh.Freepets.domain.util.Paging;
 import com.kh.Freepets.security.TokenProvider;
 import com.kh.Freepets.service.board.community.CommunityLikeService;
@@ -181,31 +182,46 @@ public class CommunityController {
     //중복 처리
     @PostMapping("/community/like")
     public ResponseEntity<CommunityLike> createCommonLike(@RequestBody CommunityLike commonLike) {
+        BoardDTO boardDTO = new BoardDTO();
+        String userId = tokenProvider.validateAndGetUserId(boardDTO.getToken());
+        Member member = memberService.findByIdUser(userId);
+        log.info("member->" + member);
 
-        CommunityLike target = commonLikeService.duplicatedLike(commonLike.getCommunity().getMember().getId(), commonLike.getCommunity().getCommonCode());
+        CommunityLike target = commonLikeService.likesBymemberAndCommunity(commonLike.getMember().getId(), commonLike.getCommunity().getCommonCode());
+
         if (target == null) {
-            commonService.increaseCommonLikes(commonLike.getCommunity().getCommonCode());
+            Community community = commonService.updateCommonLike(commonLike.getCommunity().getCommonCode());
+            CommunityLike communityLike = CommunityLike.builder()
+                                     .community(community)
+                                     .member(member)
+                                     .build();
             return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.create(commonLike));
         } else {
-
+            if(target.getMember().getId().equals(userId) && target.getCommunity().getCommonCode() == boardDTO.getBoardCode()){
+              Community community = commonService.deleteCommonLike(boardDTO.getBoardCode());
+              CommunityLike communityLike = commonLikeService.delete(target.getCommonLikeCode());
+              return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.delete(commonLike.getCommonLikeCode()));
+            }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+
+
 
     }
 
     //일반게시판 좋아요 삭제 DELETE - http://localhost:8080/api/community/like/1
     //추후 기능 부가 및 수정 필요
-    @DeleteMapping("/community/like/{commonLikeCode}")
-    public ResponseEntity<CommunityLike> deleteCommonLike(@PathVariable int commonLikeCode) {
-        CommunityLike communityLike = commonLikeService.showCommonLike(commonLikeCode);
-        CommunityLike target = commonLikeService.duplicatedLike(communityLike.getMember().getId(), communityLike.getCommunity().getCommonCode());
-        if (target != null) {
-            commonService.decreaseCommonLikes(communityLike.getCommunity().getCommonCode());
-            return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.delete(commonLikeCode));
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+//    @DeleteMapping("/community/like/{commonLikeCode}")
+//    public ResponseEntity<CommunityLike> deleteCommonLike(@PathVariable int commonLikeCode) {
+//        CommunityLike communityLike = commonLikeService.showCommonLike(commonLikeCode);
+//        CommunityLike target = commonLikeService.duplicatedLike(communityLike.getMember().getId(), communityLike.getCommunity().getCommonCode());
+//        if (target != null) {
+//            commonService.decreaseCommonLikes(communityLike.getCommunity().getCommonCode());
+//            return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.delete(commonLikeCode));
+//        } else {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+//        }
 
     }
 
-}
+

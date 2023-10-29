@@ -1,9 +1,14 @@
 package com.kh.Freepets.service.board.community;
 
+import com.kh.Freepets.domain.board.BoardDTO;
 import com.kh.Freepets.domain.board.community.Community;
+import com.kh.Freepets.domain.board.community.CommunityLike;
 import com.kh.Freepets.domain.board.community.QCommunity;
 import com.kh.Freepets.domain.board.sitter.Sitter;
+import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.repo.board.community.CommunityDAO;
+import com.kh.Freepets.repo.board.community.CommunityLikeDAO;
+import com.kh.Freepets.service.member.MemberService;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryFactory;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -21,6 +26,10 @@ import java.util.List;
 public class CommunityService {
     @Autowired
     private CommunityDAO commonDAO;
+    @Autowired
+    private CommunityLikeDAO commonLikeDAO;
+    @Autowired
+    private MemberService memberService;
     @Autowired
     private JPAQueryFactory queryFactory;
     private QCommunity qCommunity = QCommunity.community;
@@ -55,15 +64,16 @@ public class CommunityService {
         return target;
     }
 
+    // 게시글 좋아요 및 좋아요 해제
     // 게시글 좋아요 총 개수 증가
-    public Community increaseCommonLikes(int commonCode) {
-        commonDAO.increaseCommonLikes(commonCode);
+    public Community updateCommonLike(int commonCode) {
+        commonDAO.updateCommonLike(commonCode);
         return commonDAO.findById(commonCode).orElse(null);
 
     }
 
-    public Community decreaseCommonLikes(int commonCode) {
-        commonDAO.decreaseCommonLikes(commonCode);
+    public Community deleteCommonLike(int commonCode) {
+        commonDAO.deleteCommonLike(commonCode);
         return commonDAO.findById(commonCode).orElse(null);
     }
 
@@ -114,6 +124,18 @@ public class CommunityService {
 //        } else {
 //            result.orderBy(qCommunity.commonCode.desc());
 //        }
+//
+// 게시글 좋아요 총 개수 증가
+//    public Community updateCommonLike(int commonCode) {
+//        commonDAO.updateCommonLike(commonCode);
+//        return commonDAO.findById(commonCode).orElse(null);
+//
+//    }
+//
+//    public Community deleteCommonLike(int commonCode) {
+//        commonDAO.deleteCommonLike(commonCode);
+//        return commonDAO.findById(commonCode).orElse(null);
+//    }
 
 
 

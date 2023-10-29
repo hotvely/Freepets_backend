@@ -3,10 +3,12 @@ package com.kh.Freepets.domain.board.community;
 import com.kh.Freepets.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @Entity
 @Table(name = "COMMON_LIKE")
 @NoArgsConstructor
@@ -24,4 +26,5 @@ public class CommunityLike {
     @ManyToOne
     @JoinColumn(name="ID")
     private Member member;
+
 }
