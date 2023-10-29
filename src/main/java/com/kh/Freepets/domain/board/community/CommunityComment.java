@@ -34,21 +34,12 @@ public class CommunityComment {
     private String commonCommentAddFileUrl;
 
 
-//    @Column(name="COMMON_CODE")
-//    private int commonCode;
-
-    // 댓글 신고
-//    @ManyToOne
-//    @JoinColumn(name="COMMON_CODE")
-//    private Community community;
-
     @ManyToOne
     @JoinColumn(name="ID")
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name="commonCode")
+    @JoinColumn(name="COMMON_CODE")
     private Community community;
 
-    //private Report report;
 }

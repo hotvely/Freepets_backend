@@ -35,14 +35,10 @@ public class CommunityController {
     private CommunityService commonService;
     @Autowired
     private CommunityLikeService commonLikeService;
-//    @Value("${spring.servlet.multipart.location}")
-//    private String uploadPath;
     @Autowired
     private FileInputHandler handler;
-
     @Autowired
     private TokenProvider tokenProvider;
-
     @Autowired
     private MemberService memberService;
     @Autowired
@@ -57,16 +53,21 @@ public class CommunityController {
         Sort sort;
 
         switch (orderBy) {
-            case 1: sort = Sort.by("commonCode").descending();
-            break;
-            case 2: sort = Sort.by("commonLikeCount").descending();
-            break;
-            case 3: sort = Sort.by("commonCommentCount").descending();
-            break;
-            case 4: sort = Sort.by("commonViewCount").descending();
-            break;
-            default: sort = Sort.by("commonCode").descending();
-            break;
+            case 1:
+                sort = Sort.by("commonCode").descending();
+                break;
+            case 2:
+                sort = Sort.by("commonLikeCount").descending();
+                break;
+            case 3:
+                sort = Sort.by("commonCommentCount").descending();
+                break;
+            case 4:
+                sort = Sort.by("commonViewCount").descending();
+                break;
+            default:
+                sort = Sort.by("commonCode").descending();
+                break;
         }
         log.info("orderBy" + orderBy);
 
@@ -87,7 +88,7 @@ public class CommunityController {
     //일반게시판 검색 GET - http://localhost:8080/api/community/search
     @GetMapping("/community/search")
     public ResponseEntity<Paging> searchCommon(
-            @RequestParam(name = "page", defaultValue = "1") int page, @RequestParam String searchKeyword, @RequestParam(name="searchType", defaultValue = "1") int searchType){
+            @RequestParam(name = "page", defaultValue = "1") int page, @RequestParam String searchKeyword, @RequestParam(name = "searchType", defaultValue = "1") int searchType) {
 //        log.info("page" + page);
 //        log.info("searchKeyword" + searchKeyword);
 //        log.info("searchType" + searchType);
@@ -124,31 +125,31 @@ public class CommunityController {
     @PostMapping("/community")
     public ResponseEntity<Community> createCommon(BoardDTO dto) {
         log.info("community : " + dto.getTitle());
-        log.info("community : " +  dto.toString());
+        log.info("community : " + dto.toString());
         //파일 업로드
 
-            String userId = tokenProvider.validateAndGetUserId(dto.getToken());
-            Member member = memberService.findByIdUser(userId);
+        String userId = tokenProvider.validateAndGetUserId(dto.getToken());
+        Member member = memberService.findByIdUser(userId);
 
-            Community vo = Community.builder()
-                    .commonTitle(dto.getTitle())
-                    .commonDesc(dto.getDesc())
-                    .member(member)
-                    .build();
+        Community vo = Community.builder()
+                .commonTitle(dto.getTitle())
+                .commonDesc(dto.getDesc())
+                .member(member)
+                .build();
 //            vo.setCommonTitle(commonTitle);
 //            vo.setCommonDesc(commonDesc);
 //            vo.setCommonAddFileUrl(fileName);
 //            Member member = new Member();
 //            member.setId(id);
-            return ResponseEntity.status(HttpStatus.OK).body(commonService.create(vo));
-        }
+        return ResponseEntity.status(HttpStatus.OK).body(commonService.create(vo));
+    }
 
 
     //일반게시판 수정 PUT - http://localhost:8080/api/community
     @PutMapping("/community")
     public ResponseEntity<Community> updateCommon(@RequestBody BoardDTO dto) {
         log.info("community : " + dto.getToken());
-        log.info("community : " +  dto.toString());
+        log.info("community : " + dto.toString());
 
         String id = tokenProvider.validateAndGetUserId(dto.getToken());
         Member member = memberService.findByIdUser(id);
@@ -192,22 +193,22 @@ public class CommunityController {
         if (target == null) {
             Community community = commonService.updateCommonLike(commonLike.getCommunity().getCommonCode());
             CommunityLike communityLike = CommunityLike.builder()
-                                     .community(community)
-                                     .member(member)
-                                     .build();
+                    .community(community)
+                    .member(member)
+                    .build();
             return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.create(commonLike));
         } else {
-            if(target.getMember().getId().equals(userId) && target.getCommunity().getCommonCode() == boardDTO.getBoardCode()){
-              Community community = commonService.deleteCommonLike(boardDTO.getBoardCode());
-              CommunityLike communityLike = commonLikeService.delete(target.getCommonLikeCode());
-              return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.delete(commonLike.getCommonLikeCode()));
+            if (target.getMember().getId().equals(userId) && target.getCommunity().getCommonCode() == boardDTO.getBoardCode()) {
+                Community community = commonService.deleteCommonLike(boardDTO.getBoardCode());
+                CommunityLike communityLike = commonLikeService.delete(target.getCommonLikeCode());
+                return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.delete(commonLike.getCommonLikeCode()));
             }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
 
-
     }
+}
 
     //일반게시판 좋아요 삭제 DELETE - http://localhost:8080/api/community/like/1
     //추후 기능 부가 및 수정 필요
@@ -222,6 +223,6 @@ public class CommunityController {
 //            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 //        }
 
-    }
+
 
 

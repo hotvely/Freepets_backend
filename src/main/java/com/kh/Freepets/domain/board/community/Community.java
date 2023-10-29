@@ -27,7 +27,6 @@ public class Community
     private int commonCode;
     @Column(name = "COMMON_DATE")
     private Date commonDate;
-
     @Column(name = "COMMON_TITLE")
     private String commonTitle;
     @Column(name = "COMMON_DESC")
@@ -49,12 +48,8 @@ public class Community
     @Column(name = "COMMON_COMMENT_COUNT")
     private int commonCommentCount;
 
-    //신고
-
-
     @ManyToOne
     @JoinColumn(name = "ID")
     private Member member;
-    ////private Report report; 신고 만들어줘
 
 }

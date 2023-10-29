@@ -1,16 +1,11 @@
 package com.kh.Freepets.service.board.community;
 
-import com.kh.Freepets.domain.board.BoardDTO;
 import com.kh.Freepets.domain.board.community.Community;
-import com.kh.Freepets.domain.board.community.CommunityLike;
 import com.kh.Freepets.domain.board.community.QCommunity;
-import com.kh.Freepets.domain.board.sitter.Sitter;
-import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.repo.board.community.CommunityDAO;
 import com.kh.Freepets.repo.board.community.CommunityLikeDAO;
 import com.kh.Freepets.service.member.MemberService;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.QueryFactory;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;

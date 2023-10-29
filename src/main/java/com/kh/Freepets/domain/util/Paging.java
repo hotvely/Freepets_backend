@@ -1,6 +1,7 @@
 package com.kh.Freepets.domain.util;
 
 import com.kh.Freepets.domain.board.community.Community;
+import com.kh.Freepets.domain.board.community.Lost;
 import com.kh.Freepets.domain.board.information.HospitalReview;
 import com.kh.Freepets.domain.board.sitter.Sitter;
 import jakarta.persistence.Entity;
@@ -27,4 +28,5 @@ public class Paging
     private List<Sitter> sitterList;
     private List<HospitalReview> hospitalReviewList;
     private List<Community> communityList;
+    private List<Lost> lostList;
 }
