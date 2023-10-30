@@ -65,24 +65,23 @@ public class CommentController {
     // 댓글 수정
     @PutMapping("/hr/comment")
     public ResponseEntity<HRComment> hrUpdate(@RequestBody CommentDTO commentDTO) {
-        String id = provider.validateAndGetUserId(commentDTO.getToken());
         HRComment hrComment = hrService.show(commentDTO.getCommentCode());
         Member member = Member.builder()
-                .id(id)
+                .id(hrComment.getMember().getId())
                 .build();
         HospitalReview hospitalReview = HospitalReview.builder()
-                .hospitalReviewCode(commentDTO.getPostCode())
+                .hospitalReviewCode(hrComment.getHospitalReview().getHospitalReviewCode())
                 .build();
         HRComment result = HRComment.builder()
                 .hospitalReview(hospitalReview)
                 .hrCommentCode(commentDTO.getCommentCode())
                 .hrCommentDesc(commentDTO.getCommentDesc())
                 .hrCommentDate(hrComment.getHrCommentDate())
-                .superHrCommentCode(commentDTO.getParentCommentCode())
+                .superHrCommentCode(hrComment.getSuperHrCommentCode())
                 .hrCommentReportYn('N')
                 .member(member)
                 .build();
-        return ResponseEntity.status(HttpStatus.OK).body(hrService.update(hrComment));
+        return ResponseEntity.status(HttpStatus.OK).body(hrService.update(result));
     }
 
     // 댓글 삭제
