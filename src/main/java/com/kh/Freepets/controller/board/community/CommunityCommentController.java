@@ -87,13 +87,16 @@ public class CommunityCommentController {
     //일반 게시글 댓글 수정 UPDATE - http://localhost:8080/api/community/comment
     @PutMapping("/community/comment")
     public ResponseEntity<CommunityComment> updateCommonComment(@RequestBody CommentDTO commentDTO){
-        CommunityComment commonComment = CommunityComment.builder()
-                .commonCommentDesc(commentDTO.getCommentDesc())
-                .commonCommentDate(new Date())
-                .build();
-        commonCommentService.update(commonComment);
 
-        return ResponseEntity.status(HttpStatus.OK).body(commonComment);
+        CommunityComment target = commonCommentService.showCommonComment(commentDTO.getCommentCode());
+        log.info(target.toString());
+        target.setCommonCommentDesc(commentDTO.getCommentDesc());
+        target.setCommonCommentDate(new Date());
+
+
+        commonCommentService.update(target);
+
+        return ResponseEntity.status(HttpStatus.OK).body(target);
     }
 
     //일반 게시글 댓글 삭제 DELETE - http://localhost:8080/api/community/comment/1

@@ -9,4 +9,5 @@ public interface LostLikeDAO extends JpaRepository<LostLike, Integer> {
     // 좋아요 중복 체크
     @Query(value = "SELECT * FROM LOST_LIKE WHERE id = :id AND LOST_CODE = :lostCode", nativeQuery = true)
     LostLike lostLikesByMemberAndLost(String id, int lostCode);
+    
 }

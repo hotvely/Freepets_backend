@@ -3,6 +3,7 @@ package com.kh.Freepets.controller.board.community;
 import com.kh.Freepets.domain.board.BoardDTO;
 import com.kh.Freepets.domain.board.community.Community;
 import com.kh.Freepets.domain.board.community.CommunityLike;
+import com.kh.Freepets.domain.board.community.CommunityLikeDTO;
 import com.kh.Freepets.domain.board.community.QCommunity;
 import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.domain.member.MemberDTO;
@@ -182,34 +183,31 @@ public class CommunityController {
     //일반게시판 좋아요 추가 POST - http://localhost:8080/api/community/like
     //중복 처리
     @PostMapping("/community/like")
-    public ResponseEntity<CommunityLike> createCommonLike(@RequestBody CommunityLike commonLike) {
-        BoardDTO boardDTO = new BoardDTO();
-        String userId = tokenProvider.validateAndGetUserId(boardDTO.getToken());
+    public ResponseEntity<CommunityLike> createCommonLike(@RequestBody CommunityLikeDTO communityLikeDTO) {
+        String userId = tokenProvider.validateAndGetUserId(communityLikeDTO.getToken());
         Member member = memberService.findByIdUser(userId);
         log.info("member->" + member);
 
-        CommunityLike target = commonLikeService.likesBymemberAndCommunity(commonLike.getMember().getId(), commonLike.getCommunity().getCommonCode());
+        CommunityLike target = commonLikeService.likesBymemberAndCommunity(userId, communityLikeDTO.getPostCode());
 
         if (target == null) {
-            Community community = commonService.updateCommonLike(commonLike.getCommunity().getCommonCode());
+            Community community = commonService.updateCommonLike(communityLikeDTO.getPostCode());
             CommunityLike communityLike = CommunityLike.builder()
                     .community(community)
                     .member(member)
                     .build();
-            return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.create(commonLike));
+            return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.create(communityLike));
         } else {
-            if (target.getMember().getId().equals(userId) && target.getCommunity().getCommonCode() == boardDTO.getBoardCode()) {
-                Community community = commonService.deleteCommonLike(boardDTO.getBoardCode());
+            if (target.getMember().getId().equals(userId) && target.getCommunity().getCommonCode() == communityLikeDTO.getPostCode()) {
+                Community community = commonService.deleteCommonLike(communityLikeDTO.getPostCode());
                 CommunityLike communityLike = commonLikeService.delete(target.getCommonLikeCode());
-                return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.delete(commonLike.getCommonLikeCode()));
+
+                return ResponseEntity.status(HttpStatus.OK).body(null);
             }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-
-
     }
 }
-
     //일반게시판 좋아요 삭제 DELETE - http://localhost:8080/api/community/like/1
     //추후 기능 부가 및 수정 필요
 //    @DeleteMapping("/community/like/{commonLikeCode}")

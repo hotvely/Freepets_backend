@@ -32,8 +32,8 @@ public class CommunityLikeService {
         return null;
     }
 
-    public CommunityLike delete(int commonLike){
-        CommunityLike target = commonLikeDAO.findById(commonLike).orElse(null);
+    public CommunityLike delete(int commonLikeCode){
+        CommunityLike target = commonLikeDAO.findById(commonLikeCode).orElse(null);
         commonLikeDAO.delete(target);
         return target;
     }
