@@ -19,11 +19,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -49,7 +49,7 @@ public class NoticeController
 
     // 공지사항 게시글 전체보기
     @GetMapping("/notice")
-    public ResponseEntity<Paging> showAll(@RequestParam(name = "page", defaultValue = "1") int page, @RequestParam(name = "sortNum", defaultValue = "0") int sortNum)
+    public ResponseEntity<Paging> showAll(@RequestParam(name = "page", defaultValue = "1") int page, @RequestParam(name = "sortNum", defaultValue = "1") int sortNum)
     {
         log.info("get ShowALL 들어옴");
         try
@@ -76,6 +76,8 @@ public class NoticeController
 
             Pageable pageable = PageRequest.of(page - 1, 10, sort);
             Page<Notice> result = noticeService.showAll(pageable);
+            log.info(result.toString());
+
             Paging paging = new Paging();
             paging.setNoticeList(result.getContent());
             paging.setTotalCount(result.getTotalElements());
@@ -90,35 +92,67 @@ public class NoticeController
         }
         catch (Exception e)
         {
+            log.info(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
     }
 
 
-    @GetMapping("/notice/search/{keyword}/{sortNum}")
-    public ResponseEntity<Paging> findByKeyword(@PathVariable String keyword, @PathVariable int sortNum, @RequestParam(name = "page") int page)
+    @GetMapping("/notice/search")
+    public ResponseEntity<Paging> findByKeyword(@RequestParam(name = "keyword") String keyword, @RequestParam(name = "searchNum") int searchNum,
+                                                @RequestParam(name = "page") int page, @RequestParam(name = "sortNum") int sortNum)
     {
-
+        String word = URLDecoder.decode(keyword, StandardCharsets.UTF_8);
+        log.info(word);
         try
         {
-
             Page<Notice> result = null;
-            Pageable pageable = PageRequest.of(page - 1, 10);
-
+            Sort sort = null;
             switch (sortNum)
             {
                 case 1:
-                    result = noticeService.searchTitleContent(keyword, pageable);
+                    sort = Sort.by("NOTICE_CODE").descending();
                     break;
                 case 2:
-                    result = noticeService.searchTitle(keyword, pageable);
+                    sort = Sort.by("NOTICE_LIKE").descending().and(Sort.by("NOTICE_CODE").descending());
                     break;
                 case 3:
-                    result = noticeService.searchContent(keyword, pageable);
+                    sort = Sort.by("NOTICE_COMMENT_COUNT").descending().and(Sort.by("NOTICE_CODE").descending());
+                    break;
+                case 4:
+                    sort = Sort.by("NOTICE_VIEWS").descending().and(Sort.by("NOTICE_CODE").descending());
+                    break;
+                default:
+                    sort = Sort.by("NOTICE_CODE").descending().and(Sort.by("NOTICE_CODE").descending());
+                    break;
+            }
+
+            switch (searchNum)
+            {
+                case 1:
+                    log.info("제목 댓글..");
+                    Pageable pageable = PageRequest.of(page - 1, 10, sort);
+                    result = noticeService.searchTitleContent(word, pageable);
+                    break;
+                case 2:
+                    log.info("제목..");
+                    pageable = PageRequest.of(page - 1, 10, sort);
+                    result = noticeService.searchTitle(word, pageable);
+                    break;
+                case 3:
+                    log.info("댓글..");
+//                    sort = sort.and(Sort.by("searchNum").descending());
+                    pageable = PageRequest.of(page - 1, 10, sort);
+                    result = noticeService.searchContent(word, pageable);
+                    break;
+                default:
+                    log.info("기본..");
+
                     break;
 
             }
+
             Paging paging = new Paging();
             paging.setNoticeList(result.getContent());
             paging.setTotalCount(result.getTotalElements());
@@ -182,24 +216,18 @@ public class NoticeController
     public ResponseEntity<Notice> updateNotice(@RequestBody BoardDTO boardDTO)
     {
         log.info("UpdateNOTICE : " + boardDTO.toString());
-        Notice dbNotice = noticeService.show(boardDTO.getBoardCode());
-        String userId = tokenProvider.validateAndGetUserId(boardDTO.getToken());
-        if (dbNotice.getMember().getId().equals(userId))
-        {
-            Member member = memberService.findByIdUser(userId);
-            Notice vo = Notice.builder()
-                    .noticeCode(boardDTO.getBoardCode())
-                    .noticeTitle(boardDTO.getTitle())
-                    .noticeAddFileUrl(boardDTO.getUploadfileUrl())
-                    .noticeDesc(boardDTO.getDesc())
-                    .noticeCommentCount(boardDTO.getCommentCount())
-                    .noticeLike(boardDTO.getLikeCount())
-                    .member(member)
-                    .build();
-            return ResponseEntity.status(HttpStatus.OK).body(noticeService.update(vo));
-        }
 
-        return ResponseEntity.badRequest().build();
+        Notice vo = Notice.builder()
+                .noticeCode(boardDTO.getBoardCode())
+                .noticeTitle(boardDTO.getTitle())
+                .noticeAddFileUrl(boardDTO.getUploadfileUrl())
+                .noticeDesc(boardDTO.getDesc())
+                .noticeCommentCount(boardDTO.getCommentCount())
+                .noticeLike(boardDTO.getLikeCount())
+
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(noticeService.update(vo));
+
     }
 
     // 공지사항 게시글 삭제하기

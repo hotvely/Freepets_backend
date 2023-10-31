@@ -19,15 +19,15 @@ public interface NoticeDAO extends JpaRepository<Notice, Integer>
     List<Notice> findByMemberId(String id);
 
 
-    @Query(value = "SELECT * FROM NOTICE WHERE NOTICE_TITLE LIKE %:keyword% OR NOTICE_DESC LIKE %:keyword% ORDER BY NOTICE_CODE", nativeQuery = true)
+    @Query(value = "SELECT * FROM NOTICE WHERE NOTICE_TITLE LIKE %:keyword% OR NOTICE_DESC LIKE %:keyword%", nativeQuery = true)
     Page<Notice> searchTitleContent(String keyword, Pageable pageable);
 
 
-    @Query(value = "SELECT * FROM NOTICE WHERE NOTICE_DESC LIKE %:keyword% ORDER BY NOTICE_CODE", nativeQuery = true)
+    @Query(value = "SELECT * FROM NOTICE WHERE NOTICE_DESC LIKE %:keyword%", nativeQuery = true)
     Page<Notice> searchTitle(String keyword, Pageable pageable);
 
 
-    @Query(value = "SELECT * FROM NOTICE WHERE NOTICE_TITLE LIKE %:keyword% ORDER BY NOTICE_CODE", nativeQuery = true)
+    @Query(value = "SELECT * FROM NOTICE WHERE NOTICE_TITLE LIKE %:keyword%", nativeQuery = true)
     Page<Notice> searchContent(String keyword, Pageable pageable);
 
 
