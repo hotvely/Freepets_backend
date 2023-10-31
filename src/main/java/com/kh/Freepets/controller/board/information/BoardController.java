@@ -154,13 +154,13 @@ public class BoardController
     public ResponseEntity<BoardDTO> hrUpdateLike(HrLike hrLike) {
         HrLike target = hrLikeService.likeMember(hrLike.getMember().getId(), hrLike.getHospitalReview().getHospitalReviewCode());
         if (target == null) { // 유저가 해당 글 좋아요 한 적이 없으면 좋아요, 좋아요 + 1
-            hrService.updateLike(hrLike.getHospitalReview().getHospitalReviewCode());
-            log.info("좋아요 누름");
             hrLikeService.hrAddLike(hrLike);
+            log.info("좋아요 누름");
+            hrService.updateLike(hrLike.getHospitalReview().getHospitalReviewCode());
         } else { // 한 적 있으면 좋아요 취소, 좋아요 - 1
-            hrService.deleteLike(hrLike.getHospitalReview().getHospitalReviewCode());
-            log.info("좋아요 취소 누름");
             hrLikeService.hrDeleteLike(target.getHrLikeCode());
+            log.info("좋아요 취소 누름");
+            hrService.deleteLike(hrLike.getHospitalReview().getHospitalReviewCode());
         }
         HospitalReview hospitalReview = hrService.show(hrLike.getHospitalReview().getHospitalReviewCode());
         MemberDTO memberDTO = MemberDTO.builder()
