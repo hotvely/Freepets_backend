@@ -144,6 +144,7 @@ public class LostController {
     //조회할 때마다 조회수 추가
     @GetMapping("/community/lost/{lostCode}")
     public ResponseEntity<Lost> showLost(@PathVariable int lostCode) {
+        log.info("매핑 됐어??" + lostCode);
         Lost lost = lostService.showlost(lostCode);
         lost.setLostViewCount(lost.getLostViewCount() + 1);
         Lost updateLost = lostService.update(lost);
