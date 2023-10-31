@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kh.Freepets.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.util.Date;
 @Data
+@Builder
 @Entity
 @Table(name = "COMMON_COMMENT")
 @NoArgsConstructor
@@ -32,17 +34,12 @@ public class CommunityComment {
     private String commonCommentAddFileUrl;
 
 
-    @Column(name="COMMON_CODE")
-    private int commonCode;
-
-    // 댓글 신고
-//    @ManyToOne
-//    @JoinColumn(name="COMMON_CODE")
-//    private Community community;
-
     @ManyToOne
     @JoinColumn(name="ID")
     private Member member;
 
-    //private Report report;
+    @ManyToOne
+    @JoinColumn(name="COMMON_CODE")
+    private Community community;
+
 }

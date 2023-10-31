@@ -32,13 +32,13 @@ public class CommunityLikeService {
         return null;
     }
 
-    public CommunityLike delete(int id){
-        CommunityLike target = commonLikeDAO.findById(id).orElse(null);
+    public CommunityLike delete(int commonLikeCode){
+        CommunityLike target = commonLikeDAO.findById(commonLikeCode).orElse(null);
         commonLikeDAO.delete(target);
         return target;
     }
 
-    public CommunityLike duplicatedLike(String id, int commonCode) {
+    public CommunityLike likesBymemberAndCommunity(String id, int commonCode) {
         return commonLikeDAO.commonLikesByMemberAndCommunity(id, commonCode);
     }
 

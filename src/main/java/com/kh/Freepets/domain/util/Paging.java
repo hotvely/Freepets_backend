@@ -1,6 +1,7 @@
 package com.kh.Freepets.domain.util;
 
 import com.kh.Freepets.domain.board.community.Community;
+import com.kh.Freepets.domain.board.community.Lost;
 import com.kh.Freepets.domain.board.information.HospitalReview;
 import com.kh.Freepets.domain.board.notice.Notice;
 import com.kh.Freepets.domain.board.sitter.Sitter;
@@ -29,4 +30,5 @@ public class Paging
     private List<HospitalReview> hospitalReviewList;
     private List<Community> communityList;
     private List<Notice> noticeList;
+    private List<Lost> lostList;
 }

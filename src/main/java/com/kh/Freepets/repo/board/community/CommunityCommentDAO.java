@@ -12,4 +12,9 @@ public interface CommunityCommentDAO extends JpaRepository<CommunityComment, Int
 
     @Query(value = "SELECT * FROM COMMON_COMMENT WHERE COMMON_CODE = :commonCode", nativeQuery = true)
     List<CommunityComment> commonCommentAll(int commonCode);
+
+    // 부모 댓글에 따른 자식 댓글 조회
+    @Query(value = "SELECT * FROM COMMON_COMMENT WHERE C_COMMENT_CODE_SUPER = :commonCommentCodeSuper ORDER BY C_COMMENT_CODE", nativeQuery = true)
+    List<CommunityComment> commonReCommentAll(int commonCommentCodeSuper);
+
 }

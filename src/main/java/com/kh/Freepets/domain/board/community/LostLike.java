@@ -10,19 +10,19 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @Entity
-@Table(name = "COMMON_LIKE")
+@Table(name = "LOST_LIKE")
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommunityLike {
+public class LostLike {
     @Id
-    @Column(name="C_LIKE_CODE")
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "commonLikeSequence" )
-    @SequenceGenerator(name = "commonLikeSequence",sequenceName = "SEQ_COMMON_LIKE" ,allocationSize = 1)
-    private int commonLikeCode;
+    @Column(name="LOST_LIKE_CODE")
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "lostLikeSequence" )
+    @SequenceGenerator(name = "lostLikeSequence",sequenceName = "SEQ_LOST_LIKE" ,allocationSize = 1)
+    private int lostLikeCode;
 
     @ManyToOne
-    @JoinColumn(name="COMMON_CODE")
-    private Community community;
+    @JoinColumn(name="LOST_CODE")
+    private Lost lost;
     @ManyToOne
     @JoinColumn(name="ID")
     private Member member;
