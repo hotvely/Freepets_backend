@@ -127,7 +127,7 @@ public class BookmarkController
                             .title(hospitalReview.getHospitalReviewTitle())
                             .date(hospitalReview.getHospitalReviewDate())
                             .boardCode(hospitalReview.getHospitalReviewCode())
-                            .postPath("../information/hospital/" + item.getPostCode())
+                            .postPath("../hospital/view/" + item.getPostCode())
                             .build();
 
                     break;
