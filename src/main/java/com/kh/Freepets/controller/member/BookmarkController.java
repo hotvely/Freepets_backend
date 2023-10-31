@@ -90,7 +90,7 @@ public class BookmarkController
                             .title(community.getCommonTitle())
                             .date(community.getCommonDate())
                             .boardCode(community.getCommonCode())
-                            .postPath("../community/common/commonview/" + item.getPostCode())
+                            .postPath("/community/common/commonview/" + item.getPostCode() + "/undefined")
                             .build();
                     break;
                 case 2:
