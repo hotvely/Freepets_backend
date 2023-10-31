@@ -59,6 +59,21 @@ public class CommunityService {
         return target;
     }
 
+    // 게시글 댓글 갯수 증가
+    public boolean increaseCommonUpdate(int code)
+    {
+        int count = commonDAO.increaseCommonComments(code);
+        log.info(""+count);
+        if(count > 0) return true;
+        return  false;
+    }
+
+    public int decreaseCommonCommentCount(int code)
+    {
+        return commonDAO.decreaseCommonComments(code);
+    }
+
+
     // 게시글 좋아요 및 좋아요 해제
     // 게시글 좋아요 총 개수 증가
     public Community updateCommonLike(int commonCode) {
