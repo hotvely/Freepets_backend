@@ -47,15 +47,14 @@ public class CommunityCommentController {
     private ResponseEntity<List<CommunityComment>> commonCommentList(@PathVariable int commonCode){
         log.info("여기서 나오냐고ㅜㅜ");
         List<CommunityComment> list = commonCommentService.commonCommentAll(commonCode);
-        log.info(list.toString());
 
       return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
-    @GetMapping("/community/comment/{commonCommentCode}")
-    private ResponseEntity <CommunityComment> getCommonComment(@PathVariable int commonCommentCode){
-        return ResponseEntity.ok().body(commonCommentService.showCommonComment(commonCommentCode));
-    }
+//    @GetMapping("/community/comment/{commonCommentCode}")
+//    private ResponseEntity <CommunityComment> getCommonComment(@PathVariable int commonCommentCode){
+//        return ResponseEntity.ok().body(commonCommentService.showCommonComment(commonCommentCode));
+//    }
 
     // 부모 댓글에 따른 자식 댓글 보기 GET - http://localhost:8080/api/community/comment/{commonCommentCode}
     @GetMapping("/community/comment/{commonCommentCodeSuper}")

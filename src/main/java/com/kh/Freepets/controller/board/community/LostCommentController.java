@@ -31,7 +31,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequestMapping("/api/*")
-@CrossOrigin
+@CrossOrigin(origins = {"*"},maxAge = 6000)
 public class LostCommentController {
     @Autowired
     private LostCommentService lostCommentService;
@@ -41,19 +41,18 @@ public class LostCommentController {
     private TokenProvider token;
 
     //일반 게시글 한 개에 따른 댓글 전체 조회 GET - http://localhost:8080/api/community/lost/1/comment
-    @GetMapping("/community/lost/{commonCode}/comments")
+    @GetMapping("/community/lost/{lostCode}/comments")
     private ResponseEntity<List<LostComment>> lostCommentList(@PathVariable int lostCode){
-        log.info("여기서 나오냐고ㅜㅜ");
         return ResponseEntity.status(HttpStatus.OK).body(lostCommentService.lostCommentAll(lostCode));
     }
 
-    @GetMapping("/community/lost/comment/{commonCommentCode}")
-    private ResponseEntity <LostComment> getLostComment(@PathVariable int lostCommentCode){
-        return ResponseEntity.ok().body(lostCommentService.showLostComment(lostCommentCode));
-    }
+//    @GetMapping("/community/lost/comment/{lostCommentCode}")
+//    private ResponseEntity <LostComment> getLostComment(@PathVariable int lostCommentCode){
+//        return ResponseEntity.ok().body(lostCommentService.showLostComment(lostCommentCode));
+//    }
 
     // 부모 댓글에 따른 자식 댓글 보기 GET - http://localhost:8080/api/community/lost/comment/{commonCommentCode}
-    @GetMapping("/community/lost/comment/{commonCommentCodeSuper}")
+    @GetMapping("/community/lost/comment/{lostCommentCodeSuper}")
     private ResponseEntity<List<LostComment>> showLostComment(@PathVariable int lostCommentCodeSuper) {
         return ResponseEntity.status(HttpStatus.OK).body(lostCommentService.lostReCommentAll(lostCommentCodeSuper));
     }
@@ -96,7 +95,7 @@ public class LostCommentController {
     }
 
     //일반 게시글 댓글 삭제 DELETE - http://localhost:8080/api/community/comment/1
-    @DeleteMapping("/community/lost/comment/{commonCommentCode}")
+    @DeleteMapping("/community/lost/comment/{lostCommentCode}")
     public ResponseEntity<LostComment>deleteLostComment(@PathVariable int lostCommentCode){
         return ResponseEntity.status(HttpStatus.OK).body(lostCommentService.delete(lostCommentCode));
     }

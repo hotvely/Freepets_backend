@@ -14,7 +14,7 @@ public interface LostCommentDAO extends JpaRepository<LostComment, Integer> {
     List<LostComment> lostCommentAll(int lostCode);
 
     // 부모 댓글에 따른 자식 댓글 조회
-    @Query(value = "SELECT * FROM LOST_COMMENT WHERE L_COMMENT_CODE_SUPER = :lostCommentCodeSuper ORDER BY lostCommentCode", nativeQuery = true)
+    @Query(value = "SELECT * FROM LOST_COMMENT WHERE L_COMMENT_CODE_SUPER = :lostCommentCodeSuper ORDER BY L_COMMENT_CODE", nativeQuery = true)
     List<LostComment> lostReCommentAll(int lostCommentCodeSuper);
 
 }
