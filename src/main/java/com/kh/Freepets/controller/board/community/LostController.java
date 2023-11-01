@@ -1,7 +1,7 @@
 package com.kh.Freepets.controller.board.community;
 
 import com.kh.Freepets.domain.board.BoardDTO;
-import com.kh.Freepets.domain.board.community.Lost;
+import com.kh.Freepets.domain.board.community.*;
 import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.domain.util.Paging;
 import com.kh.Freepets.security.TokenProvider;
@@ -108,6 +108,8 @@ public class LostController {
         Member member = memberService.findByIdUser(userId);
 
         Lost lost = Lost.builder()
+                .lostCode(dto.getBoardCode())
+                .lostDate(dto.getDate())
                 .lostTitle(dto.getTitle())
                 .lostDesc(dto.getDesc())
                 .member(member)
@@ -125,10 +127,12 @@ public class LostController {
 
         String id = tokenProvider.validateAndGetUserId(dto.getToken());
         Member member = memberService.findByIdUser(id);
+        Lost lostPost = lostService.showlost(dto.getBoardCode());
         Lost lost = Lost.builder()
                 .lostCode(dto.getBoardCode())
                 .lostTitle(dto.getTitle())
                 .lostDesc(dto.getDesc())
+                .lostDate(lostPost.getLostDate())
                 .member(member)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(lostService.update(lost));
@@ -152,35 +156,34 @@ public class LostController {
         return ResponseEntity.status(HttpStatus.OK).body(updateLost);
     }
 
-    //일반게시판 좋아요 추가 POST - http://localhost:8080/api/community/lost/like
+    //일반게시판 좋아요 추가 POST - http://localhost:8080/api/community/like
     //중복 처리
-//    @PostMapping("/community/lost/like")
-//    public ResponseEntity<Lost> createLostLike(@RequestBody LostLike lostLike) {
-//        BoardDTO boardDTO = new BoardDTO();
-//        String userId = tokenProvider.validateAndGetUserId(boardDTO.getToken());
-//        Member member = memberService.findByIdUser(userId);
-//        log.info("member->" + member);
-//
-//        LostLike target = lostLikeService.likesBymemberAndCommunity(lostLike.getMember().getId(), lostLike.getLost().getLostCode());
-//
-//        if (target == null) {
-//            Lost lost = lostService.updateLostLike(lostLike.getLost().getLostCode());
-//            LostLike lostLike1 = LostLike.builder()
-//                    .lost(lost)
-//                    .member(member)
-//                    .build();
-//            return ResponseEntity.status(HttpStatus.OK).body(lostLikeService.create(lostLike));
-//        } else {
-//            if (target.getMember().getId().equals(userId) && target.getCommunity().getCommonCode() == boardDTO.getBoardCode()) {
-//                Community community = commonService.deleteCommonLike(boardDTO.getBoardCode());
-//                CommunityLike communityLike = commonLikeService.delete(target.getCommonLikeCode());
-//                return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.delete(commonLike.getCommonLikeCode()));
-//            }
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-//        }
-//
-//
-//    }
+    @PostMapping("/community/lost/like")
+    public ResponseEntity<LostLike> createLostLike(@RequestBody LostLikeDTO lostLikeDTO) {
+        String userId = tokenProvider.validateAndGetUserId(lostLikeDTO.getToken());
+        Member member = memberService.findByIdUser(userId);
+        log.info("member->" + member);
+
+        LostLike target = lostLikeService.likesBymemberAndCommunity(userId, lostLikeDTO.getPostCode());
+
+        if (target == null) {
+            Lost lost = lostService.updateLostLike(lostLikeDTO.getPostCode());
+            LostLike lostLike = LostLike.builder()
+                    .lost(lost)
+                    .member(member)
+                    .build();
+            return ResponseEntity.status(HttpStatus.OK).body(lostLikeService.create(lostLike));
+        } else {
+            if (target.getMember().getId().equals(userId) && target.getLost().getLostCode() == lostLikeDTO.getPostCode()) {
+                Lost lost = lostService.deleteLostLike(lostLikeDTO.getPostCode());
+                LostLike lostLike = lostLikeService.delete(target.getLostLikeCode());
+
+                return ResponseEntity.status(HttpStatus.OK).body(null);
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
 }
+
 
 

@@ -133,6 +133,7 @@ public class CommunityController {
         Member member = memberService.findByIdUser(userId);
 
         Community vo = Community.builder()
+                .commonCode(dto.getBoardCode())
                 .commonTitle(dto.getTitle())
                 .commonDesc(dto.getDesc())
                 .member(member)
