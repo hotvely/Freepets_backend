@@ -32,6 +32,9 @@ import java.util.UUID;
 public class CommunityCommentController {
     @Autowired
     private CommunityCommentService commonCommentService;
+
+    @Autowired
+    private CommunityService communityService;
     @Autowired
     private MemberService memberService;
     @Autowired
@@ -43,7 +46,10 @@ public class CommunityCommentController {
     @GetMapping("/community/{commonCode}/comments")
     private ResponseEntity<List<CommunityComment>> commonCommentList(@PathVariable int commonCode){
         log.info("여기서 나오냐고ㅜㅜ");
-      return ResponseEntity.status(HttpStatus.OK).body(commonCommentService.commonCommentAll(commonCode));
+        List<CommunityComment> list = commonCommentService.commonCommentAll(commonCode);
+        log.info(list.toString());
+
+      return ResponseEntity.status(HttpStatus.OK).body(list);
     }
 
     @GetMapping("/community/comment/{commonCommentCode}")
@@ -76,9 +82,16 @@ public class CommunityCommentController {
                 .commonCommentCodeSuper(commentDTO.getParentCommentCode())
                 .member(member)
                 .build();
-        commonCommentService.create(commonComment);
 
-            return ResponseEntity.status(HttpStatus.OK).body(commonComment);
+           CommunityComment target =  commonCommentService.create(commonComment);
+
+           if(target != null)
+           {
+               log.info("is ADD Comment?");
+               communityService.increaseCommonUpdate(commentDTO.getPostCode());
+           }
+
+            return ResponseEntity.status(HttpStatus.OK).body(target);
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -102,6 +115,10 @@ public class CommunityCommentController {
     //일반 게시글 댓글 삭제 DELETE - http://localhost:8080/api/community/comment/1
     @DeleteMapping("/community/comment/{commonCommentCode}")
     public ResponseEntity<CommunityComment>deleteCommonComment(@PathVariable int commonCommentCode){
+
+        CommunityComment vo = commonCommentService.showCommonComment(commonCommentCode);
+
+        communityService.decreaseCommonCommentCount(vo.getCommunity().getCommonCode());
         return ResponseEntity.status(HttpStatus.OK).body(commonCommentService.delete(commonCommentCode));
     }
 

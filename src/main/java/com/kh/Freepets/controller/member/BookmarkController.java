@@ -90,7 +90,7 @@ public class BookmarkController
                             .title(community.getCommonTitle())
                             .date(community.getCommonDate())
                             .boardCode(community.getCommonCode())
-                            .postPath("../community/common/commonview/" + item.getPostCode())
+                            .postPath("/community/common/commonview/" + item.getPostCode() + "/undefined")
                             .build();
                     break;
                 case 2:
@@ -127,7 +127,7 @@ public class BookmarkController
                             .title(hospitalReview.getHospitalReviewTitle())
                             .date(hospitalReview.getHospitalReviewDate())
                             .boardCode(hospitalReview.getHospitalReviewCode())
-                            .postPath("../information/hospital/" + item.getPostCode())
+                            .postPath("../hospital/view/" + item.getPostCode())
                             .build();
 
                     break;
@@ -200,9 +200,11 @@ public class BookmarkController
     @PostMapping("/bookmark")
     public ResponseEntity<Bookmark> create(@RequestBody BookmarkDTO bookmarkDTO)
     {
-
+log.info(bookmarkDTO.toString());
 
         String userId = tokenProvider.validateAndGetUserId(bookmarkDTO.getToken());
+
+        log.info(userId);
         Member member = memberService.findByIdUser(userId);
 
 
