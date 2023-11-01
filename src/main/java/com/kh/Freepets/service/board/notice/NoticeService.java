@@ -74,7 +74,8 @@ public class NoticeService
     public Notice delete(int noticeCode)
     {
         Notice target = dao.findById(noticeCode).orElse(null);
-        dao.delete(target);
+        if (target != null)
+            dao.delete(target);
         return target;
     }
 

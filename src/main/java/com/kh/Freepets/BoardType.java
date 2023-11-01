@@ -11,7 +11,7 @@ public enum BoardType
     sitter(3),
     hospitalReview(4),
     notice(5),
-    customerService(6),
+    chatting(6),
 
     end(999);
 
@@ -35,7 +35,7 @@ public enum BoardType
             case 3 -> sitter;
             case 4 -> hospitalReview;
             case 5 -> notice;
-            case 6 -> customerService;
+            case 6 -> chatting;
             default -> null;
         };
     }
@@ -50,7 +50,7 @@ public enum BoardType
             case "sitter" -> sitter;
             case "hospitalReview" -> hospitalReview;
             case "notice" -> notice;
-            case "customerService" -> customerService;
+            case "chatting" -> chatting;
             default -> null;
         };
     }
@@ -64,7 +64,7 @@ public enum BoardType
             case sitter -> 3;
             case hospitalReview -> 4;
             case notice -> 5;
-            case customerService -> 6;
+            case chatting -> 6;
             default -> -1;
         };
     }
@@ -78,7 +78,7 @@ public enum BoardType
             case sitter -> "sitter";
             case hospitalReview -> "hospitalReview";
             case notice -> "notice";
-            case customerService -> "customerService";
+            case chatting -> "chatting";
             default -> "";
         };
     }
@@ -96,8 +96,8 @@ public enum BoardType
                     lost,
                     sitter,
                     hospitalReview,
-                    customerService,
-                    notice ->
+                    notice,
+                    chatting ->
             {
                 return true;
             }

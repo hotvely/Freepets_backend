@@ -2,6 +2,7 @@ package com.kh.Freepets.controller.member;
 
 import com.kh.Freepets.domain.board.BoardDTO;
 import com.kh.Freepets.domain.board.community.Community;
+import com.kh.Freepets.domain.board.community.Lost;
 import com.kh.Freepets.domain.board.information.HospitalReview;
 import com.kh.Freepets.domain.board.notice.Notice;
 import com.kh.Freepets.domain.board.sitter.Sitter;
@@ -12,6 +13,7 @@ import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.domain.member.MemberDTO;
 import com.kh.Freepets.security.TokenProvider;
 import com.kh.Freepets.service.board.community.CommunityService;
+import com.kh.Freepets.service.board.community.LostService;
 import com.kh.Freepets.service.board.information.HospitalReviewService;
 import com.kh.Freepets.service.board.notice.NoticeService;
 import com.kh.Freepets.service.board.sitter.SitterService;
@@ -50,6 +52,8 @@ public class BookmarkController
     @Autowired
     private HospitalReviewService hospitalReviewService;
 
+    @Autowired
+    private LostService lostService;
 
     @Autowired
     private TokenProvider tokenProvider;
@@ -66,7 +70,7 @@ public class BookmarkController
     {  // 특정 유저 북마크 가져오기
         String userId = tokenProvider.validateAndGetUserId(token);
         List<Bookmark> list = bookmarkService.findByMemberId(userId);
-        List<BookmarkDTO> responseDTO = new ArrayList<BookmarkDTO>();
+        List<BookmarkDTO> responseDTO = new ArrayList<>();
 
         for (Bookmark item : list)
         {
@@ -79,6 +83,11 @@ public class BookmarkController
                 case 1:
                     log.info("1번 스위치");
                     Community community = communityService.showCommon(item.getPostCode());
+                    if (community == null)
+                    {// 삭제 되었을때
+                        bookmarkService.delete(item.getBookmarkCode());
+                        break;
+                    }
 
                     mDTO = MemberDTO.builder()
                             .nickname(community.getMember().getNickname())
@@ -94,11 +103,36 @@ public class BookmarkController
                             .build();
                     break;
                 case 2:
+                    Lost lost = lostService.showlost(item.getPostCode());
+                    if (lost == null)
+                    {// 삭제 되었을때
+                        bookmarkService.delete(item.getBookmarkCode());
+                        break;
+                    }
+
+                    mDTO = MemberDTO.builder()
+                            .nickname(lost.getMember().getNickname())
+                            .memberImg(lost.getMember().getMemberImg())
+                            .build();
+
+                    boardDTO = BoardDTO.builder()
+                            .memberDTO(mDTO)
+                            .title(lost.getLostTitle())
+                            .date(lost.getLostDate())
+                            .boardCode(lost.getLostCode())
+                            .postPath("/community/common/commonview/" + item.getPostCode() + "/undefined")
+                            .build();
                     //lost
                     break;
                 case 3:
                     log.info("3번 스위치");
                     Sitter sitter = sitterService.show(item.getPostCode());
+                    if (sitter == null)
+                    {// 삭제 되었을때
+                        bookmarkService.delete(item.getBookmarkCode());
+                        break;
+                    }
+
                     mDTO = MemberDTO.builder()
                             .nickname(sitter.getMember().getNickname())
                             .memberImg(sitter.getMember().getMemberImg())
@@ -116,6 +150,12 @@ public class BookmarkController
                 case 4:
                     log.info("4번 스위치");
                     HospitalReview hospitalReview = hospitalReviewService.show(item.getPostCode());
+                    if (hospitalReview == null)
+                    {
+                        bookmarkService.delete(item.getBookmarkCode());
+                        break;
+                    }
+
                     mDTO = MemberDTO.builder()
                             .nickname(hospitalReview.getMember().getNickname())
                             .memberImg(hospitalReview.getMember().getMemberImg())
@@ -134,6 +174,11 @@ public class BookmarkController
                 case 5:
                     log.info("5번 스위치");
                     Notice notice = noticeService.show(item.getPostCode());
+                    if (notice == null)
+                    {
+                        bookmarkService.delete(item.getBookmarkCode());
+                        break;
+                    }
                     mDTO = MemberDTO.builder()
                             .nickname(notice.getMember().getNickname())
                             .memberImg(notice.getMember().getMemberImg())
@@ -147,24 +192,24 @@ public class BookmarkController
                             .postPath("../notice/noticeView/" + item.getPostCode())
                             .build();
                     break;
-                case 6:
-                    //customerService
-                    break;
+
                 default:
                     return ResponseEntity.ok().body(null);
 
             }
+            if (boardDTO != null)
+            {
+                BookmarkDTO bookmarkDTO = BookmarkDTO.builder()
+                        .bookmarkCode(bookmarkCode)
+                        .boardDTO(boardDTO)
+                        .boardName(BoardType.getTypeName(BoardType.getType(item.getBoardCode())))
+                        .nickname(mDTO.getNickname())
+                        .postCode(boardDTO.getBoardCode())
+                        .url(boardDTO.getPostPath())
+                        .build();
+                responseDTO.add(bookmarkDTO);
+            }
 
-            BookmarkDTO bookmarkDTO = BookmarkDTO.builder()
-                    .bookmarkCode(bookmarkCode)
-                    .boardDTO(boardDTO)
-                    .boardName(BoardType.getTypeName(BoardType.getType(item.getBoardCode())))
-                    .nickname(mDTO.getNickname())
-                    .postCode(boardDTO.getBoardCode())
-                    .url(boardDTO.getPostPath())
-                    .build();
-//            log.info(bookmarkDTO.toString());
-            responseDTO.add(bookmarkDTO);
         }
 
         log.info(responseDTO.toString());
@@ -200,7 +245,7 @@ public class BookmarkController
     @PostMapping("/bookmark")
     public ResponseEntity<Bookmark> create(@RequestBody BookmarkDTO bookmarkDTO)
     {
-log.info(bookmarkDTO.toString());
+        log.info(bookmarkDTO.toString());
 
         String userId = tokenProvider.validateAndGetUserId(bookmarkDTO.getToken());
 
