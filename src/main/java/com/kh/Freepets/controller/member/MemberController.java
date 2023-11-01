@@ -106,7 +106,6 @@ public class MemberController {
 
     @PostMapping("/register") // sign up 회원가입
     public ResponseEntity<MemberDTO> register(@RequestBody MemberDTO dto) {
-        log.info("dto : " + dto);
 
         //기본 값 넣고..
         Member member = Member.builder()

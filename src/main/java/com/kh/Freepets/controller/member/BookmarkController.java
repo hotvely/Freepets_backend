@@ -200,9 +200,11 @@ public class BookmarkController
     @PostMapping("/bookmark")
     public ResponseEntity<Bookmark> create(@RequestBody BookmarkDTO bookmarkDTO)
     {
-
+log.info(bookmarkDTO.toString());
 
         String userId = tokenProvider.validateAndGetUserId(bookmarkDTO.getToken());
+
+        log.info(userId);
         Member member = memberService.findByIdUser(userId);
 
 
