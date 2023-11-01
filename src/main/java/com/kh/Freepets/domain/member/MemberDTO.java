@@ -1,9 +1,11 @@
 package com.kh.Freepets.domain.member;
 
+import jakarta.mail.Multipart;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
@@ -11,7 +13,8 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberDTO {
+public class MemberDTO
+{
     // 클라로 넘길 토큰을 가지고 있는 멤버 껍데기 객체
     private String token;
     private String id;
