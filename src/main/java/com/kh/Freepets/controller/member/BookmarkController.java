@@ -66,6 +66,9 @@ public class BookmarkController
     {  // 특정 유저 북마크 가져오기
         String userId = tokenProvider.validateAndGetUserId(token);
         List<Bookmark> list = bookmarkService.findByMemberId(userId);
+        if(list==null) {
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
         List<BookmarkDTO> responseDTO = new ArrayList<BookmarkDTO>();
 
         for (Bookmark item : list)

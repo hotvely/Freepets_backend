@@ -6,7 +6,11 @@ import com.kh.Freepets.domain.board.notice.NoticeComment;
 import com.kh.Freepets.domain.member.Notification;
 import com.kh.Freepets.domain.member.NotificationDTO;
 import com.kh.Freepets.security.TokenProvider;
+import com.kh.Freepets.service.board.community.CommunityService;
+import com.kh.Freepets.service.board.community.LostService;
+import com.kh.Freepets.service.board.information.HospitalReviewService;
 import com.kh.Freepets.service.board.notice.NoticeCommentService;
+import com.kh.Freepets.service.chatting.ChattingService;
 import com.kh.Freepets.service.member.NotificationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +30,21 @@ public class NotificationController
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    private CommunityService communityService;
+
+    @Autowired
+    private LostService lostService;
+
+    @Autowired
+    private HospitalReviewService hospitalReviewService;
 
     @Autowired
     private NoticeCommentService noticeCommentService;
+
+
+    @Autowired
+    private ChattingService chattingService;
 
     @Autowired
     private TokenProvider tokenProvider;
@@ -92,6 +108,8 @@ public class NotificationController
                 }
                 break;
                 case 6:
+
+
                     break;
             }
 
@@ -105,10 +123,9 @@ public class NotificationController
     @PostMapping("/noti/register")
     public ResponseEntity<Notification> save(@RequestBody NotificationDTO dto)
     {
-
-
+        String userId = tokenProvider.validateAndGetUserId(dto.getToken());
         Notification vo = Notification.builder()
-                .id(dto.getId())
+                .id(userId)
                 .boardCode(dto.getBoardCode())
                 .postCode(dto.getPostCode())
                 .childCommentCode(dto.getChildCommentCode())
