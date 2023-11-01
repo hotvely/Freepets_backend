@@ -27,8 +27,6 @@ public class LostService {
     private LostLikeDAO lostLikeDAO;
     @Autowired
     private MemberService memberService;
-    @Autowired
-    private JPAQueryFactory queryFactory;
 
     public Page<Lost> lostAll(Pageable pageable) {
         return lostDAO.findAll(pageable);
@@ -73,43 +71,18 @@ public class LostService {
         return lostDAO.findById(lostCode).orElse(null);
     }
 
-    // 검색 기능 -> queryDSL Q클래스 업데이트 곤란...
-//    public Page<Community> searchKeyword(String keyword, int keywordType, Pageable pageable) {
-//        JPAQuery result;
-//        BooleanBuilder builder = new BooleanBuilder();
-//        switch (keywordType) {
-//            case 1:
-//                builder.or(qCommunity.commonTitle.contains(keyword));
-//                builder.or(qCommunity.commonDesc.contains(keyword));
-//                result = queryFactory.selectFrom(qCommunity).where(builder)
-//                        .orderBy(qCommunity.commonCode.desc());
-//                break;
-//            case 2:
-//                result = queryFactory.selectFrom(qCommunity).where(qCommunity.commonTitle.contains(keyword))
-//                        .orderBy(qCommunity.commonCode.desc());
-//                break;
-//            case 3:
-//                result = queryFactory.selectFrom(qCommunity).where(qCommunity.commonTitle.contains(keyword))
-//                        .orderBy(qCommunity.commonCode.desc());
-//                break;
-//
-//            default:
-//                result = null;
-//                break;
-//        }
-//        log.info("keyword"+ keyword);
-//        log.info("keywordType"+ keywordType);
-////        log.info("orderBy"+orderBy);
-//
-//        long totalCount = result.fetchCount();
-//        result.offset(pageable.getOffset())
-//                .limit(pageable.getPageSize());
-//
-//        List<Community> resultList = result.fetch();
-//
-//        return new PageImpl<>(resultList, pageable, totalCount);
-//    }
+    // 검색
+   public Page<Lost> searchKeywordAll(String keyword, Pageable pageable){
+        return lostDAO.searchKeywordAll(keyword,pageable);
+    }
 
+    public Page<Lost> searchTitle(String keyword, Pageable pageable){
+        return lostDAO.searchTitle(keyword,pageable);
+    }
+
+    public Page<Lost> searchDesc(String keyword, Pageable pageable){
+        return lostDAO.searchDesc(keyword,pageable);
+    }
 
 
 }

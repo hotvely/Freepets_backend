@@ -1,11 +1,7 @@
 package com.kh.Freepets.service.board.community;
 
-import com.kh.Freepets.domain.board.community.CommunityComment;
 import com.kh.Freepets.domain.board.community.LostComment;
-import com.kh.Freepets.repo.board.community.CommunityCommentDAO;
-import com.kh.Freepets.repo.board.community.CommunityDAO;
 import com.kh.Freepets.repo.board.community.LostCommentDAO;
-import com.kh.Freepets.repo.board.community.LostDAO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,11 +12,8 @@ import java.util.List;
 public class LostCommentService {
     @Autowired
     private LostCommentDAO lostCommentDAO;
-    @Autowired
-    private LostDAO lostDAO;
 
     public List<LostComment> lostCommentAll(int lostCode){
-        log.info("왜 안나와아ㅏㅏ");
         return lostCommentDAO.lostCommentAll(lostCode);
     }
     public List<LostComment> lostReCommentAll(int lostCommentCodeSuper){

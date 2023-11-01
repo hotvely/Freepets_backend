@@ -78,25 +78,64 @@ public class LostController {
         return ResponseEntity.status(HttpStatus.OK).body(paging);
     }
 
-    //일반게시판 검색 GET - http://localhost:8080/api/community/search
-//    @GetMapping("/community/search")
-//    public ResponseEntity<Paging> searchCommon(
-//            @RequestParam(name = "page", defaultValue = "1") int page, @RequestParam String searchKeyword, @RequestParam(name = "searchType", defaultValue = "1") int searchType) {
-//
-//        Pageable pageable = PageRequest.of(page - 1, 15);
-//
-//        Page<Community> result = commonService.searchKeyword(searchKeyword, searchType, pageable);
-//        Paging paging = new Paging();
-//        paging.setCommunityList(result.getContent());
-//        paging.setTotalCount(result.getTotalElements());
-//        paging.setTotalPages(result.getTotalPages());
-//        paging.setGetNumber(result.getNumber());
-//        paging.setHasNext(result.hasNext());
-//        paging.setHasPrev(result.hasPrevious());
-//        paging.setFirst(result.isFirst());
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(paging);
-//    }
+    //분실게시판 검색 GET - http://localhost:8080/api/community/lost/search
+    @GetMapping("/community/lost/search")
+    public ResponseEntity<Paging> searchCommon(
+            @RequestParam(name = "page", defaultValue = "1") int page,@RequestParam(name = "orderBy", defaultValue = "1") int orderBy, @RequestParam String searchKeyword, @RequestParam(name = "searchType", defaultValue = "1") int searchType) {
+
+        try{
+        Page<Lost> result = null;
+        Pageable pageable = PageRequest.of(page - 1, 15);
+        Sort sort;
+
+        switch (orderBy) {
+            case 1:
+                sort = Sort.by("lostCode").descending();
+                break;
+            case 2:
+                sort = Sort.by("lostLikeCount").descending();
+                break;
+            case 3:
+                sort = Sort.by("lostCommentCount").descending();
+                break;
+            case 4:
+                sort = Sort.by("lostViewCount").descending();
+                break;
+            default:
+                sort = Sort.by("lostCode").descending();
+                break;
+        }
+
+
+        switch (searchType){
+            case 1:
+                result = lostService.searchKeywordAll(searchKeyword,pageable);
+                break;
+            case 2:
+                result = lostService.searchTitle(searchKeyword,pageable);
+                break;
+            case 3:
+                result = lostService.searchDesc(searchKeyword,pageable);
+                break;
+            default:
+                result= null;
+                break;
+        }
+
+        Paging paging = new Paging();
+        paging.setLostList(result.getContent());
+        paging.setTotalCount(result.getTotalElements());
+        paging.setTotalPages(result.getTotalPages());
+        paging.setGetNumber(result.getNumber());
+        paging.setHasNext(result.hasNext());
+        paging.setHasPrev(result.hasPrevious());
+        paging.setFirst(result.isFirst());
+
+        return ResponseEntity.status(HttpStatus.OK).body(paging);
+       } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
 
     //일반게시판 추가 POST - http://localhost:8080/api/community/lost
     @PostMapping("/community/lost")

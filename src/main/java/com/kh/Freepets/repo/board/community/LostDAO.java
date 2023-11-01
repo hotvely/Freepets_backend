@@ -1,5 +1,6 @@
 package com.kh.Freepets.repo.board.community;
 
+
 import com.kh.Freepets.domain.board.community.Lost;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -7,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -45,6 +45,21 @@ public interface LostDAO extends JpaRepository<Lost, Integer> {
     @Modifying
     @Query(value = "UPDATE LOST SET LOST_VIEW_COUNT = (LOST_VIEW_COUNT + 1 ) WHERE LOST_CODE = :lostCode", nativeQuery = true)
     int updateViews(int lostCode);
+
+    // 댓글 검색
+    @Transactional
+    @Query(value = "SELECT * FROM LOST WHERE LOST_TITLE LIKE %:keyword% OR LOST_DESC LIKE %:keyword%", nativeQuery = true)
+    Page<Lost> searchKeywordAll(String keyword, Pageable pageable);
+
+    @Transactional
+    @Query(value = "SELECT * FROM LOST WHERE LOST_TITLE LIKE %:keyword%", nativeQuery = true)
+    Page<Lost> searchTitle(String keyword, Pageable pageable);
+
+    @Transactional
+    @Query(value = "SELECT * FROM LOST WHERE LOST_DESC LIKE %:keyword%", nativeQuery = true)
+    Page<Lost> searchDesc(String keyword, Pageable pageable);
+
+
 
 }
 
