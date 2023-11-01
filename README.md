@@ -71,7 +71,6 @@
 <img src="Weekly_Report/resources/viper/9_5week/도경_시터상세보기.png" >
 <img src="Weekly_Report/resources/viper/9_5week/도경_채팅.png" >
 
-
 **예진**
 
 - 10/7 - 10/8
@@ -192,70 +191,73 @@
 3. 커뮤니티, 커뮤니티 댓글 컨트롤러 체크 완료
    ( -> 로스트(일반게시판) 컨트롤러로 통합 예정)
 
-
-**도경** 
+**도경**
 
 - 백엔드 ✔️
- 
+
 1. 이미지, 비디오 등 file 관련 처리 메소드, api 생성
+
 ```java
 @Value("${freepets.upload.path}")
-    private String uploadPath;
+private String uploadPath;
 
-    public String fileInput(MultipartFile file) {
-        String originalFile = file.getOriginalFilename();
-        String realFile = originalFile.substring(originalFile.lastIndexOf("\\")+1);
-        String uuid = UUID.randomUUID().toString();
-        String saveFile = uploadPath + File.separator + uuid + "_" + realFile;
-        Path pathFile = Paths.get(saveFile);
+public String fileInput(MultipartFile file){
+        String originalFile=file.getOriginalFilename();
+        String realFile=originalFile.substring(originalFile.lastIndexOf("\\")+1);
+        String uuid=UUID.randomUUID().toString();
+        String saveFile=uploadPath+File.separator+uuid+"_"+realFile;
+        Path pathFile=Paths.get(saveFile);
 
-        try {
-            file.transferTo(pathFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        try{
+        file.transferTo(pathFile);
+        }catch(IOException e){
+        throw new RuntimeException(e);
         }
-        return uuid + "_" + realFile;
-    }
+        return uuid+"_"+realFile;
+        }
 ```
+
 ```java
 @PostMapping("/img")
-    public ResponseEntity<FileDataDTO> imgReturn(@RequestParam(name = "file", required = true) MultipartFile file) {
-        String originalFile = file.getOriginalFilename();
-        String realFile = originalFile.substring(originalFile.lastIndexOf("\\")+1);
-        String uuid = UUID.randomUUID().toString();
-        String saveFile = uploadPath + File.separator + uuid + "_" + realFile;
-        Path pathFile = Paths.get(saveFile);
-        try {
-            FileDataDTO fileDataDTO = new FileDataDTO();
-            file.transferTo(pathFile);
-            fileDataDTO.setTitle(realFile);
-            fileDataDTO.setUrl("http://localhost:3000/upload/" + uuid + "_" + realFile);
-            return ResponseEntity.status(HttpStatus.OK).body(fileDataDTO);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+public ResponseEntity<FileDataDTO> imgReturn(@RequestParam(name = "file", required = true) MultipartFile file){
+        String originalFile=file.getOriginalFilename();
+        String realFile=originalFile.substring(originalFile.lastIndexOf("\\")+1);
+        String uuid=UUID.randomUUID().toString();
+        String saveFile=uploadPath+File.separator+uuid+"_"+realFile;
+        Path pathFile=Paths.get(saveFile);
+        try{
+        FileDataDTO fileDataDTO=new FileDataDTO();
+        file.transferTo(pathFile);
+        fileDataDTO.setTitle(realFile);
+        fileDataDTO.setUrl("http://localhost:3000/upload/"+uuid+"_"+realFile);
+        return ResponseEntity.status(HttpStatus.OK).body(fileDataDTO);
+        }catch(IOException e){
+        throw new RuntimeException(e);
         }
-    }
+        }
 ```
 
 2. QueryDSL 설정 후 일부 기능 querydsl 방식으로 전환
+
 ```java
 @Autowired(required = true)
-    private JPAQueryFactory queryFactory;
+private JPAQueryFactory queryFactory;
 
-    private final QSitterReview qSitterReview = QSitterReview.sitterReview;
-    private final QSitter qSitter = QSitter.sitter;
+private final QSitterReview qSitterReview=QSitterReview.sitterReview;
+private final QSitter qSitter=QSitter.sitter;
 
-    public List<SitterReview> showall(String id) {
+public List<SitterReview> showall(String id){
         return queryFactory.selectFrom(qSitterReview)
-                .join(qSitterReview.sitter, qSitter)
-                .where(qSitter.member.id.eq(id))
-                .fetch();
-    }
+        .join(qSitterReview.sitter,qSitter)
+        .where(qSitter.member.id.eq(id))
+        .fetch();
+        }
 ```
 
 - 프론트 ✔️
 
 1. Modal 라이브러리 사용해 1:1 채팅 팝업
+
 ```javascript
 
     const handleModalClick = (e) => {
@@ -308,6 +310,37 @@ return (
 </div>
 ```
 
+### 10월 3째 주 ~ 10월 4째 주
+
+- 10/16 ~ 10/22
+
+1. ✔️Front + back 연결 + css작업 (각자 맡은 퍼블리싱 페이지)
+
+- 10/23 ~ 10/28
+
+1. 트러블 슈팅(이슈 체킹) -> 11월 1째 주 이관.. (기본적인 테스팅은 진행완료)
+2. 필요한 API 이식 및 본인 맡은 페이지 기능 처리 (진행중..)
+
+**승환**
+
+1. 날씨 Open Weather API + Naver maps API 이식후 날씨 정보, 현재 위치 가져오는 기능 추가 완료
+2. 회원가입 폼 (주소찾기 API 추가 및 정규식 처리) , 아이디 비밀번호 찾기 폼 변경
+3. 공지사항 게시판 불완전한 페이징 처리 및 정렬 기능 완료
+4. 댓글 컴포넌트 특정 컨트롤러 API 호출하는 부분 밖으로 분리 하여 통합 관리 변경
+5. 새로고침 시에 API 인식 못하던 부분 변경 완료
+6. 특정 게시판 (공지사항, 이벤트 캘린더) 글쓰기 수정 삭제 권한으로 조건 처리 완료
+7. 페이징 css 창 줄이면 특정 px까지만 줄고 그이상 줄어들지 않도록 flex-shrink 처리 완료
+8. 유저 자동 로그 아웃 시키기 위해서 cookie이용해서 처리 완료 데이터는 쿠키에 담지 않음
+9. 다른 유저 페이지 추가해서 기본적인 정보만 출력하도록 추가 완료
+10. 유저 관련 알림 처리 추가 완료 (다른사람이 댓글 대댓글 달게 되면 알림)
+11. 북마크 기능 추가 완료
+12. 공지사항 게시글 내부 비동기 데이터 처리 완료 및 좋아요 등 기능 추가 완료
+
+### 11월 1째 주
+
+1. 트러블 슈팅(11월 2일 or 3일 예정) -> 지우님 게시판 추가 완료 후 체킹 예정
+2.
+
 ***----------------------------------- 로드맵 ----------------------------------***
 
 ## 해야 하는 퍼블리싱 페이지
@@ -326,11 +359,13 @@ return (
 
 - 10/16 ~ 10/22
 
-1. Front + back 연결 + css작업 (각자 맡은 퍼블리싱 페이지)
-2. API 공공데이터 연결 + css
+1. ✔️Front + back 연결 + css작업 (각자 맡은 퍼블리싱 페이지)
 
 ### 10월 4째 주
 
 - 10/23 ~ 10/28
 
-1. 트러블 슈팅(이슈 체킹)
+1. 트러블 슈팅(이슈 체킹) -> 11월 1째 주 이관..
+2. 필요한 API 이식 및 본인 맡은 페이지 기능 처리
+
+##                  
