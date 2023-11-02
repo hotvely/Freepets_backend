@@ -135,6 +135,10 @@ public class NotificationController
                         notificationService.deleteNoti(notification.getNotiCode());
                         break;
                     }
+                    boardDTO = notificationService.createBoardDTO(hospitalReview, BoardType.hospitalReview);        //제목이랑 정도?
+      
+                    notificationDTO.setBoardDTO(boardDTO);
+
                     dtoList.add(notificationDTO);
                     break;
                 case 5:
