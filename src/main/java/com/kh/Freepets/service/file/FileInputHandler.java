@@ -12,24 +12,29 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service
-public class FileInputHandler {
+public class FileInputHandler
+{
 
     @Value("${freepets.upload.path}")
     private String uploadPath;
 
-    public FileDataDTO fileInput(MultipartFile file) {
+    public FileDataDTO fileInput(MultipartFile file)
+    {
         String originalFile = file.getOriginalFilename();
-        String realFile = originalFile.substring(originalFile.lastIndexOf("\\")+1);
+        String realFile = originalFile.substring(originalFile.lastIndexOf("\\") + 1);
         String uuid = UUID.randomUUID().toString();
         String saveFile = uploadPath + File.separator + uuid + "_" + realFile;
         Path pathFile = Paths.get(saveFile);
-        try {
+        try
+        {
             FileDataDTO fileDataDTO = new FileDataDTO();
             file.transferTo(pathFile);
             fileDataDTO.setTitle(realFile);
-            fileDataDTO.setUrl("http://localhost:3000/upload/" + uuid + "_" + realFile);
+            fileDataDTO.setUrl("/upload/" + uuid + "_" + realFile);
             return fileDataDTO;
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             throw new RuntimeException(e);
         }
     }
