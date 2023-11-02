@@ -30,8 +30,8 @@ public class LostComment {
     private Date lostCommentDate;
     @Column(name="L_COMMENT_CODE_SUPER")
     private int lostCommentCodeSuper;
-    @Column(name="C_COMMENT_ADD_FILE_URL")
-    private String lostCommentAddFileUrl;
+//    @Column(name="L_COMMENT_ADD_FILE_URL")
+//    private String lostCommentAddFileUrl;
 
 
     @ManyToOne
