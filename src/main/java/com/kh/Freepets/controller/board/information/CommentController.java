@@ -7,7 +7,9 @@ import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.domain.member.MemberDTO;
 import com.kh.Freepets.security.TokenProvider;
 import com.kh.Freepets.service.board.information.HRCommentService;
+import com.kh.Freepets.service.board.information.HospitalReviewService;
 import com.kh.Freepets.service.file.FileInputHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +20,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/info/*")
+@Slf4j
 @CrossOrigin(value = {"*"}, maxAge = 6000)
 public class CommentController {
 
     @Autowired
     private HRCommentService hrService;
+    @Autowired
+    private HospitalReviewService hospitalReviewService;
     @Autowired
     private TokenProvider provider;
 
@@ -34,9 +39,14 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK).body(hrService.showBoardAll(hospitalReviewCode));
     }
 
+    @GetMapping("/hr/comment/one/{code}")
+    public ResponseEntity<HRComment> hrShow(@PathVariable int code) {
+        return ResponseEntity.status(HttpStatus.OK).body(hrService.show(code));
+    }
+
     // 부모 댓글에 달린 대댓글들 불러 오기
     @GetMapping("/hr/comment/{superCode}")
-    public ResponseEntity<List<HRComment>> hrShow(@PathVariable int superCode) {
+    public ResponseEntity<List<HRComment>> hrShowReAll(@PathVariable int superCode) {
         return ResponseEntity.status(HttpStatus.OK).body(hrService.showReCommentAll(superCode));
     }
 
@@ -58,8 +68,8 @@ public class CommentController {
                 .hrCommentReportYn('N')
                 .member(member)
                 .build();
-        hrService.create(hrComment);
-        return ResponseEntity.status(HttpStatus.OK).body(hrComment);
+        HRComment result = hrService.create(hrComment);
+        return ResponseEntity.status(HttpStatus.OK).body(hrService.show(result.getHrCommentCode()));
     }
 
     // 댓글 수정

@@ -39,8 +39,10 @@ public class NotificationController
 
     @Autowired
     private NotificationService notificationService;
+
     @Autowired
     private CommunityService communityService;
+
     @Autowired
     private LostService lostService;
     @Autowired
@@ -133,6 +135,10 @@ public class NotificationController
                         notificationService.deleteNoti(notification.getNotiCode());
                         break;
                     }
+                    boardDTO = notificationService.createBoardDTO(hospitalReview, BoardType.hospitalReview);        //제목이랑 정도?
+      
+                    notificationDTO.setBoardDTO(boardDTO);
+
                     dtoList.add(notificationDTO);
                     break;
                 case 5:
@@ -179,15 +185,15 @@ public class NotificationController
                 break;
                 case 6:
                     // 도경님 채팅 시퀀스로 받는 로직 피료함!
-                    Chatting chatting = chattingService.showMessage(elem.getBoardCode());
-                    if (chatting == null)
-                    {
-                        Notification notification
-                                = notificationService.showBcodePcode(elem.getBoardCode(), elem.getPostCode());
-
-                        notificationService.deleteNoti(notification.getNotiCode());
-                        break;
-                    }
+//                    Chatting chatting = chattingService.show(elem.getBoardCode());
+//                    if (chatting == null)
+//                    {
+//                        Notification notification
+//                                = notificationService.showBcodePcode(elem.getBoardCode(), elem.getPostCode());
+//
+//                        notificationService.deleteNoti(notification.getNotiCode());
+//                        break;
+//                    }
                     dtoList.add(notificationDTO);
 
                     break;
@@ -202,9 +208,10 @@ public class NotificationController
     @PostMapping("/noti/register")
     public ResponseEntity<Notification> save(@RequestBody NotificationDTO dto)
     {
-        String userId = tokenProvider.validateAndGetUserId(dto.getToken());
+
+
         Notification vo = Notification.builder()
-                .id(userId)
+                .id(dto.getId())
                 .boardCode(dto.getBoardCode())
                 .postCode(dto.getPostCode())
                 .childCommentCode(dto.getChildCommentCode())

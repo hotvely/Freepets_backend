@@ -32,10 +32,7 @@ public class SitterService {
     }
 
     public Sitter show(int id) {
-        Sitter sitter = sitterDAO.findById(id).orElse(null);
-        Member member = memberDAO.findById(sitter.getMember().getId()).orElse(null);
-        sitter.setMember(member);
-        return sitter;
+        return sitterDAO.findById(id).orElse(null);
     }
     public Sitter create(Sitter sitter) {
         return sitterDAO.save(sitter);
