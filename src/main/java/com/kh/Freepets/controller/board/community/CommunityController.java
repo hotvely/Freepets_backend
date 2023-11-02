@@ -193,10 +193,13 @@ public class CommunityController {
 
         if (target == null) {
             Community community = commonService.updateCommonLike(communityLikeDTO.getPostCode());
+            Community vo = commonService.showCommon(community.getCommonCode());
             CommunityLike communityLike = CommunityLike.builder()
-                    .community(community)
+                    .community(vo)
                     .member(member)
                     .build();
+            log.info("좋아요?" + communityLike);
+            log.info("부모를 찾아라" + vo);
             return ResponseEntity.status(HttpStatus.OK).body(commonLikeService.create(communityLike));
         } else {
             if (target.getMember().getId().equals(userId) && target.getCommunity().getCommonCode() == communityLikeDTO.getPostCode()) {
