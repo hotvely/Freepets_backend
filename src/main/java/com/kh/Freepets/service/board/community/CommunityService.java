@@ -59,7 +59,7 @@ public class CommunityService {
         return target;
     }
 
-    // 게시글 댓글 갯수 증가
+    // 게시글 댓글 개수 증가
     public boolean increaseCommonUpdate(int code)
     {
         int count = commonDAO.increaseCommonComments(code);

@@ -10,6 +10,7 @@ import com.kh.Freepets.security.TokenProvider;
 import com.kh.Freepets.service.board.community.CommunityCommentService;
 import com.kh.Freepets.service.board.community.CommunityService;
 import com.kh.Freepets.service.board.community.LostCommentService;
+import com.kh.Freepets.service.board.community.LostService;
 import com.kh.Freepets.service.member.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,8 @@ public class LostCommentController {
     @Autowired
     private LostCommentService lostCommentService;
     @Autowired
+    private LostService lostService;
+    @Autowired
     private MemberService memberService;
     @Autowired
     private TokenProvider token;
@@ -60,7 +63,7 @@ public class LostCommentController {
     //일반 게시글 댓글 추가 POST - http://localhost:8080/api/community/lost/comment
     @PostMapping("/community/lost/comment")
     public ResponseEntity<LostComment> createLostComment(@RequestBody CommentDTO commentDTO){
-        if(commentDTO.getBoardName().equals("lost")){
+        if(commentDTO.getBoardName().equals("lost")) {
             String userId = token.validateAndGetUserId(commentDTO.getToken());
             Member member = memberService.findByIdUser(userId);
 
@@ -74,10 +77,14 @@ public class LostCommentController {
                     .lostCommentCodeSuper(commentDTO.getParentCommentCode())
                     .member(member)
                     .build();
-            lostCommentService.create(lostComment);
 
-            return ResponseEntity.status(HttpStatus.OK).body(lostComment);
-        } else {
+            LostComment target = lostCommentService.create(lostComment);
+
+            if (target != null) {
+                lostService.updateLostUpdate(commentDTO.getPostCode());
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(target);
+            }else{
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
@@ -85,18 +92,20 @@ public class LostCommentController {
     //일반 게시글 댓글 수정 UPDATE - http://localhost:8080/api/community/comment
     @PutMapping("/community/lost/comment")
     public ResponseEntity<LostComment> updateLostComment(@RequestBody CommentDTO commentDTO){
-        LostComment lostComment = LostComment.builder()
-                .lostCommentDesc(commentDTO.getCommentDesc())
-                .lostCommentDate(new Date())
-                .build();
-        lostCommentService.update(lostComment);
+         LostComment lostComment = lostCommentService.showLostComment(commentDTO.getCommentCode());
+        lostComment.setLostCommentDesc(commentDTO.getCommentDesc());
+        lostComment.setLostCommentDate(new Date());
 
-        return ResponseEntity.status(HttpStatus.OK).body(lostComment);
+        LostComment response = lostCommentService.update(lostComment);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     //일반 게시글 댓글 삭제 DELETE - http://localhost:8080/api/community/comment/1
     @DeleteMapping("/community/lost/comment/{lostCommentCode}")
     public ResponseEntity<LostComment>deleteLostComment(@PathVariable int lostCommentCode){
+        LostComment vo = lostCommentService.showLostComment(lostCommentCode);
+        lostService.deleteLostCommentCount(vo.getLost().getLostCommentCount());
         return ResponseEntity.status(HttpStatus.OK).body(lostCommentService.delete(lostCommentCode));
     }
 

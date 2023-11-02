@@ -84,5 +84,15 @@ public class LostService {
         return lostDAO.searchDesc(keyword,pageable);
     }
 
+    // 게시글 댓글 개수
+    public boolean updateLostUpdate(int code){
+        int count = lostDAO.updateLostComments(code);
+        if(count > 0 ) return true;
+        return false;
+    }
+
+    public int deleteLostCommentCount(int code){
+        return lostDAO.deleteLostComments(code);
+    }
 
 }
