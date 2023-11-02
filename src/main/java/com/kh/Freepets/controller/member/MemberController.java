@@ -195,10 +195,8 @@ public class MemberController
                                                 @RequestParam(name = "email") String email,
                                                 @RequestParam(name = "phone") String phone,
                                                 @RequestParam(name = "memberInfo") String memberInfo,
-                                                @RequestParam(name = "file") MultipartFile file)
+                                                @RequestParam(name = "file", required = false) MultipartFile file)
     {
-
-
         // 전달 받은 데이터로 변경 할 멤버 객체 만듬
         String userId = tokenProvider.validateAndGetUserId(token);
         log.info("받은 토큰을 이용해 유저 아이디 찾기 : " + userId);
@@ -233,8 +231,7 @@ public class MemberController
         {
             member.setMemberInfo(memberInfo);
         }
-
-        if (file != null) ;
+        if (file != null)
         {
             String filepath = fileInputHandler.fileInput(file).getUrl();
 
