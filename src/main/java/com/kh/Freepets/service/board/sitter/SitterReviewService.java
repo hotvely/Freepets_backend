@@ -44,12 +44,7 @@ public class SitterReviewService {
     }
 
     public SitterReview show(int id) {
-        SitterReview sitterReview = sitterReviewDAO.findById(id).orElse(null);
-        Member member = memberDAO.findById(sitterReview.getMember().getId()).orElse(null);
-        Sitter sitter = sitterDAO.findById(sitterReview.getSitter().getSitterCode()).orElse(null);
-        sitterReview.setSitter(sitter);
-        sitterReview.setMember(member);
-        return sitterReview;
+        return sitterReviewDAO.findById(id).orElse(null);
     }
     public SitterReview create(SitterReview sitterReview) {
         return sitterReviewDAO.save(sitterReview);

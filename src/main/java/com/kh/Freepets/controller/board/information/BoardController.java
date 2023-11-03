@@ -72,6 +72,9 @@ public class BoardController
     // 게시글 한 개 보기
     @GetMapping("/hr/{hospitalReviewCode}")
     public ResponseEntity<BoardDTO> hrShow(@PathVariable int hospitalReviewCode) {
+        // 게시글 조회할 때마다 조회수 올라가기
+        hrService.updateViewCount(hospitalReviewCode);
+
         HospitalReview hospitalReview = hrService.show(hospitalReviewCode);
 
         MemberDTO memberDTO = MemberDTO.builder()

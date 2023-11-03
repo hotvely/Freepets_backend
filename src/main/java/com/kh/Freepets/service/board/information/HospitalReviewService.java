@@ -57,13 +57,12 @@ public class HospitalReviewService {
     // 게시글 한 개 보기
     public HospitalReview show(int hospitalReviewCode) {
 
-        // 게시글 들어갈 때마다 조회수 올라가기
-        hospitalReviewDAO.updateViews(hospitalReviewCode);
-
         HospitalReview hospitalReview = hospitalReviewDAO.findById(hospitalReviewCode).orElse(null);
-        Member member = memberDAO.findById(hospitalReview.getMember().getId()).orElse(null);
-        hospitalReview.setMember(member);
         return hospitalReview;
+    }
+
+    public int updateViewCount(int hospitalReviewCode) {
+        return hospitalReviewDAO.updateViews(hospitalReviewCode);
     }
 
     // 게시글 작성하기
