@@ -2,8 +2,10 @@ package com.kh.Freepets.controller.board.sitter;
 
 import com.kh.Freepets.domain.board.sitter.Sitter;
 import com.kh.Freepets.domain.board.sitter.SitterReview;
+import com.kh.Freepets.domain.member.Member;
 import com.kh.Freepets.service.board.sitter.SitterReviewService;
 import com.kh.Freepets.service.board.sitter.SitterService;
+import com.kh.Freepets.service.member.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +28,8 @@ public class SitterReviewController {
     private SitterReviewService service;
     @Autowired
     private SitterService sitterService;
+    @Autowired
+    private MemberService memberService;
 
     @GetMapping("/sitter/{id}/review") // 시터 한 명당 후기 전체 보기
     public ResponseEntity<List<SitterReview>> showAll(@PathVariable String id) {
@@ -40,9 +44,12 @@ public class SitterReviewController {
 
     @PostMapping("/sitterReview") // 후기 작성
     public ResponseEntity<SitterReview> create(SitterReview sitterReview) {
+        Member member = memberService.findByIdUser(sitterReview.getMember().getId());
+        sitterReview.setMember(member);
         SitterReview result = service.create(sitterReview);
         Sitter sitter = sitterService.show(result.getSitter().getSitterCode());
         sitterService.updateRatings(sitter.getMember().getId());
+        log.info("service.show(sitterReview.getSitterReviewCode()) : " + service.show(sitterReview.getSitterReviewCode()));
         return ResponseEntity.status(HttpStatus.OK).body(service.show(sitterReview.getSitterReviewCode()));
     }
 
