@@ -49,7 +49,6 @@ public class SitterReviewController {
         SitterReview result = service.create(sitterReview);
         Sitter sitter = sitterService.show(result.getSitter().getSitterCode());
         sitterService.updateRatings(sitter.getMember().getId());
-        log.info("service.show(sitterReview.getSitterReviewCode()) : " + service.show(sitterReview.getSitterReviewCode()));
         return ResponseEntity.status(HttpStatus.OK).body(service.show(sitterReview.getSitterReviewCode()));
     }
 
